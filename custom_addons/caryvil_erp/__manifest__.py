@@ -30,6 +30,7 @@
         'security/caryvil_security.xml',
         'security/ir.model.access.csv',
         'views/caryvil_menus.xml',
+        'views/res_partner_customer_views.xml',
     ],
     'demo': [
         'demo/demo_data.xml',
