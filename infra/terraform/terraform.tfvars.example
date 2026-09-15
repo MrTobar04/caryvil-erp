@@ -1,0 +1,7 @@
+render_api_key      = "rnd_example_api_key_xxxxxxxx"
+owner_id            = "tea_example_owner_id_xxxxxxxx"
+environment         = "staging"
+region              = "oregon"
+db_name             = "caryvil_erp_db"
+db_user             = "caryvil_db_admin"
+odoo_admin_password = "super_secure_master_password_example"

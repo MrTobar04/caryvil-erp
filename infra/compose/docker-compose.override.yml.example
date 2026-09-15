@@ -1,0 +1,5 @@
+services:
+  web:
+    environment:
+      DEV_MODE: "True"
+    command: odoo --dev=all --log-level=debug
