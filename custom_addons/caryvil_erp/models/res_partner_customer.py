@@ -15,6 +15,15 @@ class ResPartnerCustomer(models.Model):
         ('dui_unique', 'unique(dui)', 'Ya existe un cliente registrado con este número de DUI.')
     ]
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('is_pharmacy_customer') and not vals.get('ref'):
+                # Autogenerar código secuencial de cliente (CL0001, CL0002, etc.)
+                count = self.search_count([('is_pharmacy_customer', '=', True)]) + 1
+                vals['ref'] = f"CL{count:04d}"
+        return super(ResPartnerCustomer, self).create(vals_list)
+
     @api.onchange('first_name', 'last_name')
     def _onchange_names(self):
         names = [self.first_name or '', self.last_name or '']

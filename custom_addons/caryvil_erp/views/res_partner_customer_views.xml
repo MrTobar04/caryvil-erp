@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Dedicated Form View for Pharmacy Customers -->
+        <!-- Custom Tree View matching list-of-customers.png UI/UX design -->
+        <record id="view_caryvil_partner_customer_tree" model="ir.ui.view">
+            <field name="name">caryvil.partner.customer.tree</field>
+            <field name="model">res.partner</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <tree string="Clientes" create="true" delete="true">
+                    <field name="ref" string="Código"/>
+                    <field name="name" string="Nombre"/>
+                    <field name="email" string="Email"/>
+                    <field name="phone" string="Teléfono"/>
+                    <field name="dui" string="DUI"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Custom Form View matching new-customer.png UI/UX design -->
         <record id="view_caryvil_partner_customer_form" model="ir.ui.view">
             <field name="name">caryvil.partner.customer.form</field>
             <field name="model">res.partner</field>
@@ -11,24 +27,41 @@
                     <sheet>
                         <field name="is_pharmacy_customer" invisible="1"/>
                         <div class="oe_title">
-                            <label for="name" string="Nombre Completo del Cliente"/>
+                            <label for="name" string="Nombre del Cliente" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" placeholder="Se genera automáticamente con Nombres y Apellidos"/>
+                                <field name="name" placeholder="Nombre1 Nombre2 Apellido 1"/>
                             </h1>
+                            <h3>
+                                <field name="ref" readonly="1" class="text-muted" placeholder="[Código interno]"/>
+                            </h3>
                         </div>
                         <group>
-                            <group string="Datos Personales y DUI">
+                            <group string="Datos del Cliente">
                                 <field name="first_name" required="1" placeholder="Ej. María Elena"/>
                                 <field name="last_name" required="1" placeholder="Ej. López Rivas"/>
+                                <field name="email" widget="email" placeholder="digitar correo electrónico...."/>
                                 <field name="dui" placeholder="00000000-0"/>
                             </group>
                             <group string="Contacto y Residencia">
-                                <field name="phone" widget="phone" placeholder="7000-0000"/>
-                                <field name="mobile" widget="phone" placeholder="2000-0000"/>
-                                <field name="email" widget="email" placeholder="cliente@ejemplo.com"/>
+                                <field name="phone" widget="phone" placeholder="0000-0000"/>
+                                <field name="mobile" widget="phone" placeholder="0000-0000"/>
                                 <field name="street" placeholder="Colonia San Antonio, Soyapango"/>
                             </group>
                         </group>
+
+                        <!-- Tab de Historial de Compras (según diseño new-customer.png) -->
+                        <notebook>
+                            <page string="Historial de Compras" name="purchase_history">
+                                <field name="sale_order_ids" readonly="1">
+                                    <tree string="Ventas Realizadas" no_open="1">
+                                        <field name="name" string="Código"/>
+                                        <field name="date_order" string="Fecha"/>
+                                        <field name="amount_total" string="Monto" widget="monetary"/>
+                                        <field name="state" string="Estado" widget="badge"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
@@ -65,6 +98,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="dui" string="DUI"/>
+                    <field name="ref" string="Código"/>
                 </xpath>
                 <xpath expr="//filter[@name='customer']" position="after">
                     <filter string="Clientes de Farmacia" name="pharmacy_customer" domain="[('is_pharmacy_customer', '=', True)]"/>
@@ -74,7 +108,7 @@
 
         <!-- Action for Pharmacy Customers -->
         <record id="action_caryvil_partner_customer" model="ir.actions.act_window">
-            <field name="name">Directorio de Clientes</field>
+            <field name="name">Clientes</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form,kanban</field>
@@ -90,7 +124,14 @@
             </field>
         </record>
 
-        <!-- Link Action to Dedicated Form View -->
+        <!-- Link Action to Dedicated Views -->
+        <record id="action_caryvil_partner_customer_view_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_caryvil_partner_customer_tree"/>
+            <field name="act_window_id" ref="action_caryvil_partner_customer"/>
+        </record>
+
         <record id="action_caryvil_partner_customer_view_form" model="ir.actions.act_window.view">
             <field name="sequence" eval="2"/>
             <field name="view_mode">form</field>
