@@ -1,113 +1,29 @@
-// Farmacia Caryvil ERP - Custom Theme Overrides
-// Colors: Menu=#002A58, App-bar=#697F92, Confirm-btn=#34C759, Deny-btn=#FAFAFE (hover red)
+// Farmacia Caryvil - Custom Theme Tokens & Style System
 
-body.o_web_client {
-  // Top Navbar (Header / App Bar)
-  header.o_navbar, .o_main_navbar, nav.o_main_navbar {
-    background-color: #697F92 !important;
-    color: #ffffff !important;
-    border-bottom: none !important;
+:root {
+  --caryvil-primary: #0284c7;
+  --caryvil-primary-dark: #0369a1;
+  --caryvil-primary-light: #e0f2fe;
+  --caryvil-secondary: #0d9488;
+  --caryvil-accent: #f59e0b;
+  --caryvil-danger: #ef4444;
+  --caryvil-success: #10b981;
+  --caryvil-warning: #f59e0b;
+  --caryvil-bg-app: #f8fafc;
+  --caryvil-surface: #ffffff;
+  --caryvil-border: #e2e8f0;
+  --caryvil-text-main: #0f172a;
+  --caryvil-text-muted: #64748b;
+}
 
-    .o_menu_brand, .o_nav_entry, .nav-link, .dropdown-toggle {
-      color: #ffffff !important;
-      font-weight: 600 !important;
-    }
-    
-    .o_navbar_apps_menu {
-      background-color: #002A58 !important;
-    }
-  }
+.o_main_navbar {
+  border-bottom: 2px solid var(--caryvil-primary) !important;
+}
 
-  // Dropdown menus & App Navigation Sidebar
-  .o_navbar_apps_menu .dropdown-menu,
-  .o_menu_sections .dropdown-menu {
-    background-color: #002A58 !important;
-    border: none !important;
-
-    .dropdown-item {
-      color: #ffffff !important;
-      &:hover, &:focus {
-        background-color: rgba(255, 255, 255, 0.15) !important;
-        color: #ffffff !important;
-      }
-    }
-  }
-
-  // Primary Confirmation Buttons (Cliente Nuevo, Guardar, Crear)
-  .btn-primary, 
-  button.btn-primary,
-  .o_form_button_save, 
-  .o_list_button_add,
-  .btn-success {
-    background-color: #34C759 !important;
-    border-color: #34C759 !important;
-    color: #ffffff !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    padding: 6px 18px !important;
-    box-shadow: none !important;
-
-    &:hover, &:focus, &:active {
-      background-color: #2db34f !important;
-      border-color: #2db34f !important;
-      color: #ffffff !important;
-      box-shadow: 0 4px 6px -1px rgba(52, 199, 89, 0.4) !important;
-    }
-  }
-
-  // Deny / Cancel Buttons (Cancelar)
-  .btn-secondary, 
-  button.btn-secondary,
-  .o_form_button_cancel,
-  .btn-default {
-    background-color: #FAFAFE !important;
-    border: 1px solid #d1d5db !important;
-    color: #374151 !important;
-    border-radius: 8px !important;
-    font-weight: 500 !important;
-    padding: 6px 18px !important;
-
-    &:hover, &:focus, &:active {
-      background-color: #fee2e2 !important;
-      color: #dc2626 !important;
-      border-color: #f87171 !important;
-    }
-  }
-
-  // Pill Search Bar
-  .o_searchview, .o_cp_searchview {
-    border-radius: 20px !important;
-    background-color: #f1f5f9 !important;
-    border: 1px solid #cbd5e1 !important;
-    padding: 2px 12px !important;
-  }
-
-  // Table Headers in List View
-  .o_list_renderer .o_list_table {
-    thead th {
-      background-color: #EFEFEF !important;
-      color: #111827 !important;
-      font-weight: 700 !important;
-      border-bottom: 2px solid #e5e7eb !important;
-    }
-
-    tbody tr:hover {
-      background-color: #f8fafc !important;
-    }
-  }
-
-  // Clean Form Styling
-  .o_form_view {
-    .oe_title h1 {
-      font-size: 1.75rem !important;
-      font-weight: 600 !important;
-      color: #4b5563 !important;
-    }
-
-    .o_form_sheet {
-      border-radius: 12px !important;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
-      padding: 2rem !important;
-    }
-  }
+.caryvil_badge_fefo {
+  background-color: var(--caryvil-primary-light);
+  color: var(--caryvil-primary-dark);
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 2px 6px;
 }
