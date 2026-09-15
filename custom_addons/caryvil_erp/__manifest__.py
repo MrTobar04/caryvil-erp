@@ -36,6 +36,9 @@
         'demo/demo_data.xml',
     ],
     'assets': {
+        'web.assets_primary_variables': [
+            'caryvil_erp/static/src/scss/primary_variables.scss',
+        ],
         'web.assets_backend': [
             'caryvil_erp/static/src/scss/custom_theme.scss',
         ],
