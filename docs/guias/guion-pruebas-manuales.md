@@ -9,6 +9,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
 - [2. Configuración Inicial](#2-configuración-inicial)
 - [3. Problemas Comunes](#3-problemas-comunes)
 - [4. Flujos de Verificación](#4-flujos-de-verificación)
+  - [Flujo 1.1: Despliegue, Persistencia y Montaje en Contenedores Docker (SPEC-1.1.1)](#flujo-11-despliegue-persistencia-y-montaje-en-contenedores-docker-spec-111)
 
 ---
 
@@ -88,10 +89,29 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 
 ## 3. Problemas Comunes
 
-<!-- Sección reservada: se incorporarán soluciones rápidas a incidentes típicos de despliegue, caché o conectividad -->
+| Incidente / Síntoma | Causa Probable | Solución Paso a Paso |
+|---|---|---|
+| **Error `Bind for 0.0.0.0:8069 failed: port is already allocated`** | Existe otra instancia de Odoo o un proceso local ocupando el puerto `8069`. | 1. Detener el proceso en conflicto o cambiar el puerto mapeado en `infra/compose/docker-compose.override.yml`.<br>2. En Windows: `Get-Process -Id (Get-NetTCPConnection -LocalPort 8069).OwningProcess \| Stop-Process -Force`. |
+| **Error `Bind for 0.0.0.0:5432 failed: port is already allocated`** | Servicio local de PostgreSQL nativo ejecutándose en la máquina host. | 1. Detener temporalmente el servicio local de PostgreSQL (`Stop-Service postgresql*` en PowerShell).<br>2. O eliminar el mapeo del puerto externo `5432` en el compose para aislar la base de datos a la red interna. |
+| **Odoo reinicia constantemente con error `Connection to PostgreSQL failed`** | El contenedor de base de datos aún no completa su inicialización interna de cluster. | El archivo `entrypoint.sh` y el `depends_on` con `condition: service_healthy` gestionan la espera automáticamente. Esperar 15-20 segundos y revisar con `docker compose -f infra/compose/docker-compose.yml logs -f web`. |
+| **Los cambios en archivos de `./custom_addons` no se reflejan** | El modo desarrollador no está activo o se requiere recarga de assets en caliente. | 1. Iniciar los contenedores con la configuración `docker-compose.override.yml` (`--dev=all`).<br>2. En el navegador, forzar recarga dura con `Ctrl + F5` o actualizar el módulo desde **Aplicaciones** -> **Actualizar**. |
+| **Permisos denegados en `/var/lib/odoo` o `/mnt/extra-addons`** | Permisos del host incompatibles con el usuario `odoo` (UID 101). | Ejecutar en el host o contenedor: `docker compose -f infra/compose/docker-compose.yml exec -u 0 web chown -R odoo:odoo /var/lib/odoo /mnt/extra-addons`. |
 
 ---
 
 ## 4. Flujos de Verificación
 
-<!-- Sección reservada: se detallarán los casos de prueba con pasos, datos de entrada y resultados esperados -->
+### Flujo 1.1: Despliegue, Persistencia y Montaje en Contenedores Docker (SPEC-1.1.1)
+
+1. **Validación de sintaxis de orquestación:** En la terminal del host, ejecutar `docker compose -f infra/compose/docker-compose.yml config`, debes observar la definición completa del esquema YAML resuelta sin errores de sintaxis y con los servicios `db` y `web` vinculados a la red `caryvil-net`.
+2. **Construcción y arranque de servicios:** Ejecutar `docker compose -f infra/compose/docker-compose.yml up -d --build`, debes ver cómo Docker descarga/compila las imágenes y levanta los contenedores `caryvil-db` y `caryvil-web` en segundo plano en menos de 30 segundos.
+3. **Comprobación de estado de salud (Healthcheck):** Ejecutar `docker compose -f infra/compose/docker-compose.yml ps`, debes observar ambos contenedores en estado `Up (healthy)` con los puertos `5432->5432/tcp` en `db` y `8069->8069/tcp`, `8072->8072/tcp` en `web`.
+4. **Verificación de logs de conectividad:** Ejecutar `docker compose -f infra/compose/docker-compose.yml logs web`, debes observar en consola el mensaje `=== [Caryvil ERP] Base de datos PostgreSQL disponible ===` seguido del inicio del servidor HTTP de Odoo listo para recibir peticiones en el puerto `8069`.
+5. **Acceso web inicial al ERP:** Abrir el navegador web y navegar a [http://localhost:8069](http://localhost:8069), debes ver la pantalla de inicio de sesión de Odoo o el asistente del gestor de base de datos cargando limpiamente y sin errores de hoja de estilos ni librerías faltantes.
+6. **Verificación del montaje en caliente de addons:** En el host, crear un archivo de prueba en `custom_addons/caryvil_erp/test_sync.txt` con el contenido `sincronizacion_activa` y ejecutar en terminal `docker compose -f infra/compose/docker-compose.yml exec web cat /mnt/extra-addons/caryvil_erp/test_sync.txt`, debes ver en la salida del contenedor el texto `sincronizacion_activa`, confirmando la sincronización bidireccional inmediata (luego eliminar el archivo temporal `custom_addons/caryvil_erp/test_sync.txt`).
+7. **Verificación de usuario no privilegiado en runtime:** Ejecutar `docker compose -f infra/compose/docker-compose.yml exec web whoami`, debes observar la respuesta `odoo` (UID 101), garantizando que el proceso no corre como `root`.
+8. **Prueba de persistencia tras reinicio:** Con el sistema iniciado, detener los contenedores mediante `docker compose -f infra/compose/docker-compose.yml down` y volver a levantarlos con `docker compose -f infra/compose/docker-compose.yml up -d`, navegar nuevamente a [http://localhost:8069](http://localhost:8069) y debes comprobar que el estado de la base de datos `caryvil_dev` y las sesiones persisten intactas en los volúmenes `caryvil_odoo_db_data` y `caryvil_odoo_web_data`.
+
+#### Casos Límite / Rutas de Excepción:
+1. **Recuperación ante caída o demora de PostgreSQL:** Detener el contenedor de base de datos con `docker compose -f infra/compose/docker-compose.yml stop db` y reiniciar el contenedor web con `docker compose -f infra/compose/docker-compose.yml restart web`, al inspeccionar `docker compose -f infra/compose/docker-compose.yml logs -f web` debes ver que el script `entrypoint.sh` entra en bucle de espera sin abortar el contenedor (`Verificando disponibilidad de PostgreSQL...`), y al reiniciar la base de datos con `docker compose -f infra/compose/docker-compose.yml start db`, el servicio web debe detectar la conexión y arrancar automáticamente.
+
