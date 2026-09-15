@@ -10,6 +10,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
 - [3. Problemas Comunes](#3-problemas-comunes)
 - [4. Flujos de Verificación](#4-flujos-de-verificación)
   - [Flujo 1.1: Despliegue, Persistencia y Montaje en Contenedores Docker (SPEC-1.1.1)](#flujo-11-despliegue-persistencia-y-montaje-en-contenedores-docker-spec-111)
+  - [Flujo 1.2: Parámetros del Servidor Odoo, Proxy Inverso y Gestión de Base de Datos (SPEC-1.1.2)](#flujo-12-parámetros-del-servidor-odoo-proxy-inverso-y-gestión-de-base-de-datos-spec-112)
 
 ---
 
@@ -114,4 +115,17 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 
 #### Casos Límite / Rutas de Excepción:
 1. **Recuperación ante caída o demora de PostgreSQL:** Detener el contenedor de base de datos con `docker compose -f infra/compose/docker-compose.yml stop db` y reiniciar el contenedor web con `docker compose -f infra/compose/docker-compose.yml restart web`, al inspeccionar `docker compose -f infra/compose/docker-compose.yml logs -f web` debes ver que el script `entrypoint.sh` entra en bucle de espera sin abortar el contenedor (`Verificando disponibilidad de PostgreSQL...`), y al reiniciar la base de datos con `docker compose -f infra/compose/docker-compose.yml start db`, el servicio web debe detectar la conexión y arrancar automáticamente.
+
+---
+
+### Flujo 1.2: Parámetros del Servidor Odoo, Proxy Inverso y Gestión de Base de Datos (SPEC-1.1.2)
+
+1. **Detección e indexación del módulo en Addons Path (UI):** Ingresar al navegador web en [http://localhost:8069](http://localhost:8069), iniciar sesión como administrador (`admin` / `admin`), activar el modo desarrollador (`?debug=1`), navegar a **Aplicaciones**, presionar el botón **Actualizar lista de aplicaciones**, remover cualquier filtro predeterminado en la barra de búsqueda y escribir `caryvil_erp`, debes ver la tarjeta del módulo **Farmacia Caryvil ERP** (versión `17.0.1.0.0`, autor *Farmacia Caryvil*) listada en estado *"No instalado"* y lista para su despliegue.
+2. **Disponibilidad del gestor gráfico de bases de datos (`list_db = True`):** En la barra superior, hacer clic en el avatar de usuario y seleccionar **Cerrar sesión**, en la pantalla de bienvenida hacer clic en el enlace inferior **Gestionar bases de datos** (o acceder directamente a [http://localhost:8069/web/database/manager](http://localhost:8069/web/database/manager)), debes ver el panel administrativo visual con la base de datos `caryvil_dev` y las opciones de **Crear**, **Respaldar (Backup)**, **Duplicar** y **Eliminar**.
+3. **Verificación visual de renderizado de assets y modo proxy (Navegador):** En la interfaz web de Odoo, presionar `F12` para abrir las herramientas de desarrollador y seleccionar la pestaña **Consola**, debes observar que la pantalla carga sin advertencias de contenido mixto (*Mixed Content*) ni bloqueos de scripts; en la pestaña **Red (Network)**, forzar una recarga limpia (`Ctrl + F5`) y verificar que todas las hojas de estilo y scripts de Odoo (`web.assets_backend`) respondan con código `200 OK` o `304 Not Modified`.
+4. **Inspección del entorno y versión del servidor (UI):** Con el modo desarrollador activo, hacer clic en el avatar del usuario administrador en la esquina superior derecha y seleccionar **Acerca de**, debes ver el cuadro de diálogo modal confirmando la versión **Odoo 17.0 (Community Edition)** y el entorno operativo sobre la base de datos `caryvil_dev`.
+
+#### Casos Límite / Rutas de Excepción:
+1. **Persistencia de sesión en navegación protegida:** Navegar entre diferentes aplicaciones y menús del sistema recargando la página con `F5`, debes comprobar que la sesión de usuario y la apariencia gráfica se mantienen estables sin desconexiones inesperadas ni pérdida de estilos por reescritura de cabeceras.
+
 
