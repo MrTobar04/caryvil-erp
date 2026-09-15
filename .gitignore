@@ -1,2 +1,5 @@
 /.vscode
 /.agents
+__pycache__/
+*.pyc
+infra/compose/docker-compose.override.yml
