@@ -2,6 +2,22 @@ FROM odoo:17.0
 
 USER root
 
+# Instalar dependencias del sistema para localización y utilidades de red/diagnóstico
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    locales \
+    netcat-openbsd \
+    curl \
+    postgresql-client \
+    && sed -i -e 's/# es_ES.UTF-8 UTF-8/es_ES.UTF-8 UTF-8/' /etc/locale.gen \
+    && sed -i -e 's/# es_SV.UTF-8 UTF-8/es_SV.UTF-8 UTF-8/' /etc/locale.gen \
+    && dpkg-reconfigure --frontend=noninteractive locales \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configurar variables de entorno para localización en español
+ENV LANG=es_SV.UTF-8 \
+    LANGUAGE=es_SV:es \
+    LC_ALL=es_SV.UTF-8
+
 # Instalar dependencias Python adicionales sin romper paquetes del sistema base
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
