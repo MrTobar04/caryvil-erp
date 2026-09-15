@@ -1,9 +1,9 @@
-# 📘 Guía de Desarrollo Basado en Especificaciones (Spec Driven Development - SDD)
+# Guía de Desarrollo Basado en Especificaciones (Spec Driven Development - SDD)
 ### Proyecto: Caryvil ERP (Odoo 17 Community & PostgreSQL 16)
 
 ---
 
-## 🎯 1. Introducción y Filosofía SDD
+## 1. Introducción y Filosofía SDD
 
 En **Farmacia Caryvil ERP**, el desarrollo se rige bajo la metodología **Spec Driven Development (SDD)**. La premisa fundamental de esta filosofía es:
 
@@ -19,7 +19,7 @@ En **Farmacia Caryvil ERP**, el desarrollo se rige bajo la metodología **Spec D
 
 ---
 
-## 🌿 2. Modelo de Ramas y Flujo Git
+## 2. Modelo de Ramas y Flujo Git
 
 El repositorio cuenta con políticas estrictas de integración y despliegue continuo (CI/CD) para garantizar la estabilidad del sistema.
 
@@ -49,7 +49,7 @@ graph LR
 
 ---
 
-## 📝 3. Convención de Commits Atómicos y Profesionales
+## 3. Convención de Commits Atómicos y Profesionales
 
 En cumplimiento con la regla interna del proyecto (`commit-convention.md`), los desarrolladores deben mantener un historial limpio, trazable y **estrictamente atómico**.
 
@@ -93,7 +93,7 @@ test(inventario): Agregar pruebas unitarias para validación de ajustes
 
 ---
 
-## 🔀 4. Convención y Plantilla de Pull Requests (PR)
+## 4. Convención y Plantilla de Pull Requests (PR)
 
 Todo Pull Request enviado a `main` debe ser exhaustivo y proporcionar el contexto necesario para una revisión ágil y confiable.
 
@@ -108,22 +108,22 @@ Todo Pull Request enviado a `main` debe ser exhaustivo y proporcionar el context
 Al abrir un PR, se debe completar la siguiente estructura en el cuerpo de la solicitud:
 
 ```markdown
-## 📌 Contexto & Objetivo
+## Contexto & Objetivo
 Breve resumen de los cambios introducidos y la necesidad del negocio que resuelven.
 - **Spec / Issue Asociada:** `SPEC-X.Y.Z: Nombre de la Spec`
 
-## 🛠️ Cambios Realizados
+## Cambios Realizados
 - [x] Extensión de modelo `modelo.odoo` con campos de auditoría.
 - [x] Creación de vistas XML en `views/archivo_views.xml`.
 - [x] Reglas de acceso añadidas en `ir.model.access.csv`.
 
-## 📋 Verificación de Criterios (DoD)
+## Verificación de Criterios (DoD)
 - [x] Se revisó y cumplió el Definition of Ready (DoR) antes del inicio.
 - [x] Código cumple con los lineamientos de estilo y arquitectura modular.
 - [x] No se introdujeron datos duros (hardcoded) ni credenciales sensibles.
 - [x] Criterios de Aceptación (Gherkin) de la spec validados y cumplidos al 100%.
 
-## 🧪 Pruebas Realizadas
+## Pruebas Realizadas
 ### Pruebas Automatizadas
 - Comando ejecutado: `docker exec -it odoo-container odoo -c /etc/odoo/odoo.conf -d caryvil_db -u caryvil_erp --test-enable --stop-after-init`
 - Resultado: 0 errores / 0 fallos.
@@ -132,17 +132,17 @@ Breve resumen de los cambios introducidos y la necesidad del negocio que resuelv
 - Pasos ejecutados según la sección 7 de la spec.
 - Verificación de roles: Probado con usuario `Administrador` y usuario `Cajero/Inventario`.
 
-## 📸 Evidencias
+## Evidencias
 Adjuntar capturas de pantalla de la interfaz de Odoo, registros de logs o salidas de terminal que demuestren el funcionamiento esperado.
 
-## ⚠️ Impacto y Consideraciones de Despliegue
+## Impacto y Consideraciones de Despliegue
 - ¿Requiere actualización de módulo (`-u caryvil_erp`)?: [Sí / No]
 - ¿Afecta datos existentes?: [Explicar migración si aplica]
 ```
 
 ---
 
-## 🔬 5. Anatomía de una Especificación (Spec X.Y.Z)
+## 5. Anatomía de una Especificación (Spec X.Y.Z)
 
 Cada archivo de especificación ubicado en `specs/spec-X.Y.Z-[nombre].md` sigue una estructura estandarizada. A continuación se detalla el significado, relevancia y cómo debe interpretarse cada sección:
 
@@ -230,7 +230,7 @@ Antes de escribir una sola línea de código o crear una rama de trabajo, el des
 
 ---
 
-## 🚀 6. Guía Rápida para el Desarrollador (Paso a Paso)
+## 6. Guía Rápida para el Desarrollador (Paso a Paso)
 
 Sigue este flujo secuencial en cada asignación:
 
