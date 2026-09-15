@@ -41,6 +41,7 @@
         ],
         'web.assets_backend': [
             'caryvil_erp/static/src/scss/custom_theme.scss',
+            'caryvil_erp/static/src/css/custom_theme.css',
         ],
     },
     'installable': True,

@@ -1,0 +1,132 @@
+/* Farmacia Caryvil ERP - Plain CSS Theme Override */
+:root {
+  --o-navbar-bg: #697F92 !important;
+  --o-brand-odoo: #002A58 !important;
+  --o-brand-primary: #34C759 !important;
+}
+
+/* Top Navbar / Header Bar (#697F92) */
+.o_main_navbar, 
+header.o_navbar, 
+nav.o_main_navbar, 
+.o_navbar,
+body .o_main_navbar {
+  background-color: #697F92 !important;
+  color: #ffffff !important;
+  border-bottom: none !important;
+}
+
+.o_main_navbar .o_menu_brand, 
+.o_main_navbar .o_nav_entry, 
+.o_main_navbar .nav-link,
+.o_main_navbar .dropdown-toggle {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* App Drawer / Main Menu Sidebar (#002A58) */
+.o_navbar_apps_menu,
+.o_menu_sections,
+.o_navbar_apps_menu .dropdown-menu,
+.o_menu_sections .dropdown-menu,
+.o_menu_apps {
+  background-color: #002A58 !important;
+}
+
+.o_navbar_apps_menu .dropdown-item,
+.o_menu_sections .dropdown-item {
+  color: #ffffff !important;
+}
+
+.o_navbar_apps_menu .dropdown-item:hover,
+.o_menu_sections .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* Action Buttons - Confirmation / Create / Save (#34C759) */
+.btn-primary, 
+button.btn-primary, 
+.o_form_button_save, 
+.o_list_button_add, 
+.o_control_panel .btn-primary,
+button.o_list_button_add,
+button.o_form_button_save,
+.btn-success {
+  background-color: #34C759 !important;
+  border-color: #34C759 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 6px 18px !important;
+}
+
+.btn-primary:hover, 
+button.btn-primary:hover, 
+.o_form_button_save:hover, 
+.o_list_button_add:hover,
+.btn-success:hover {
+  background-color: #2db34f !important;
+  border-color: #2db34f !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 6px -1px rgba(52, 199, 89, 0.4) !important;
+}
+
+/* Action Buttons - Deny / Cancel (#FAFAFE with hover red) */
+.btn-secondary, 
+button.btn-secondary, 
+.o_form_button_cancel, 
+.o_control_panel .btn-secondary,
+button.o_form_button_cancel,
+.btn-default {
+  background-color: #FAFAFE !important;
+  border: 1px solid #d1d5db !important;
+  color: #374151 !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  padding: 6px 18px !important;
+}
+
+.btn-secondary:hover, 
+button.btn-secondary:hover, 
+.o_form_button_cancel:hover,
+.btn-default:hover {
+  background-color: #fee2e2 !important;
+  color: #dc2626 !important;
+  border-color: #f87171 !important;
+}
+
+/* Search Bar Input Pill Shape */
+.o_searchview, 
+.o_cp_searchview,
+.o_searchview_input_container {
+  border-radius: 20px !important;
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* List Table Headers (#EFEFEF) */
+.o_list_renderer .o_list_table thead th,
+.o_list_view .o_list_table thead th {
+  background-color: #EFEFEF !important;
+  color: #111827 !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid #e5e7eb !important;
+}
+
+.o_list_renderer .o_list_table tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Clean Form Card Styling */
+.o_form_view .oe_title h1 {
+  font-size: 1.75rem !important;
+  font-weight: 600 !important;
+  color: #4b5563 !important;
+}
+
+.o_form_view .o_form_sheet {
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+  padding: 2rem !important;
+}
