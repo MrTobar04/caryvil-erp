@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_caryvil_admin_all,caryvil.admin.all,base.model_res_partner,group_caryvil_admin,1,1,1,1
+access_caryvil_cajero_partner,caryvil.cajero.partner,base.model_res_partner,group_caryvil_cajero,1,1,1,0
+access_caryvil_farmaceutico_product,caryvil.farmaceutico.product,product.model_product_template,group_caryvil_farmaceutico,1,1,0,0
+access_caryvil_compras_purchase,caryvil.compras.purchase,purchase.model_purchase_order,group_caryvil_compras_inventario,1,1,1,1
+access_caryvil_compras_stock,caryvil.compras.stock,stock.model_stock_picking,group_caryvil_compras_inventario,1,1,1,1

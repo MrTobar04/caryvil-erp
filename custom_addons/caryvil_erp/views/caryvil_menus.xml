@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Menú Raíz de Farmacia Caryvil ERP -->
+        <menuitem id="menu_caryvil_root"
+                  name="Farmacia Caryvil"
+                  web_icon="caryvil_erp,static/description/icon.png"
+                  sequence="10"/>
+
+        <!-- Menús de Primer Nivel -->
+        <menuitem id="menu_caryvil_dashboard"
+                  name="Dashboard"
+                  parent="menu_caryvil_root"
+                  sequence="10"/>
+
+        <menuitem id="menu_caryvil_ventas"
+                  name="Ventas y Caja"
+                  parent="menu_caryvil_root"
+                  sequence="20"/>
+
+        <menuitem id="menu_caryvil_inventario"
+                  name="Medicamentos e Inventario"
+                  parent="menu_caryvil_root"
+                  sequence="30"/>
+
+        <menuitem id="menu_caryvil_compras"
+                  name="Compras y Proveedores"
+                  parent="menu_caryvil_root"
+                  sequence="40"/>
+
+        <menuitem id="menu_caryvil_clientes"
+                  name="Clientes"
+                  parent="menu_caryvil_root"
+                  sequence="50"/>
+
+        <menuitem id="menu_caryvil_configuracion"
+                  name="Configuración"
+                  parent="menu_caryvil_root"
+                  sequence="100"
+                  groups="caryvil_erp.group_caryvil_admin"/>
+    </data>
+</odoo>

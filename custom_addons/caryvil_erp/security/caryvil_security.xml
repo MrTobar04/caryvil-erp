@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Categoría de Módulo para Grupos de Seguridad -->
+        <record id="module_category_caryvil_erp" model="ir.module.category">
+            <field name="name">Farmacia Caryvil ERP</field>
+            <field name="description">Niveles de acceso y roles para la gestión de Farmacia Caryvil</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Rol: Cajero / Mostrador -->
+        <record id="group_caryvil_cajero" model="res.groups">
+            <field name="name">Cajero / Mostrador</field>
+            <field name="category_id" ref="module_category_caryvil_erp"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Rol: Farmacéutico / Dependiente -->
+        <record id="group_caryvil_farmaceutico" model="res.groups">
+            <field name="name">Farmacéutico / Dependiente</field>
+            <field name="category_id" ref="module_category_caryvil_erp"/>
+            <field name="implied_ids" eval="[(4, ref('group_caryvil_cajero'))]"/>
+        </record>
+
+        <!-- Rol: Encargado de Compras e Inventario -->
+        <record id="group_caryvil_compras_inventario" model="res.groups">
+            <field name="name">Encargado de Compras e Inventario</field>
+            <field name="category_id" ref="module_category_caryvil_erp"/>
+            <field name="implied_ids" eval="[(4, ref('group_caryvil_farmaceutico'))]"/>
+        </record>
+
+        <!-- Rol: Administrador General -->
+        <record id="group_caryvil_admin" model="res.groups">
+            <field name="name">Administrador General</field>
+            <field name="category_id" ref="module_category_caryvil_erp"/>
+            <field name="implied_ids" eval="[(4, ref('group_caryvil_compras_inventario')), (4, ref('base.group_system'))]"/>
+        </record>
+    </data>
+</odoo>
