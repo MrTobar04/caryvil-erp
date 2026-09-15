@@ -1,0 +1,7 @@
+num2words>=0.5.12
+phonenumbers>=8.13.0
+qrcode[pil]>=7.4.2
+psycopg2-binary>=2.9.9
+python-dotenv>=1.0.0
+flake8>=6.0.0
+pytest>=7.4.0
