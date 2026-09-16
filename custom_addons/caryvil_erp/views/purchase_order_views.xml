@@ -15,6 +15,27 @@
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
+                <!-- Se oculta el botón nativo "Crear Factura". Los abonos del día a día se   -->
+                <!-- anotan en la pestaña "Abonos" (sin pasar por Contabilidad). Este botón    -->
+                <!-- solo se habilita cuando ya se abonó el 100%, para generar de un clic la   -->
+                <!-- Factura de Proveedor formal y su pago, ya reconciliado.                   -->
+                <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <button name="action_create_invoice" position="after">
+                    <button name="action_generar_factura_final_caryvil" type="object"
+                            string="Generar Factura Final" class="oe_highlight"
+                            invisible="state not in ('purchase', 'done') or abono_status_label != 'pagado' or payment_status_label == 'pagado'"/>
+                </button>
+
+                <div name="button_box" position="inside">
+                    <button type="object" name="action_view_caryvil_payments"
+                            class="oe_stat_button" icon="fa-money"
+                            invisible="payment_count == 0">
+                        <field name="payment_count" widget="statinfo" string="Pagos"/>
+                    </button>
+                </div>
+
                 <field name="partner_id" position="attributes">
                     <attribute name="string">Nombre Vendedor</attribute>
                 </field>
@@ -23,6 +44,7 @@
                 </field>
                 <!-- "Vendor Reference" no aplica al flujo de Caryvil -->
                 <field name="partner_ref" position="replace"/>
+                <!-- "Fecha Prevista" se deja 100% nativa/intacta (sin ocultar ni vaciar). -->
                 <div name="date_planned_div" position="after">
                     <field name="commercial_terms_id"/>
                 </div>
@@ -31,6 +53,28 @@
                         <group>
                             <field name="notes_reception"/>
                         </group>
+                    </page>
+                    <page string="Abonos" name="caryvil_abonos">
+                        <group>
+                            <group>
+                                <field name="monto_abonado" widget="monetary" readonly="1"/>
+                                <field name="saldo_abonos_pendiente" widget="monetary" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="abono_status_label" widget="badge"
+                                       decoration-success="abono_status_label == 'pagado'"
+                                       decoration-warning="abono_status_label == 'parcial'"
+                                       decoration-danger="abono_status_label == 'pendiente'"/>
+                            </group>
+                        </group>
+                        <field name="abono_ids">
+                            <tree editable="bottom">
+                                <field name="fecha"/>
+                                <field name="monto" widget="monetary"/>
+                                <field name="nota"/>
+                                <field name="currency_id" column_invisible="True"/>
+                            </tree>
+                        </field>
                     </page>
                 </page>
 
@@ -62,17 +106,25 @@
                     <attribute name="column_invisible">1</attribute>
                 </field>
 
-                <!-- Resumen: Subtotal sin descuento, Descuento, IVA, IVA Percibido y Total -->
+                <!-- Resumen calculado en el navegador (JS), directo de las líneas ya          -->
+                <!-- cargadas en pantalla — no depende de que el servidor recalcule el          -->
+                <!-- encabezado a tiempo, así que Subtotal/Descuento/IVA/Total se ven correctos  -->
+                <!-- desde el primer producto agregado, sin necesidad de tocar otro campo.       -->
                 <field name="tax_totals" position="replace">
-                    <field name="amount_subtotal_gross" string="Subtotal" widget="monetary" readonly="1"/>
-                    <field name="amount_discount_total" string="Descuento" widget="monetary" readonly="1"/>
-                    <field name="amount_tax" string="IVA (13%)" widget="monetary" readonly="1"/>
-                    <label for="iva_percibido_check" string="IVA Percibido (1%)"/>
-                    <div class="o_row">
-                        <field name="iva_percibido_check"/>
-                        <field name="amount_iva_percibido" widget="monetary" readonly="1"/>
-                    </div>
-                    <field name="amount_total_final" string="Total" widget="monetary" readonly="1" class="fw-bold"/>
+                    <field name="iva_percibido_check" invisible="1"/>
+                    <field name="amount_total_final" widget="caryvil_purchase_live_totals" nolabel="1"/>
+                </field>
+
+                <!-- Abonos: estado de pago y saldo pendiente, tomados de las Facturas de -->
+                <!-- Proveedor (Bills) y sus pagos nativos de Contabilidad.                -->
+                <field name="invoice_status" position="after">
+                    <field name="payment_status_label" widget="badge"
+                           decoration-success="payment_status_label == 'pagado'"
+                           decoration-warning="payment_status_label == 'parcial'"
+                           decoration-danger="payment_status_label == 'pendiente'"
+                           decoration-muted="payment_status_label == 'sin_facturar'"/>
+                    <field name="amount_residual_total" widget="monetary"
+                           invisible="payment_status_label in ('sin_facturar', 'pagado')"/>
                 </field>
             </field>
         </record>
@@ -92,11 +144,16 @@
                     <field name="partner_id" string="Nombre Vendedor"/>
                     <field name="laboratory_id" string="Proveedor"/>
                     <field name="amount_total" string="Total" widget="monetary"/>
+                    <field name="saldo_abonos_pendiente" string="Saldo Pendiente" widget="monetary" optional="show"/>
                     <field name="currency_id" column_invisible="True"/>
                     <field name="state_label" string="Estado" widget="badge"
                            decoration-success="state_label == 'recibido'"
                            decoration-warning="state_label == 'pendiente'"
                            decoration-danger="state_label == 'cancelado'"/>
+                    <field name="abono_status_label" string="Estado de Pago" widget="badge" optional="show"
+                           decoration-success="abono_status_label == 'pagado'"
+                           decoration-warning="abono_status_label == 'parcial'"
+                           decoration-danger="abono_status_label == 'pendiente'"/>
                 </tree>
             </field>
         </record>

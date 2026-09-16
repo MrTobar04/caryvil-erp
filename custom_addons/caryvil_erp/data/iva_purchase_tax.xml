@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- IVA 13% de compras, aplicado automáticamente a cada línea (ver -->
+        <!-- purchase_order_medicine.py). El usuario nunca la ve ni la elige: -->
+        <!-- se usa para que Odoo calcule el resumen con su motor nativo      -->
+        <!-- (reactivo en pantalla), en vez de un cálculo propio que se       -->
+        <!-- quedaba en $0.00 hasta el siguiente clic.                       -->
+        <record id="tax_caryvil_iva_compras_13" model="account.tax">
+            <field name="name">IVA 13% Compras</field>
+            <field name="amount">13.0</field>
+            <field name="amount_type">percent</field>
+            <field name="type_tax_use">purchase</field>
+            <field name="price_include" eval="False"/>
+        </record>
+    </data>
+</odoo>

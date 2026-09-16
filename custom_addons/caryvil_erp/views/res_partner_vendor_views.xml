@@ -43,6 +43,22 @@
                                    placeholder="0000-0000"/>
                             <field name="email" string="Email"/>
                         </group>
+                        <notebook>
+                            <page string="Historial de Compras" name="purchase_history">
+                                <field name="purchase_order_ids" nolabel="1">
+                                    <tree decoration-muted="state_label == 'cancelado'" create="0">
+                                        <field name="name" string="Código"/>
+                                        <field name="date_order" string="Fecha"/>
+                                        <field name="amount_total" string="Monto Total" widget="monetary"/>
+                                        <field name="currency_id" column_invisible="True"/>
+                                        <field name="state_label" string="Estado" widget="badge"
+                                               decoration-success="state_label == 'recibido'"
+                                               decoration-warning="state_label == 'pendiente'"
+                                               decoration-danger="state_label == 'cancelado'"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

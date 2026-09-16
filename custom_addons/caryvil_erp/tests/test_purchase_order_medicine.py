@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from odoo import fields
 from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase, tagged
 
@@ -25,12 +26,6 @@ class TestPurchaseOrderMedicine(TransactionCase):
             'name': 'Amoxicilina 500mg',
             'purchase_method': 'purchase',
         })
-        self.iva = self.env['account.tax'].create({
-            'name': 'IVA 13% Compras',
-            'amount': 13.0,
-            'amount_type': 'percent',
-            'type_tax_use': 'purchase',
-        })
 
     # El campo laboratory_id debe derivarse automáticamente de la empresa del vendedor seleccionado.
     def test_laboratory_id_derivado_del_vendedor(self):
@@ -39,7 +34,8 @@ class TestPurchaseOrderMedicine(TransactionCase):
         })
         self.assertEqual(orden.laboratory_id, self.laboratorio)
 
-    # Cálculo de subtotal, IVA y total sobre una línea de compra (IVA aparte del precio unitario).
+    # Cálculo de subtotal, IVA y total sobre una línea de compra. El 13% se calcula sobre el
+    # total de la orden (no depende de ningún impuesto configurado en el producto/línea).
     def test_calculo_subtotal_iva_total(self):
         orden = self.env['purchase.order'].create({
             'partner_id': self.vendedor.id,
@@ -48,12 +44,11 @@ class TestPurchaseOrderMedicine(TransactionCase):
                 'name': self.producto.name,
                 'product_qty': 10,
                 'price_unit': 4.50,
-                'taxes_id': [(6, 0, self.iva.ids)],
             })],
         })
         self.assertAlmostEqual(orden.amount_untaxed, 45.0, places=2)
         self.assertAlmostEqual(orden.amount_tax, 5.85, places=2)
-        self.assertAlmostEqual(orden.amount_total, 50.85, places=2)
+        self.assertAlmostEqual(orden.amount_total_final, 50.85, places=2)
 
     # El IVA Percibido (1%) solo se calcula si el check está activo y el total supera $100.
     def test_iva_percibido_requiere_check_y_supera_100(self):
@@ -64,18 +59,18 @@ class TestPurchaseOrderMedicine(TransactionCase):
                 'name': self.producto.name,
                 'product_qty': 30,
                 'price_unit': 4.50,
-                'taxes_id': [(6, 0, self.iva.ids)],
             })],
         })
-        # amount_total = 135*1.13 = 152.55 > 100, pero el check sigue apagado por defecto.
-        self.assertGreater(orden.amount_total, 100)
+        # total sin percibido = 135 * 1.13 = 152.55 > 100, pero el check sigue apagado por defecto.
+        total_sin_percibido = orden.amount_total
+        self.assertGreater(total_sin_percibido, 100)
         self.assertFalse(orden.iva_percibido_check)
         self.assertEqual(orden.amount_iva_percibido, 0.0)
-        self.assertAlmostEqual(orden.amount_total_final, orden.amount_total, places=2)
+        self.assertAlmostEqual(orden.amount_total_final, total_sin_percibido, places=2)
 
         orden.iva_percibido_check = True
-        self.assertAlmostEqual(orden.amount_iva_percibido, orden.amount_total * 0.01, places=2)
-        self.assertAlmostEqual(orden.amount_total_final, orden.amount_total * 1.01, places=2)
+        self.assertAlmostEqual(orden.amount_iva_percibido, total_sin_percibido * 0.01, places=2)
+        self.assertAlmostEqual(orden.amount_total_final, total_sin_percibido * 1.01, places=2)
 
     # Aunque el check esté activo, si la factura no supera $100 no se cobra IVA Percibido.
     def test_iva_percibido_no_aplica_bajo_100(self):
@@ -86,12 +81,48 @@ class TestPurchaseOrderMedicine(TransactionCase):
                 'name': self.producto.name,
                 'product_qty': 1,
                 'price_unit': 4.50,
-                'taxes_id': [(6, 0, self.iva.ids)],
             })],
             'iva_percibido_check': True,
         })
-        self.assertLess(orden.amount_total, 100)
+        total_sin_percibido = orden.amount_total
+        self.assertLess(total_sin_percibido, 100)
         self.assertEqual(orden.amount_iva_percibido, 0.0)
+
+    # SPEC-8.1.2: el estado de pago refleja los abonos parciales registrados contra la factura.
+    def test_abonos_parciales_actualizan_estado_de_pago(self):
+        orden = self.env['purchase.order'].create({
+            'partner_id': self.vendedor.id,
+            'order_line': [(0, 0, {
+                'product_id': self.producto.id,
+                'name': self.producto.name,
+                'product_qty': 10,
+                'price_unit': 50.0,
+            })],
+        })
+        orden.button_confirm()
+        self.assertEqual(orden.payment_status_label, 'sin_facturar')
+
+        orden.action_create_invoice()
+        factura = orden.invoice_ids
+        factura.invoice_date = fields.Date.today()
+        factura.action_post()
+        self.assertEqual(orden.payment_status_label, 'pendiente')
+        # 10 x $50 + IVA 13% automático = $565.00
+        self.assertAlmostEqual(orden.amount_residual_total, 565.0, places=2)
+
+        pago_1 = self.env['account.payment.register'].with_context(
+            active_model='account.move', active_ids=factura.ids
+        ).create({'amount': 200.0})
+        pago_1._create_payments()
+        self.assertEqual(orden.payment_status_label, 'parcial')
+        self.assertAlmostEqual(orden.amount_residual_total, 365.0, places=2)
+
+        pago_2 = self.env['account.payment.register'].with_context(
+            active_model='account.move', active_ids=factura.ids
+        ).create({'amount': 365.0})
+        pago_2._create_payments()
+        self.assertEqual(orden.payment_status_label, 'pagado')
+        self.assertAlmostEqual(orden.amount_residual_total, 0.0, places=2)
 
     # No se puede confirmar una orden sin líneas.
     def test_bloqueo_confirmacion_sin_lineas(self):
@@ -124,7 +155,6 @@ class TestPurchaseOrderMedicine(TransactionCase):
                 'name': self.producto.name,
                 'product_qty': 10,
                 'price_unit': 4.50,
-                'taxes_id': [(6, 0, self.iva.ids)],
             })],
         })
         orden.button_confirm()
