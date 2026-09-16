@@ -67,6 +67,33 @@
             </field>
         </record>
 
+        <!-- Vista Simplificada Modal para Creación Rápida de Cliente en Caja (SPEC-5.2.1) -->
+        <record id="view_partner_simple_form_caryvil" model="ir.ui.view">
+            <field name="name">caryvil.partner.customer.simple.form</field>
+            <field name="model">res.partner</field>
+            <field name="priority">30</field>
+            <field name="arch" type="xml">
+                <form string="Alta Exprés de Cliente en Caja">
+                    <sheet>
+                        <field name="is_pharmacy_customer" invisible="1"/>
+                        <group>
+                            <group string="Identificación">
+                                <field name="first_name" required="1" placeholder="Ej. María Elena"/>
+                                <field name="last_name" required="1" placeholder="Ej. López Rivas"/>
+                                <field name="name" placeholder="Nombre completo" readonly="0"/>
+                            </group>
+                            <group string="Contacto">
+                                <field name="dui" placeholder="00000000-0"/>
+                                <field name="phone" widget="phone" placeholder="0000-0000"/>
+                                <field name="mobile" widget="phone" placeholder="0000-0000"/>
+                                <field name="email" widget="email" placeholder="correo@ejemplo.com"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
         <!-- Form View Extension for res.partner (Standard Contacts View) -->
         <record id="view_partner_form_inherit_caryvil" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.caryvil</field>

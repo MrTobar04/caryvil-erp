@@ -22,6 +22,7 @@
         'contacts',
         'stock',
         'purchase',
+        'purchase_stock',
         'sale_management',
         'account',
         'uom',
