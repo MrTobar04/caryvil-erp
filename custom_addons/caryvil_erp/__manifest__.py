@@ -33,6 +33,7 @@
         'data/purchase_order_sequence.xml',
         'data/iva_purchase_tax.xml',
         'views/caryvil_menus.xml',
+        'views/res_partner_customer_views.xml',
         'views/res_partner_vendor_views.xml',
         'views/product_supplierinfo_views.xml',
         'views/purchase_order_views.xml',

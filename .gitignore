@@ -2,6 +2,7 @@
 /.agents
 __pycache__/
 *.py[cod]
+infra/compose/docker-compose.override.yml
 .pytest_cache/
 .coverage
 htmlcov/
