@@ -3,4 +3,17 @@ access_caryvil_admin_all,caryvil.admin.all,base.model_res_partner,group_caryvil_
 access_caryvil_cajero_partner,caryvil.cajero.partner,base.model_res_partner,group_caryvil_cajero,1,1,1,0
 access_caryvil_farmaceutico_product,caryvil.farmaceutico.product,product.model_product_template,group_caryvil_farmaceutico,1,1,0,0
 access_caryvil_compras_purchase,caryvil.compras.purchase,purchase.model_purchase_order,group_caryvil_compras_inventario,1,1,1,1
+access_caryvil_compras_purchase_line,caryvil.compras.purchase.line,purchase.model_purchase_order_line,group_caryvil_compras_inventario,1,1,1,1
 access_caryvil_compras_stock,caryvil.compras.stock,stock.model_stock_picking,group_caryvil_compras_inventario,1,1,1,1
+access_caryvil_compras_stock_move,caryvil.compras.stock.move,stock.model_stock_move,group_caryvil_compras_inventario,1,1,1,1
+access_caryvil_compras_stock_lot,caryvil.compras.stock.lot,stock.model_stock_lot,group_caryvil_compras_inventario,1,1,1,1
+access_caryvil_compras_stock_quant,caryvil.compras.stock.quant,stock.model_stock_quant,group_caryvil_compras_inventario,1,1,1,0
+access_caryvil_compras_account_move,caryvil.compras.account.move,account.model_account_move,group_caryvil_compras_inventario,1,1,1,0
+access_caryvil_admin_account_move,caryvil.admin.account.move,account.model_account_move,group_caryvil_admin,1,1,1,1
+access_caryvil_compras_account_move_line,caryvil.compras.account.move.line,account.model_account_move_line,group_caryvil_compras_inventario,1,1,1,0
+access_caryvil_admin_account_move_line,caryvil.admin.account.move.line,account.model_account_move_line,group_caryvil_admin,1,1,1,1
+access_caryvil_compras_account_payment,caryvil.compras.account.payment,account.model_account_payment,group_caryvil_compras_inventario,1,1,1,0
+access_caryvil_admin_account_payment,caryvil.admin.account.payment,account.model_account_payment,group_caryvil_admin,1,1,1,1
+access_caryvil_compras_payment_register,caryvil.compras.payment.register,account.model_account_payment_register,group_caryvil_compras_inventario,1,1,1,0
+access_caryvil_compras_account_journal,caryvil.compras.account.journal,account.model_account_journal,group_caryvil_compras_inventario,1,0,0,0
+access_caryvil_compras_abono,caryvil.compras.abono,model_purchase_order_abono,group_caryvil_compras_inventario,1,1,1,1

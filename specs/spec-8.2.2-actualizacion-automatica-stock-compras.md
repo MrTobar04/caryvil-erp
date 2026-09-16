@@ -83,8 +83,9 @@ Automatizar la actualización transaccional e instantánea de las existencias f�
 * Métodos de sincronización con órdenes de compra.
 
 ## 11. Definition of Done (DoD)
-* [ ] Actualización automática de existencias y lotes probada y validada.
-* [ ] Sincronización con el campo `qty_received` en Órdenes de Compra verificada.
-* [ ] Transición a estado `done` en compras confirmada.
-* [ ] Pruebas unitarias automatizadas aprobadas al 100%.
+* [x] Actualización automática de existencias y lotes probada y validada — **comportamiento nativo de Odoo** (`purchase_stock`), no requirió código adicional.
+* [x] Sincronización con el campo `qty_received` en Órdenes de Compra verificada — nativo de Odoo (`purchase_order_line._compute_qty_received`).
+* [x] Transición a estado `done` en compras confirmada — implementado en `_caryvil_lock_fully_received_purchase_orders()` (`stock_picking_reception.py`), se dispara al validar el albarán cuando todas las líneas de la orden ya están completamente recibidas.
+* [x] Pruebas unitarias automatizadas aprobadas al 100% (`tests/test_stock_picking_reception.py`).
 * [ ] Validación de flujo integral con el equipo de Farmacia Caryvil.
+* **NOTA:** "Reevaluación del Dashboard de Inicio / Alertas de Stock Crítico (`SPEC-4.2.1`)" del alcance original **no aplica todavía** — ese dashboard no está construido en el proyecto. Se retoma cuando `SPEC-4.2.1` exista.

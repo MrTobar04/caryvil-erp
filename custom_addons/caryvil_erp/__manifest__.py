@@ -31,10 +31,14 @@
         'security/ir.model.access.csv',
         'data/res_partner_vendor_sequence.xml',
         'data/purchase_order_sequence.xml',
+        'data/iva_purchase_tax.xml',
         'views/caryvil_menus.xml',
         'views/res_partner_vendor_views.xml',
         'views/product_supplierinfo_views.xml',
         'views/purchase_order_views.xml',
+        'views/stock_picking_views.xml',
+        'reports/report_purchase_order.xml',
+        'reports/purchase_order_report_action.xml',
     ],
     'demo': [
         'demo/demo_data.xml',
@@ -43,6 +47,8 @@
         'web.assets_backend': [
             'caryvil_erp/static/src/scss/custom_theme.scss',
             'caryvil_erp/static/src/js/masked_char_field.js',
+            'caryvil_erp/static/src/js/purchase_live_totals.js',
+            'caryvil_erp/static/src/xml/purchase_live_totals.xml',
         ],
     },
     'installable': True,

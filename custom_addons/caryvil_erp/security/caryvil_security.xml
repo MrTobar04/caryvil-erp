@@ -23,10 +23,14 @@
         </record>
 
         <!-- Rol: Encargado de Compras e Inventario -->
+        <!-- Incluye el grupo nativo "Facturación" (account.group_account_invoice) porque Odoo   -->
+        <!-- exige ese grupo específico (a nivel de código, no solo de ir.model.access) para      -->
+        <!-- poder confirmar Facturas de Proveedor y registrar Pagos/abonos (SPEC-8.1.2). Sin él,  -->
+        <!-- el Encargado de Compras podría crear la factura pero no confirmarla ni cobrarla.      -->
         <record id="group_caryvil_compras_inventario" model="res.groups">
             <field name="name">Encargado de Compras e Inventario</field>
             <field name="category_id" ref="module_category_caryvil_erp"/>
-            <field name="implied_ids" eval="[(4, ref('group_caryvil_farmaceutico'))]"/>
+            <field name="implied_ids" eval="[(4, ref('group_caryvil_farmaceutico')), (4, ref('account.group_account_invoice'))]"/>
         </record>
 
         <!-- Rol: Administrador General -->
