@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================ -->
+        <!-- Agrega "Presentación Proveedor" y "% Descuento" a la tabla de     -->
+        <!-- proveedores/costos que Odoo ya trae de fábrica dentro de la      -->
+        <!-- pestaña "Purchase" (Compras) de cada medicamento.                -->
+        <!-- Los precios de costo (nativo "price" + los 2 campos nuevos) solo -->
+        <!-- son visibles para Compras/Administrador — el Cajero no debe ver -->
+        <!-- precios de compra (spec-6.2.1, secciones 3 y 8).                -->
+        <!-- ================================================================ -->
+
+        <record id="view_product_supplierinfo_tree_caryvil" model="ir.ui.view">
+            <field name="name">product.supplierinfo.tree.caryvil</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="product_code" position="after">
+                    <field name="product_presentation" optional="show"
+                           groups="caryvil_erp.group_caryvil_compras_inventario"/>
+                    <field name="discount_percentage" optional="show" string="% Desc."
+                           groups="caryvil_erp.group_caryvil_compras_inventario"/>
+                </field>
+                <field name="price" position="attributes">
+                    <attribute name="groups">caryvil_erp.group_caryvil_compras_inventario</attribute>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

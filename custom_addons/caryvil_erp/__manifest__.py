@@ -32,6 +32,7 @@
         'data/res_partner_vendor_sequence.xml',
         'views/caryvil_menus.xml',
         'views/res_partner_vendor_views.xml',
+        'views/product_supplierinfo_views.xml',
     ],
     'demo': [
         'demo/demo_data.xml',
