@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 1: LISTA de vendedores/proveedores                       -->
+
+        <record id="view_res_partner_vendor_tree" model="ir.ui.view">
+            <field name="name">res.partner.vendor.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Proveedores">
+                    <field name="vendor_code"/>
+                    <field name="name" string="Nombre"/>
+                    <field name="parent_id" string="Proveedor"/>
+                    <field name="phone" string="Teléfono"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 2: FORMULARIO del vendedor (registro principal)          -->
+
+        <record id="view_res_partner_vendor_form" model="ir.ui.view">
+            <field name="name">res.partner.vendor.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Proveedor (Vendedor)">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="vendor_code" string="Código"/>
+                            <h3><field name="vendor_code" readonly="1"/></h3>
+                        </div>
+                        <field name="is_pharmacy_vendor" invisible="1" force_save="1"/>
+                        <group>
+                            <field name="name" string="Nombre"/>
+                            <field name="parent_id"
+                                   string="Proveedor"
+                                   domain="[('is_company', '=', True)]"
+                                   context="{'default_is_company': True, 'default_is_pharmacy_vendor': True, 'default_supplier_rank': 1, 'form_view_ref': 'caryvil_erp.view_res_partner_laboratorio_quick_form'}"/>
+                            <field name="phone" string="Teléfono"
+                                   widget="caryvil_phone_mask"
+                                   placeholder="0000-0000"/>
+                            <field name="email" string="Email"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 3: BÚSQUEDA y filtros rápidos(Laboratorio / Distribuidora / Droguería)  -->
+
+        <record id="view_res_partner_vendor_search" model="ir.ui.view">
+            <field name="name">res.partner.vendor.search</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Proveedores">
+                    <field name="name"/>
+                    <field name="vendor_code"/>
+                    <field name="parent_id" string="Proveedor"/>
+                    <filter string="Laboratorios"
+                            name="filter_laboratorio"
+                            domain="[('parent_id.vendor_type', '=', 'laboratorio')]"/>
+                    <filter string="Distribuidoras"
+                            name="filter_distribuidora"
+                            domain="[('parent_id.vendor_type', '=', 'distribuidora')]"/>
+                    <filter string="Droguerías"
+                            name="filter_drogueria"
+                            domain="[('parent_id.vendor_type', '=', 'drogueria')]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 4: ACCIÓN de ventana y MENÚ                              -->
+        <!-- Conecta lista + formulario + búsqueda en una sola pantalla,      -->
+
+        <record id="action_res_partner_vendor" model="ir.actions.act_window">
+            <field name="name">Proveedores</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_pharmacy_vendor', '=', True), ('is_company', '=', False)]</field>
+            <field name="context">{'default_is_pharmacy_vendor': True, 'default_type': 'contact', 'default_supplier_rank': 1}</field>
+            <field name="search_view_id" ref="view_res_partner_vendor_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Registra tu primer vendedor de proveedor farmacéutico
+                </p>
+            </field>
+        </record>
+
+        <record id="action_res_partner_vendor_view_tree" model="ir.actions.act_window.view">
+            <field name="sequence">1</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_res_partner_vendor_tree"/>
+            <field name="act_window_id" ref="action_res_partner_vendor"/>
+        </record>
+
+        <record id="action_res_partner_vendor_view_form" model="ir.actions.act_window.view">
+            <field name="sequence">2</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_res_partner_vendor_form"/>
+            <field name="act_window_id" ref="action_res_partner_vendor"/>
+        </record>
+
+        <menuitem id="menu_caryvil_proveedores"
+                  name="Proveedores y Laboratorios"
+                  parent="menu_caryvil_compras"
+                  action="action_res_partner_vendor"
+                  sequence="10"/>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 5: FORMULARIO rápido de la Empresa crear/editar la empresa  -->
+
+        <record id="view_res_partner_laboratorio_quick_form" model="ir.ui.view">
+            <field name="name">res.partner.laboratorio.quick.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Proveedor / Empresa">
+                    <sheet>
+                        <field name="is_pharmacy_vendor" invisible="1" force_save="1"/>
+                        <field name="is_company" invisible="1" force_save="1"/>
+                        <group>
+                            <field name="name" string="Nombre del Proveedor"/>
+                            <field name="vendor_type"/>
+                            <field name="nit"
+                                   widget="caryvil_nit_mask"
+                                   placeholder="0000-000000-000-0"/>
+                            <field name="nrc"
+                                   widget="caryvil_nrc_mask"
+                                   required="1"
+                                   placeholder="00000-0"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
