@@ -30,9 +30,11 @@
         'security/caryvil_security.xml',
         'security/ir.model.access.csv',
         'data/res_partner_vendor_sequence.xml',
+        'data/purchase_order_sequence.xml',
         'views/caryvil_menus.xml',
         'views/res_partner_vendor_views.xml',
         'views/product_supplierinfo_views.xml',
+        'views/purchase_order_views.xml',
     ],
     'demo': [
         'demo/demo_data.xml',

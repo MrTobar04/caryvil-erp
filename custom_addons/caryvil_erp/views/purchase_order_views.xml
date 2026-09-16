@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 1: Extiende el formulario NATIVO de purchase.order con   -->
+        <!-- los campos farmacéuticos de SPEC-8.1.1: Nombre Vendedor          -->
+        <!-- (partner_id, nativo) + Proveedor (laboratory_id, derivado),      -->
+        <!-- condiciones de pago y requerimientos de recepción. No reemplaza  -->
+        <!-- la vista de Odoo, solo la extiende.                              -->
+        <!-- ================================================================ -->
+
+        <record id="view_purchase_order_form_caryvil" model="ir.ui.view">
+            <field name="name">purchase.order.form.caryvil</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="string">Nombre Vendedor</attribute>
+                </field>
+                <field name="partner_id" position="after">
+                    <field name="laboratory_id" string="Proveedor" readonly="1"/>
+                </field>
+                <!-- "Vendor Reference" no aplica al flujo de Caryvil -->
+                <field name="partner_ref" position="replace"/>
+                <div name="date_planned_div" position="after">
+                    <field name="commercial_terms_id"/>
+                </div>
+                <page name="purchase_delivery_invoice" position="after">
+                    <page string="Recepción" name="caryvil_reception">
+                        <group>
+                            <field name="notes_reception"/>
+                        </group>
+                    </page>
+                </page>
+
+                <!-- Columnas de la tabla de productos en español -->
+                <field name="product_id" position="attributes">
+                    <attribute name="string">Producto</attribute>
+                </field>
+                <field name="name" position="attributes">
+                    <attribute name="string">Descripción</attribute>
+                </field>
+                <field name="product_qty" position="attributes">
+                    <attribute name="string">Cantidad</attribute>
+                </field>
+                <field name="price_unit" position="attributes">
+                    <attribute name="string">Precio Unitario</attribute>
+                </field>
+                <field name="discount" position="attributes">
+                    <attribute name="string">Descuento</attribute>
+                </field>
+                <field name="price_subtotal" position="attributes">
+                    <attribute name="string">Subtotal</attribute>
+                </field>
+                <!-- Se oculta la columna de Impuestos por línea: el IVA (13%) se -->
+                <!-- calcula una sola vez, en el resumen al final de la orden.    -->
+                <field name="taxes_id" position="attributes">
+                    <attribute name="column_invisible">1</attribute>
+                </field>
+                <field name="price_total" position="attributes">
+                    <attribute name="column_invisible">1</attribute>
+                </field>
+
+                <!-- Resumen: Subtotal sin descuento, Descuento, IVA, IVA Percibido y Total -->
+                <field name="tax_totals" position="replace">
+                    <field name="amount_subtotal_gross" string="Subtotal" widget="monetary" readonly="1"/>
+                    <field name="amount_discount_total" string="Descuento" widget="monetary" readonly="1"/>
+                    <field name="amount_tax" string="IVA (13%)" widget="monetary" readonly="1"/>
+                    <label for="iva_percibido_check" string="IVA Percibido (1%)"/>
+                    <div class="o_row">
+                        <field name="iva_percibido_check"/>
+                        <field name="amount_iva_percibido" widget="monetary" readonly="1"/>
+                    </div>
+                    <field name="amount_total_final" string="Total" widget="monetary" readonly="1" class="fw-bold"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 2: LISTA de órdenes de compra, vista normal de Odoo       -->
+        <!-- (Código PE0001, Nombre Vendedor, Proveedor, Total, Estado).      -->
+        <!-- ================================================================ -->
+
+        <record id="view_purchase_order_tree_caryvil" model="ir.ui.view">
+            <field name="name">purchase.order.tree.caryvil</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <tree string="Órdenes de Compra" decoration-muted="state_label == 'cancelado'">
+                    <field name="name" string="Código"/>
+                    <field name="date_order" string="Fecha de Orden"/>
+                    <field name="partner_id" string="Nombre Vendedor"/>
+                    <field name="laboratory_id" string="Proveedor"/>
+                    <field name="amount_total" string="Total" widget="monetary"/>
+                    <field name="currency_id" column_invisible="True"/>
+                    <field name="state_label" string="Estado" widget="badge"
+                           decoration-success="state_label == 'recibido'"
+                           decoration-warning="state_label == 'pendiente'"
+                           decoration-danger="state_label == 'cancelado'"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- SECCIÓN 3: ACCIÓN de ventana y MENÚ dentro de "Compras y          -->
+        <!-- Proveedores" (junto a Proveedores y Laboratorios).                -->
+        <!-- ================================================================ -->
+
+        <record id="action_purchase_order_caryvil" model="ir.actions.act_window">
+            <field name="name">Órdenes de Compra</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="purchase.purchase_order_view_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crea tu primera orden de compra a un laboratorio o droguería
+                </p>
+            </field>
+        </record>
+
+        <record id="action_purchase_order_caryvil_view_tree" model="ir.actions.act_window.view">
+            <field name="sequence">1</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_purchase_order_tree_caryvil"/>
+            <field name="act_window_id" ref="action_purchase_order_caryvil"/>
+        </record>
+
+        <record id="action_purchase_order_caryvil_view_form" model="ir.actions.act_window.view">
+            <field name="sequence">2</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="purchase.purchase_order_form"/>
+            <field name="act_window_id" ref="action_purchase_order_caryvil"/>
+        </record>
+
+        <menuitem id="menu_caryvil_ordenes_compra"
+                  name="Órdenes de Compra"
+                  parent="menu_caryvil_compras"
+                  action="action_purchase_order_caryvil"
+                  groups="caryvil_erp.group_caryvil_compras_inventario"
+                  sequence="5"/>
+
+    </data>
+</odoo>
