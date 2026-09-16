@@ -29,7 +29,9 @@
     'data': [
         'security/caryvil_security.xml',
         'security/ir.model.access.csv',
+        'data/res_partner_vendor_sequence.xml',
         'views/caryvil_menus.xml',
+        'views/res_partner_vendor_views.xml',
     ],
     'demo': [
         'demo/demo_data.xml',
@@ -37,6 +39,7 @@
     'assets': {
         'web.assets_backend': [
             'caryvil_erp/static/src/scss/custom_theme.scss',
+            'caryvil_erp/static/src/js/masked_char_field.js',
         ],
     },
     'installable': True,
