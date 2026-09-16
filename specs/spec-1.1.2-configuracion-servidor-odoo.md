@@ -5,7 +5,7 @@ Definir y parametrizar de manera estandarizada el archivo de configuración del 
 
 ## 2. Scope
 ### 2.1. Included
-* Creación y parametrización del archivo `config/odoo.conf` base.
+* Creación y parametrización del archivo `infra/config/odoo.conf` base.
 * Configuración de la directiva `addons_path` incluyendo los módulos base de Odoo y la ruta `/mnt/extra-addons`.
 * Habilitación de `proxy_mode = True` para soportar cabeceras `X-Forwarded-For` y `X-Forwarded-Proto` en Render.
 * Ajuste de directivas de límites de recursos: `workers`, `max_cron_threads`, `limit_memory_soft`, `limit_memory_hard`, `limit_time_cpu`, `limit_time_real`.
@@ -27,13 +27,13 @@ Definir y parametrizar de manera estandarizada el archivo de configuración del 
 * **Dependencias Previas:**
   * `SPEC-1.1.1` (Configuración del Entorno Docker).
 * **Definition of Ready (DoR):**
-  * [x] Arquitectura de carpetas del proyecto definida (`./config`, `./custom_addons`).
+  * [x] Arquitectura de carpetas del proyecto definida (`./infra/config`, `./custom_addons`).
   * [x] Versión de Python definida (Python 3.10 o superior).
   * [x] Lista de librerías auxiliares requeridas acordada (cálculo de montos en letras, generación de QR para comprobantes).
 
 ## 5. Design (Implementation Details)
 * **Architecture:**
-  * Archivo `config/odoo.conf`:
+  * Archivo `infra/config/odoo.conf`:
     ```ini
     [options]
     addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons
@@ -95,13 +95,13 @@ Definir y parametrizar de manera estandarizada el archivo de configuración del 
   * **Mitigation:** Mantener `workers = 0` en entornos con menos de 1 GB de RAM para que Odoo corra en modo mono-proceso multihilo liviano.
 
 ## 10. Deliverables & Config as Code
-* Archivo `config/odoo.conf.template` o `config/odoo.conf`.
+* Archivo `infra/config/odoo.conf.template` o `infra/config/odoo.conf`.
 * Archivo `requirements.txt` con versiones fijadas (*pinned*).
 * Script de inicialización / entrypoint `entrypoint.sh` para sustitución de variables en `odoo.conf` si aplica.
 
 ## 11. Definition of Done (DoD)
-* [ ] Archivos `config/odoo.conf` y `requirements.txt` creados en el repositorio.
-* [ ] Dependencias Python instaladas y verificadas dentro del contenedor.
-* [ ] Carga exitosa de rutas de addons comprobada en los logs de inicialización.
-* [ ] `proxy_mode = True` validado sin provocar bucles de redirección.
-* [ ] Revisión de código completada y aprobada.
+* [x] Archivos `infra/config/odoo.conf` y `requirements.txt` creados en el repositorio.
+* [x] Dependencias Python instaladas y verificadas dentro del contenedor.
+* [x] Carga exitosa de rutas de addons comprobada en los logs de inicialización.
+* [x] `proxy_mode = True` validado sin provocar bucles de redirección.
+* [x] Revisión de código completada y aprobada.

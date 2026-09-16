@@ -1,5 +1,8 @@
 /.vscode
 /.agents
 __pycache__/
-*.pyc
+*.py[cod]
 infra/compose/docker-compose.override.yml
+.pytest_cache/
+.coverage
+htmlcov/

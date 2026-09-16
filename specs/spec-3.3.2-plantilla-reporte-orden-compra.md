@@ -88,8 +88,9 @@ Diseñar, estructurar e implementar la plantilla de reporte QWeb en Odoo para la
 * Registro de ambos archivos en la lista `data` de `__manifest__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Plantilla QWeb de Orden de Compra creada con formato formal tamaño Carta.
-* [ ] Membrete institucional, datos del proveedor y firmas incluidos.
-* [ ] Salto de página y formateo de líneas de medicamento comprobados.
-* [ ] Botón de impresión integrado en el módulo de Compras de Odoo.
+* [x] Plantilla QWeb de Orden de Compra creada con formato formal tamaño Carta (`reports/report_purchase_order.xml`).
+* [x] Membrete institucional (vía `web.external_layout`, usa el logo/datos de la empresa configurados en `res.company`), datos del proveedor y firmas incluidos.
+* [ ] Salto de página y formateo de líneas de medicamento comprobados — pendiente probar manualmente con un pedido de 10+ líneas.
+* [x] Botón de impresión integrado en el módulo de Compras de Odoo (automático vía `binding_model_id`/`binding_type=report`, aparece en el menú "Imprimir" del formulario).
 * [ ] Aprobación del diseño por parte de la propietaria y el equipo de compras.
+* **Nota de implementación:** el resumen de IVA/Total del PDF usa los campos custom de SPEC-8.1.1 (`amount_subtotal_gross`, `amount_discount_total`, `amount_tax`, `amount_iva_percibido`, `amount_total_final`) en vez del widget nativo `document_tax_totals`, para mantener consistencia con la pantalla de Compras.

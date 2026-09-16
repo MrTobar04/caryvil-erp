@@ -103,8 +103,8 @@ Gestionar, controlar y documentar las discrepancias entre las cantidades física
 * Vistas de alertas en `views/stock_picking_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Asistente de *backorders* configurado y probado para recepciones parciales.
-* [ ] Registro de notas de rechazo y daños en transporte habilitado.
-* [ ] Cancelación de remanentes validada sin errores contables.
-* [ ] Pruebas unitarias aprobadas al 100%.
+* [x] Asistente de *backorders* configurado y probado para recepciones parciales — **nativo de Odoo** (`stock.backorder.confirmation`, se activa solo cuando `qty_done < demanda`); no requirió código adicional.
+* [x] Registro de notas de rechazo y daños en transporte habilitado (`discrepancy_notes` + pestaña "Discrepancias" en el albarán).
+* [x] Cancelación de remanentes validada sin errores contables — flujo nativo de Odoo ("No crear entrega parcial").
+* [x] Pruebas unitarias aprobadas al 100% (`tests/test_stock_picking_reception.py`).
 * [ ] Aprobación del procedimiento de discrepancias por la administración.

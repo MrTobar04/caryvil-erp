@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-# Configuración por defecto de variables de entorno
-: ${HOST:="db"}
-: ${PORT:="5432"}
-: ${USER:="odoo"}
-: ${PASSWORD:="odoo_dev_password_2026"}
+# Configuración por defecto de variables de entorno (soporta DB_HOST y HOST)
+: ${HOST:="${DB_HOST:-db}"}
+: ${PORT:="${DB_PORT:-5432}"}
+: ${USER:="${DB_USER:-odoo}"}
+: ${PASSWORD:="${DB_PASSWORD:-odoo_dev_password_2026}"}
 : ${DB_NAME:="caryvil_dev"}
 : ${ADMIN_PASSWORD:="admin_caryvil_secret_2026"}
 
@@ -17,10 +17,10 @@ echo "=== [Caryvil ERP] Base de datos PostgreSQL disponible ==="
 
 # Sustitución de variables de entorno en odoo.conf si existen marcadores
 if [ -f /etc/odoo/odoo.conf ]; then
-    sed -i "s|\$HOST|${HOST}|g" /etc/odoo/odoo.conf
-    sed -i "s|\$PORT|${PORT}|g" /etc/odoo/odoo.conf
-    sed -i "s|\$USER|${USER}|g" /etc/odoo/odoo.conf
-    sed -i "s|\$PASSWORD|${PASSWORD}|g" /etc/odoo/odoo.conf
+    sed -i "s|\$DB_HOST|${HOST}|g; s|\$HOST|${HOST}|g" /etc/odoo/odoo.conf
+    sed -i "s|\$DB_PORT|${PORT}|g; s|\$PORT|${PORT}|g" /etc/odoo/odoo.conf
+    sed -i "s|\$DB_USER|${USER}|g; s|\$USER|${USER}|g" /etc/odoo/odoo.conf
+    sed -i "s|\$DB_PASSWORD|${PASSWORD}|g; s|\$PASSWORD|${PASSWORD}|g" /etc/odoo/odoo.conf
     sed -i "s|\$DB_NAME|${DB_NAME}|g" /etc/odoo/odoo.conf
     sed -i "s|\$ADMIN_PASSWORD|${ADMIN_PASSWORD}|g" /etc/odoo/odoo.conf
 fi
