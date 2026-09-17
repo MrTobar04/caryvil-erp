@@ -1,4 +1,4 @@
-# [ADR-0010] Historial de Compras y Trazabilidad Transaccional de Clientes
+# [ADR-0011] Historial de Compras y Trazabilidad Transaccional de Clientes
 
 ## Status
 Accepted
