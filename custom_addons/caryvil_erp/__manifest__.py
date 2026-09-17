@@ -30,6 +30,11 @@
     'data': [
         'security/caryvil_security.xml',
         'security/ir.model.access.csv',
+        'data/company_data.xml',
+        'data/tax_data.xml',
+        'data/pharmacy_categories_data.xml',
+        'data/active_ingredients_data.xml',
+        'data/users_roles_data.xml',
         'data/res_partner_vendor_sequence.xml',
         'data/purchase_order_sequence.xml',
         'data/iva_purchase_tax.xml',

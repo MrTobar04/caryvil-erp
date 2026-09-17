@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Catálogo de 10 Familias Terapéuticas Base (SPEC-10.1.1) -->
+        <record id="cat_analgesicos" model="product.category">
+            <field name="name">Analgésicos y Antiinflamatorios</field>
+        </record>
+
+        <record id="cat_antibioticos" model="product.category">
+            <field name="name">Antibióticos y Antimicrobianos</field>
+        </record>
+
+        <record id="cat_antihistaminicos" model="product.category">
+            <field name="name">Antihistamínicos y Antialérgicos</field>
+        </record>
+
+        <record id="cat_antihipertensivos" model="product.category">
+            <field name="name">Antihipertensivos y Cardiovasculares</field>
+        </record>
+
+        <record id="cat_gastrointestinales" model="product.category">
+            <field name="name">Gastrointestinales y Antiácidos</field>
+        </record>
+
+        <record id="cat_antidiabeticos" model="product.category">
+            <field name="name">Antidiabéticos y Metabólicos</field>
+        </record>
+
+        <record id="cat_vitaminas" model="product.category">
+            <field name="name">Vitaminas y Suplementos</field>
+        </record>
+
+        <record id="cat_dermatologicos" model="product.category">
+            <field name="name">Dermatológicos y Tópicos</field>
+        </record>
+
+        <record id="cat_respiratorios" model="product.category">
+            <field name="name">Respiratorios y Broncodilatadores</field>
+        </record>
+
+        <record id="cat_oftalmicos" model="product.category">
+            <field name="name">Oftálmicos y Otológicos</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Categoría Padre: Principios Activos Farmacéuticos (SPEC-10.1.1) -->
+        <record id="cat_principios_activos_root" model="product.category">
+            <field name="name">Principios Activos</field>
+        </record>
+
+        <!-- Principios Activos Base -->
+        <record id="active_paracetamol" model="product.category">
+            <field name="name">Paracetamol (Acetaminofén)</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_ibuprofeno" model="product.category">
+            <field name="name">Ibuprofeno</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_amoxicilina" model="product.category">
+            <field name="name">Amoxicilina</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_loratadina" model="product.category">
+            <field name="name">Loratadina</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_enalapril" model="product.category">
+            <field name="name">Enalapril</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_metformina" model="product.category">
+            <field name="name">Metformina</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_omeprazol" model="product.category">
+            <field name="name">Omeprazol</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_salbutamol" model="product.category">
+            <field name="name">Salbutamol</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_complejo_b" model="product.category">
+            <field name="name">Complejo B</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+
+        <record id="active_aspirina" model="product.category">
+            <field name="name">Ácido Acetilsalicílico</field>
+            <field name="parent_id" ref="cat_principios_activos_root"/>
+        </record>
+    </data>
+</odoo>
