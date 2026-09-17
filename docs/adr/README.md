@@ -15,6 +15,7 @@ Este directorio contiene los **Architecture Decision Records (ADR)** que formali
 | [ADR-0005](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0005-esquema-de-facturacion-simple-y-validacion-fiscal-salvadorena.md) | Esquema de Facturación Simple y Validación Fiscal Salvadoreña | `Accepted` | 2026-09-14 | `spec-3.3.1`, `spec-5.1.1`, `spec-9.2.1`, `spec-11.1.3` |
 | [ADR-0006](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0006-modelo-de-fraccionamiento-y-unidades-de-medida-farmaceuticas.md) | Modelo de Fraccionamiento y Unidades de Medida Farmacéuticas | `Accepted` | 2026-09-14 | `spec-7.1.2`, `spec-8.2.1`, `spec-9.1.1` |
 | [ADR-0007](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0007-estrategia-de-testing-automatizado-con-odoo-test-framework.md) | Estrategia de Testing Automatizado con Odoo Test Framework en Contenedores Efímeros | `Accepted` | 2026-09-14 | `spec-1.3.1`, `spec-11.1.1`, `spec-11.1.2`, `spec-11.1.3` |
+| [ADR-0008](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0008-gestion-de-compras-con-abonos-y-totales-calculados-en-cliente.md) | Gestión de Órdenes de Compra con Abonos y Totales Calculados | `Accepted` | 2026-09-16 | `spec-8.1.1`, `spec-8.2.1`, `spec-8.2.2`, `spec-8.2.3`, `spec-3.3.2` |
 
 ---
 
