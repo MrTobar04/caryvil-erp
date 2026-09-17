@@ -123,3 +123,43 @@ class TestResPartnerCustomer(TransactionCase):
         res_ids = [r[0] for r in res]
         self.assertIn(customer.id, res_ids)
 
+    def test_09_purchase_history_stats(self):
+        """SPEC-5.2.2: Verificación de cómputo de historial de compras caryvil_invoice_count y caryvil_total_spent"""
+        customer = self.partner_model.create({
+            'first_name': 'María Elena',
+            'last_name': 'López Rivas',
+            'dui': '04589632-1',
+            'is_pharmacy_customer': True,
+        })
+        self.assertEqual(customer.caryvil_invoice_count, 0)
+        self.assertEqual(customer.caryvil_total_spent, 0.0)
+
+        # Crear una factura en estado borrador (no debe contar)
+        inv_draft = self.env['account.move'].create({
+            'partner_id': customer.id,
+            'move_type': 'out_invoice',
+            'state': 'draft',
+        })
+        customer._compute_caryvil_purchase_stats()
+        self.assertEqual(customer.caryvil_invoice_count, 0)
+
+        # Crear y publicar facturas
+        inv1 = self.env['account.move'].create({
+            'partner_id': customer.id,
+            'move_type': 'out_invoice',
+        })
+        inv1.action_post()
+
+        inv2 = self.env['account.move'].create({
+            'partner_id': customer.id,
+            'move_type': 'out_invoice',
+        })
+        inv2.action_post()
+
+        customer._compute_caryvil_purchase_stats()
+        self.assertEqual(customer.caryvil_invoice_count, 2)
+        self.assertIn(inv1.id, customer.caryvil_invoice_ids.ids)
+        self.assertIn(inv2.id, customer.caryvil_invoice_ids.ids)
+        self.assertNotIn(inv_draft.id, customer.caryvil_invoice_ids.ids)
+
+

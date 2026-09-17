@@ -16,6 +16,40 @@ class ResPartnerCustomer(models.Model):
     phone = fields.Char(index=True)
     mobile = fields.Char(index=True)
 
+    # Campos de Historial de Compras y Trazabilidad Transaccional (SPEC-5.2.2)
+    caryvil_invoice_count = fields.Integer(
+        string='N° Compras',
+        compute='_compute_caryvil_purchase_stats'
+    )
+    caryvil_total_spent = fields.Monetary(
+        string='Total Comprado ($)',
+        currency_field='currency_id',
+        compute='_compute_caryvil_purchase_stats'
+    )
+    caryvil_invoice_ids = fields.One2many(
+        'account.move',
+        'partner_id',
+        string='Facturas del Cliente',
+        domain=[('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]
+    )
+
+    def _compute_caryvil_purchase_stats(self):
+        for partner in self:
+            invoices = self.env['account.move'].search([
+                ('partner_id', '=', partner.id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted')
+            ])
+            partner.caryvil_invoice_count = len(invoices)
+            partner.caryvil_total_spent = sum(invoices.mapped('amount_total'))
+
+    def action_view_caryvil_invoices(self):
+        self.ensure_one()
+        action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_out_invoice_type")
+        action['domain'] = [('partner_id', '=', self.id), ('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]
+        action['context'] = {'default_partner_id': self.id}
+        return action
+
     _sql_constraints = [
         ('dui_unique', 'unique(dui)', 'Ya existe un cliente registrado con este número de DUI.')
     ]

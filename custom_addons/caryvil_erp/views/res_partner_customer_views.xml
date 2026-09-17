@@ -26,6 +26,15 @@
                 <form string="Cliente de Farmacia">
                     <sheet>
                         <field name="is_pharmacy_customer" invisible="1"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button type="object" name="action_view_caryvil_invoices"
+                                    class="oe_stat_button" icon="fa-shopping-bag">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value"><field name="caryvil_total_spent" widget="monetary"/></span>
+                                    <span class="o_stat_text"><field name="caryvil_invoice_count"/> Compras</span>
+                                </div>
+                            </button>
+                        </div>
                         <div class="oe_title">
                             <label for="name" string="Nombre del Cliente" class="oe_edit_only"/>
                             <h1>
@@ -49,15 +58,20 @@
                             </group>
                         </group>
 
-                        <!-- Tab de Historial de Compras (según diseño new-customer.png) -->
+                        <!-- Tab de Historial de Compras (según SPEC-5.2.2) -->
                         <notebook>
-                            <page string="Historial de Compras" name="purchase_history">
-                                <field name="sale_order_ids" readonly="1">
-                                    <tree string="Ventas Realizadas" no_open="1">
-                                        <field name="name" string="Código"/>
-                                        <field name="date_order" string="Fecha"/>
-                                        <field name="amount_total" string="Monto" widget="monetary"/>
-                                        <field name="state" string="Estado" widget="badge"/>
+                            <page string="Historial de Compras y Comprobantes" name="purchase_history">
+                                <field name="caryvil_invoice_ids" readonly="1">
+                                    <tree string="Comprobantes Emitidos" no_open="0">
+                                        <field name="name" string="N° Comprobante"/>
+                                        <field name="invoice_date" string="Fecha"/>
+                                        <field name="amount_total" string="Total" widget="monetary"/>
+                                        <field name="payment_state" string="Estado Pago" widget="badge"
+                                               decoration-success="payment_state in ('paid', 'in_payment')"
+                                               decoration-warning="payment_state == 'partial'"
+                                               decoration-danger="payment_state == 'not_paid'"/>
+                                        <field name="state" string="Estado" widget="badge"
+                                               decoration-success="state == 'posted'"/>
                                     </tree>
                                 </field>
                             </page>
