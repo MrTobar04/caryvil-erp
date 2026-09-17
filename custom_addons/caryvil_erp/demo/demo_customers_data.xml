@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Cliente Demo 1 -->
+        <record id="customer_maria_lopez" model="res.partner">
+            <field name="first_name">María Elena</field>
+            <field name="last_name">López Rivas</field>
+            <field name="name">María Elena López Rivas</field>
+            <field name="dui">04589632-1</field>
+            <field name="phone">7845-1234</field>
+            <field name="email">maria.lopez@ejemplo.com</field>
+            <field name="street">Colonia San Antonio, Pasaje 3 #14, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 2 -->
+        <record id="customer_carlos_perez" model="res.partner">
+            <field name="first_name">Carlos Alberto</field>
+            <field name="last_name">Pérez</field>
+            <field name="name">Carlos Alberto Pérez</field>
+            <field name="dui">01234567-8</field>
+            <field name="phone">7123-4567</field>
+            <field name="email">carlos.perez@ejemplo.com</field>
+            <field name="street">Urbanización Montes de San Bartolo, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 3 -->
+        <record id="customer_ana_ramirez" model="res.partner">
+            <field name="first_name">Ana Sofía</field>
+            <field name="last_name">Ramírez</field>
+            <field name="name">Ana Sofía Ramírez</field>
+            <field name="dui">09876543-2</field>
+            <field name="phone">7987-6543</field>
+            <field name="email">ana.ramirez@ejemplo.com</field>
+            <field name="street">Reparto Los Santos, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 4 -->
+        <record id="customer_roberto_gomez" model="res.partner">
+            <field name="first_name">José Roberto</field>
+            <field name="last_name">Gómez</field>
+            <field name="name">José Roberto Gómez</field>
+            <field name="dui">01122334-5</field>
+            <field name="phone">7112-2334</field>
+            <field name="email">roberto.gomez@ejemplo.com</field>
+            <field name="street">Colonia Prados de Venecia, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 5 -->
+        <record id="customer_claudia_alvarado" model="res.partner">
+            <field name="first_name">Claudia Patricia</field>
+            <field name="last_name">Alvarado</field>
+            <field name="name">Claudia Patricia Alvarado</field>
+            <field name="dui">05544332-1</field>
+            <field name="phone">7554-4332</field>
+            <field name="email">claudia.alvarado@ejemplo.com</field>
+            <field name="street">Colonia Credisa, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 6 -->
+        <record id="customer_luis_rivas" model="res.partner">
+            <field name="first_name">Luis Antonio</field>
+            <field name="last_name">Rivas</field>
+            <field name="name">Luis Antonio Rivas</field>
+            <field name="dui">02233445-6</field>
+            <field name="phone">7223-3445</field>
+            <field name="street">Colonia San José, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 7 -->
+        <record id="customer_rosa_martinez" model="res.partner">
+            <field name="first_name">Rosa Beatriz</field>
+            <field name="last_name">Martínez</field>
+            <field name="name">Rosa Beatriz Martínez</field>
+            <field name="dui">03344556-7</field>
+            <field name="phone">7334-4556</field>
+            <field name="street">Colonia Sierra Morena, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 8 -->
+        <record id="customer_jorge_hernandez" model="res.partner">
+            <field name="first_name">Jorge Eduardo</field>
+            <field name="last_name">Hernández</field>
+            <field name="name">Jorge Eduardo Hernández</field>
+            <field name="dui">04455667-8</field>
+            <field name="phone">7445-5667</field>
+            <field name="street">Colonia Bosques del Río, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 9 -->
+        <record id="customer_silvia_mendoza" model="res.partner">
+            <field name="first_name">Silvia Cristina</field>
+            <field name="last_name">Mendoza</field>
+            <field name="name">Silvia Cristina Mendoza</field>
+            <field name="dui">06677889-0</field>
+            <field name="phone">7667-7889</field>
+            <field name="street">Colonia Guadalupe, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- Cliente Demo 10 -->
+        <record id="customer_manuel_castillo" model="res.partner">
+            <field name="first_name">Manuel Fernando</field>
+            <field name="last_name">Castillo</field>
+            <field name="name">Manuel Fernando Castillo</field>
+            <field name="dui">07788990-1</field>
+            <field name="phone">7778-8990</field>
+            <field name="street">Colonia El Tránsito, Soyapango</field>
+            <field name="is_pharmacy_customer">True</field>
+            <field name="customer_rank">1</field>
+        </record>
+    </data>
+</odoo>

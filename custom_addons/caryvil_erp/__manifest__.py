@@ -48,7 +48,10 @@
         'reports/purchase_order_report_action.xml',
     ],
     'demo': [
-        'demo/demo_data.xml',
+        'demo/demo_vendors_data.xml',
+        'demo/demo_customers_data.xml',
+        'demo/demo_medicines_data.xml',
+        'demo/demo_inventory_stock_data.xml',
     ],
     'assets': {
         'web.assets_backend': [

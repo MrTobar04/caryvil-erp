@@ -20,6 +20,8 @@ Este directorio contiene los **Architecture Decision Records (ADR)** que formali
 | [ADR-00010](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-00010-gestion-de-compras-con-abonos-y-totales-calculados-en-cliente.md) | Gestión de Órdenes de Compra con Abonos y Totales Calculados | `Accepted` | 2026-09-16 | `spec-8.1.1`, `spec-8.2.1`, `spec-8.2.2`, `spec-8.2.3`, `spec-3.3.2` |
 | [ADR-0011](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0011-historial-compras-y-trazabilidad-transaccional-clientes.md) | Historial de Compras y Trazabilidad Transaccional de Clientes | `Accepted` | 2026-09-16 | `spec-5.2.2`, `spec-5.1.1`, `spec-5.2.1`, `spec-9.1.1` |
 | [ADR-0012](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0012-parametrizacion-y-carga-de-datos-semilla-maestros.md) | Parametrización y Carga de Datos Semilla Maestros del Sistema | `Accepted` | 2026-09-16 | `spec-10.1.1`, `spec-2.1.1`, `spec-2.2.1`, `spec-7.1.1` |
+| [ADR-0013](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0013-datos-semilla-operativos-y-lotes-de-demostracion.md) | Datos Semilla Operativos y Lotes de Demostración | `Accepted` | 2026-09-16 | `spec-10.2.1`, `spec-5.1.1`, `spec-6.1.1`, `spec-7.1.1`, `spec-7.2.1`, `spec-10.1.1` |
+
 
 
 ---
