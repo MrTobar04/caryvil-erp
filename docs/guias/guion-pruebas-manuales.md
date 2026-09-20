@@ -12,6 +12,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 1.1: Despliegue, Persistencia y Montaje en Contenedores Docker (SPEC-1.1.1)](#flujo-11-despliegue-persistencia-y-montaje-en-contenedores-docker-spec-111)
   - [Flujo 1.2: Parámetros del Servidor Odoo, Proxy Inverso y Gestión de Base de Datos (SPEC-1.1.2)](#flujo-12-parámetros-del-servidor-odoo-proxy-inverso-y-gestión-de-base-de-datos-spec-112)
   - [Flujo 1.3: Aprovisionamiento de Infraestructura en Render con Terraform (SPEC-1.2.1)](#flujo-13-aprovisionamiento-de-infraestructura-en-render-con-terraform-spec-121)
+  - [Flujo 1.4: Verificación de Variables de Entorno y Bloqueo de Secretos (SPEC-1.2.2)](#flujo-14-verificación-de-variables-de-entorno-y-bloqueo-de-secretos-spec-122)
 
 ---
 
@@ -161,3 +162,51 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 #### Casos Límite / Rutas de Excepción:
 1. **Cold start del Web Service gratuito:** El Web Service en el plan *Free* de Render se suspende tras 15 minutos de inactividad. Al acceder por primera vez o después de un período de inactividad, el navegador puede demorar 30-50 segundos en recibir la primera respuesta. Este comportamiento es esperado y está documentado en el SPEC-1.2.1 §9 (Risk 1). Esperar la carga completa antes de reportar un error.
 2. **Error `No valid credential sources found` en `terraform init`:** Indica que `render_api_key` no está configurada. Verificar que `terraform.tfvars` existe en `infra/terraform/` con el valor correcto de `render_api_key`, o que la variable de entorno `TF_VAR_render_api_key` está configurada en la sesión actual.
+
+---
+
+### Flujo 1.4: Verificación de Variables de Entorno y Bloqueo de Secretos (SPEC-1.2.2)
+
+> **Prerrequisito:** Disponer de una terminal Git y Docker Compose en la raíz del repositorio.
+
+#### Fase A: Inicialización a partir de la plantilla segura (Escenario 1 del spec)
+
+1. **Crear archivo local desde plantilla:**
+   ```bash
+   cp .env.example .env
+   ```
+2. **Validar lectura de variables con Docker Compose:**
+   ```bash
+   docker compose -f infra/compose/docker-compose.yml config
+   ```
+   *Comprobar que la salida no arroje variables no sustituidas (vacías) y que los puertos expuestos sean 8069 y 8072.*
+3. **Comprobar valores de marcadores (*placeholders*):**
+   Abrir `.env.example` y verificar visualmente que no figure ninguna contraseña real de producción ni tokens que inicien con `rnd_` real.
+
+#### Fase B: Detección y bloqueo de archivos sensibles en Git (Escenario 2 del spec)
+
+4. **Verificación de bloqueo estricto con `git check-ignore`:**
+   Ejecutar en la raíz del repositorio:
+   ```bash
+   git check-ignore -v .env .env.local .env.prod infra/terraform/terraform.tfvars
+   ```
+   *El comando debe mostrar que cada archivo coincide con una regla activa de `.gitignore` (ej. `.env`, `.env.*`, `*.tfvars`).*
+5. **Intento de seguimiento con `git status`:**
+   Crear un archivo temporal de prueba `test.tfvars` y ejecutar `git status`.
+   *Verificar que `test.tfvars` NO aparezca bajo "Untracked files". Luego eliminar el archivo de prueba.*
+6. **Permitir plantillas públicas:**
+   Ejecutar:
+   ```bash
+   git check-ignore -v .env.example infra/terraform/terraform.tfvars.example
+   ```
+   *No debe haber salida (código de salida 1), confirmando que las plantillas `.example` son rastreables y forman parte del repositorio.*
+
+#### Fase C: Verificación de variables sensibles en Terraform (Escenario 3 del spec)
+
+7. **Inspección de flags sensibles en Terraform:**
+   Revisar `infra/terraform/variables.tf` y verificar que las siguientes variables incluyan `sensitive = true`:
+   - `render_api_key`
+   - `render_owner_id`
+   - `odoo_admin_password`
+8. **Validación de logs limpios en Terraform Plan:**
+   Ejecutar `terraform plan` en `infra/terraform/` y verificar que las credenciales no se impriman en texto plano en la terminal.
