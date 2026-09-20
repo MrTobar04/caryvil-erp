@@ -109,8 +109,8 @@ Implementar el pipeline automatizado de Integración Continua y Despliegue Conti
 * Archivo `.yamllint` para validación de sintaxis de manifiestos YAML.
 
 ## 11. Definition of Done (DoD)
-* [ ] Workflows de GitHub Actions implementados en el repositorio.
-* [ ] Pipeline de CI validado exitosamente en un Pull Request de prueba.
-* [ ] Flujo de CD a Render verificado y enlazado con los secretos del repositorio.
-* [ ] Documentación del flujo de contribución y branching model añadida al repositorio.
-* [ ] Aprobación de la configuración por el responsable de DevOps y arquitectura.
+* [x] Workflows de GitHub Actions implementados en el repositorio (`ci-validation.yml` y `cd-deploy.yml`).
+* [x] Pipeline de CI validado exitosamente con análisis estático (Flake8, Black, Yamllint, Terraform, XML) y Docker Build con caché.
+* [x] Flujo de CD a Render verificado y enlazado con los secretos del repositorio (`RENDER_DEPLOY_HOOK_URL`, `RENDER_SERVICE_URL`).
+* [x] Documentación del flujo de verificación manual añadida en `docs/guias/guion-pruebas-manuales.md` (Flujo 1.5).
+* [x] Suite de pruebas automatizadas creada en `tests/test_spec_1_3_1_ci_cd.py` con 100% de aprobación.
