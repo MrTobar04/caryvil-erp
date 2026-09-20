@@ -8,7 +8,6 @@ Verifica que los manifiestos HCL en infra/terraform/ cumplen con:
 - Variables sensibles marcadas como sensitive=true.
 - Archivo .env y *.tfstate excluidos vía .gitignore.
 """
-import os
 import re
 from pathlib import Path
 

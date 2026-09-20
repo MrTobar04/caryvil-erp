@@ -11,7 +11,6 @@ Verifica el cumplimiento estricto de los criterios de aceptación y Definition o
 7. Disponibilidad de la guía técnica de documentación de variables y secretos.
 """
 
-import os
 import re
 import subprocess
 from pathlib import Path
