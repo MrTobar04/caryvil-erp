@@ -29,17 +29,29 @@ if [ -f /etc/odoo/odoo.conf ]; then
     sed -i "s|^admin_passwd = .*|admin_passwd = ${ADMIN_PASSWORD}|g; s|\$ADMIN_PASSWORD|${ADMIN_PASSWORD}|g" /etc/odoo/odoo.conf
 fi
 
+# Verificar si la base de datos ya está inicializada con las tablas del sistema Odoo
+INIT_FLAGS=()
+if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
+    TABLE_CHECK=$(PGPASSWORD="${PASSWORD}" psql -h "${HOST}" -p "${PORT}" -U "${USER}" -d "${DB_NAME}" -tAc "SELECT 1 FROM information_schema.tables WHERE table_name = 'ir_module_module';" 2>/dev/null || true)
+    if [ "$TABLE_CHECK" != "1" ]; then
+        echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' no inicializada. Ejecutando inicialización automática (-i base,caryvil_erp) ==="
+        INIT_FLAGS=(-i "base,caryvil_erp")
+    else
+        echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' ya inicializada ==="
+    fi
+fi
+
 case "$1" in
     -- | odoo)
         shift
         if [[ "$1" == "scaffold" ]] ; then
             exec odoo "$@"
         else
-            exec odoo -c /etc/odoo/odoo.conf --db_host="${HOST}" --db_port="${PORT}" --db_user="${USER}" --db_password="${PASSWORD}" -d "${DB_NAME}" "$@"
+            exec odoo -c /etc/odoo/odoo.conf --db_host="${HOST}" --db_port="${PORT}" --db_user="${USER}" --db_password="${PASSWORD}" -d "${DB_NAME}" "${INIT_FLAGS[@]}" "$@"
         fi
         ;;
     -*)
-        exec odoo -c /etc/odoo/odoo.conf --db_host="${HOST}" --db_port="${PORT}" --db_user="${USER}" --db_password="${PASSWORD}" -d "${DB_NAME}" "$@"
+        exec odoo -c /etc/odoo/odoo.conf --db_host="${HOST}" --db_port="${PORT}" --db_user="${USER}" --db_password="${PASSWORD}" -d "${DB_NAME}" "${INIT_FLAGS[@]}" "$@"
         ;;
     *)
         exec "$@"
