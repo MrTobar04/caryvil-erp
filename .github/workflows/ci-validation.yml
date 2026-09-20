@@ -5,9 +5,13 @@ on:
     branches:
       - main
       - develop
+      - dev
+      - staging
   push:
     branches:
       - develop
+      - dev
+      - staging
   workflow_dispatch:
 
 concurrency:
