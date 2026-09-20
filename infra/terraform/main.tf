@@ -43,7 +43,7 @@ resource "render_web_service" "caryvil_odoo" {
   # - PROXY_MODE: True es obligatorio detrás del reverse-proxy de Render
   env_vars = {
     HOST = {
-      value = render_postgres.caryvil_db.connection_info.internal_connection_string
+      value = regex("@([^:/]+)", render_postgres.caryvil_db.connection_info.internal_connection_string)[0]
     }
     PORT = {
       value = "5432"
