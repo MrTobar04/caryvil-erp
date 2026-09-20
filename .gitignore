@@ -1,7 +1,43 @@
+# IDEs and Editors
 /.vscode
 /.agents
+.idea/
+*.swp
+*.swo
+
+# Python and Bytecode
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
 .pytest_cache/
 .coverage
 htmlcov/
+.tox/
+.venv/
+env/
+venv/
+ENV/
+
+# Environment Variables and Secrets
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example
+!.env.*.example
+
+# Terraform State and Secrets
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
+!terraform.tfvars.example
+
+# Odoo and Runtime Data
+*.log
+filestore/
+sessions/
