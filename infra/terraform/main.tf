@@ -34,8 +34,10 @@ resource "render_web_service" "caryvil_odoo" {
   }
 
   # Variables de entorno inyectadas en el contenedor Odoo.
-  # - HOST: cadena de conexión interna a la BD en la red privada de Render
-  # - PORT: puerto estándar de PostgreSQL
+  # - HOST: hostname interno de la BD en la red privada de Render (extraído de la URI interna)
+  # - DB_PORT: puerto estándar de PostgreSQL (5432). Se usa DB_PORT en lugar de PORT para
+  #            evitar conflicto con la variable reservada PORT de Render, que indica el
+  #            puerto HTTP en el que el servicio web debe escuchar (Odoo usa 8069 por defecto).
   # - USER: usuario de la BD provisto por Render Postgres
   # - PASSWORD: contraseña de la BD auto-generada por Render Postgres
   # - DB_NAME: nombre de la base de datos de trabajo de Odoo
@@ -45,7 +47,7 @@ resource "render_web_service" "caryvil_odoo" {
     HOST = {
       value = regex("@([^:/]+)", render_postgres.caryvil_db.connection_info.internal_connection_string)[0]
     }
-    PORT = {
+    DB_PORT = {
       value = "5432"
     }
     USER = {
