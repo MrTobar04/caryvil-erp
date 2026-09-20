@@ -10,6 +10,7 @@ Verifica de manera automatizada:
 - Integración segura con Render (Deploy Hook y Health Check) respetando ISO-27001 (sin secretos expuestos).
 - Parámetros de calidad en .flake8 y .yamllint.
 """
+
 import re
 from pathlib import Path
 import pytest
@@ -124,7 +125,7 @@ class TestCIValidationWorkflow:
         """Verifica que el job de análisis estático incluya todas las herramientas requeridas."""
         # Python setup con caché
         assert "actions/setup-python" in ci_content, "Debe utilizar actions/setup-python"
-        assert "cache: \"pip\"" in ci_content or "cache: 'pip'" in ci_content, "Debe configurar caché de pip"
+        assert 'cache: "pip"' in ci_content or "cache: 'pip'" in ci_content, "Debe configurar caché de pip"
 
         # Herramientas de calidad
         assert "flake8" in ci_content, "Debe ejecutar análisis estático con flake8"
@@ -133,15 +134,15 @@ class TestCIValidationWorkflow:
 
         # Terraform lint & validate
         assert "hashicorp/setup-terraform" in ci_content, "Debe utilizar setup-terraform"
-        assert "terraform" in ci_content and "fmt -check" in ci_content, (
-            "Debe verificar formato con terraform fmt -check"
-        )
+        assert (
+            "terraform" in ci_content and "fmt -check" in ci_content
+        ), "Debe verificar formato con terraform fmt -check"
         assert "validate" in ci_content, "Debe validar sintaxis con terraform validate"
 
         # Verificación XML de Odoo
-        assert "xml.etree.ElementTree" in ci_content or "xmllint" in ci_content, (
-            "Debe incluir paso de validación de sintaxis XML para vistas de Odoo"
-        )
+        assert (
+            "xml.etree.ElementTree" in ci_content or "xmllint" in ci_content
+        ), "Debe incluir paso de validación de sintaxis XML para vistas de Odoo"
 
     def test_ci_docker_build_caching(self, ci_content):
         """Verifica que el build de Docker utilice docker/build-push-action con caché de GitHub Actions."""
@@ -211,12 +212,12 @@ class TestCDDeployWorkflow:
         """Verifica la invocación segura del Deploy Hook de Render y su lógica de reintentos (SPEC-1.3.1 §9)."""
         assert "RENDER_DEPLOY_HOOK_URL" in cd_content, "Debe referenciar el secreto RENDER_DEPLOY_HOOK_URL"
         assert "curl" in cd_content, "Debe invocar el webhook mediante curl"
-        assert "MAX_RETRIES" in cd_content or "retry" in cd_content.lower(), (
-            "Debe incluir política de reintentos para mitigar fallos transitorios en el webhook"
-        )
-        assert "200" in cd_content and "201" in cd_content, (
-            "Debe verificar respuestas HTTP de éxito (200 o 201) de Render"
-        )
+        assert (
+            "MAX_RETRIES" in cd_content or "retry" in cd_content.lower()
+        ), "Debe incluir política de reintentos para mitigar fallos transitorios en el webhook"
+        assert (
+            "200" in cd_content and "201" in cd_content
+        ), "Debe verificar respuestas HTTP de éxito (200 o 201) de Render"
 
     def test_cd_health_check_confirmation(self, cd_content):
         """Verifica que se ejecute la comprobación de estado de salud del servicio (SPEC-1.3.1 §6 Escenario 3)."""
@@ -235,29 +236,25 @@ class TestSecurityAndSecretsEnforcement:
         """Ningún token real, API key o contraseña debe figurar en texto plano en los workflows."""
         content = workflow_file.read_text(encoding="utf-8")
         # Patrones de tokens de Render o GitHub
-        assert not re.search(r"rnd_[A-Za-z0-9]{20,}", content), (
-            f"Se detectó un token potencial de Render hardcodeado en {workflow_file.name}"
-        )
-        assert not re.search(r"ghp_[A-Za-z0-9]{20,}", content), (
-            f"Se detectó un token personal de GitHub hardcodeado en {workflow_file.name}"
-        )
+        assert not re.search(
+            r"rnd_[A-Za-z0-9]{20,}", content
+        ), f"Se detectó un token potencial de Render hardcodeado en {workflow_file.name}"
+        assert not re.search(
+            r"ghp_[A-Za-z0-9]{20,}", content
+        ), f"Se detectó un token personal de GitHub hardcodeado en {workflow_file.name}"
 
     @pytest.mark.parametrize("workflow_file", [CI_VALIDATION_FILE, CD_DEPLOY_FILE])
     def test_secrets_masked_via_context(self, workflow_file: Path):
         """Todas las variables sensibles deben ser inyectadas únicamente mediante ${{ secrets.* }}."""
         content = workflow_file.read_text(encoding="utf-8")
         if "RENDER_" in content:
-            assert "${{ secrets.RENDER_" in content, (
-                f"Las variables de Render en {workflow_file.name} deben usar el contexto ${{ secrets.* }}"
-            )
+            assert (
+                "${{ secrets.RENDER_" in content
+            ), f"Las variables de Render en {workflow_file.name} deben usar el contexto ${{ secrets.* }}"
 
     @pytest.mark.parametrize("workflow_file", [CI_VALIDATION_FILE, CD_DEPLOY_FILE])
     def test_least_privilege_permissions_declared(self, workflow_file: Path):
         """Los workflows deben declarar explícitamente permisos mínimos (Least Privilege)."""
         content = workflow_file.read_text(encoding="utf-8")
-        assert "permissions:" in content, (
-            f"El archivo {workflow_file.name} debe definir la sección de permisos mínimos"
-        )
-        assert "contents: read" in content, (
-            f"El archivo {workflow_file.name} debe declarar 'contents: read'"
-        )
+        assert "permissions:" in content, f"El archivo {workflow_file.name} debe definir la sección de permisos mínimos"
+        assert "contents: read" in content, f"El archivo {workflow_file.name} debe declarar 'contents: read'"
