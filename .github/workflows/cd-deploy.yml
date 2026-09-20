@@ -1,0 +1,135 @@
+name: CD Deployment Pipeline - Render
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: cd-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-publish:
+    name: Build & Publish Docker Image (GHCR)
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Resolve Docker Image Repository Name
+        run: |
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_NAME=ghcr.io/${REPO_LOWER}" >> $GITHUB_ENV
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image with Cache
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./infra/docker/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-to-render:
+    name: Trigger Render Deployment Webhook
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Invoke Render Deploy Hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::warning ::RENDER_DEPLOY_HOOK_URL no está configurada en los secretos del repositorio. Omitiendo webhook."
+            exit 0
+          fi
+
+          echo "Disparando Render Deploy Hook con reintentos automáticos..."
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          SUCCESS=false
+
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "Intento $RETRY_COUNT de $MAX_RETRIES..."
+
+            HTTP_STATUS=$(curl -s -o response.json -w "%{http_code}" -X POST "$RENDER_DEPLOY_HOOK_URL")
+            echo "Código HTTP recibido: $HTTP_STATUS"
+
+            if [ "$HTTP_STATUS" -eq 200 ] || [ "$HTTP_STATUS" -eq 201 ]; then
+              echo "Despliegue disparado exitosamente en Render (HTTP $HTTP_STATUS)."
+              SUCCESS=true
+              break
+            else
+              echo "Error al invocar webhook (HTTP $HTTP_STATUS). Reintentando en 10 segundos..."
+              sleep 10
+            fi
+          done
+
+          if [ "$SUCCESS" = false ]; then
+            echo "::error ::Fallaron todos los intentos de disparo del deploy hook de Render."
+            exit 1
+          fi
+
+  health-check:
+    name: Verify Public Endpoint Health Check
+    needs: deploy-to-render
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Confirm Service Availability
+        env:
+          RENDER_SERVICE_URL: ${{ secrets.RENDER_SERVICE_URL }}
+        run: |
+          TARGET_URL="${RENDER_SERVICE_URL:-https://caryvil-erp-dev.onrender.com}"
+          echo "Iniciando sondeo de disponibilidad en: $TARGET_URL"
+
+          MAX_ATTEMPTS=12
+          ATTEMPT=0
+          ONLINE=false
+
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            ATTEMPT=$((ATTEMPT + 1))
+            echo "Sondeo $ATTEMPT/$MAX_ATTEMPTS..."
+
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$TARGET_URL" || echo "000")
+            echo "Respuesta de $TARGET_URL: HTTP $HTTP_CODE"
+
+            # 200 (OK), 303 (Redirect a /web/login), 302 (Redirect) son respuestas válidas de Odoo saludable
+            if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 303 ] || [ "$HTTP_CODE" -eq 302 ]; then
+              echo "Servicio Odoo en Render confirmado en línea y saludable (HTTP $HTTP_CODE)."
+              ONLINE=true
+              break
+            fi
+
+            echo "Esperando 15 segundos para la inicialización del contenedor en Render..."
+            sleep 15
+          done
+
+          if [ "$ONLINE" = false ]; then
+            echo "::warning ::El servicio no respondió en el tiempo límite estipulado (puede deberse a cold start en capa gratuita)."
+          fi

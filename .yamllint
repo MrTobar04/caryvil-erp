@@ -1,0 +1,43 @@
+---
+# Configuración de Yamllint para Caryvil ERP
+# Cumple con SPEC-1.3.1 §10 (Deliverables & Config as Code)
+
+extends: default
+
+rules:
+  line-length:
+    max: 160
+    level: warning
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+
+  truthy:
+    level: error
+    allowed-values: ['true', 'false', 'on', 'off', 'yes', 'no']
+
+  document-start: disable
+
+  new-lines: disable
+
+  comments:
+    min-spaces-from-content: 1
+
+  comments-indentation: disable
+
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+
+ignore: |
+  .git/
+  .venv/
+  .agents/
