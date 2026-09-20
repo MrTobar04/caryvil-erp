@@ -13,6 +13,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 1.2: Parámetros del Servidor Odoo, Proxy Inverso y Gestión de Base de Datos (SPEC-1.1.2)](#flujo-12-parámetros-del-servidor-odoo-proxy-inverso-y-gestión-de-base-de-datos-spec-112)
   - [Flujo 1.3: Aprovisionamiento de Infraestructura en Render con Terraform (SPEC-1.2.1)](#flujo-13-aprovisionamiento-de-infraestructura-en-render-con-terraform-spec-121)
   - [Flujo 1.4: Verificación de Variables de Entorno y Bloqueo de Secretos (SPEC-1.2.2)](#flujo-14-verificación-de-variables-de-entorno-y-bloqueo-de-secretos-spec-122)
+  - [Flujo 1.5: Pipeline CI/CD con GitHub Actions y Despliegue Automático (SPEC-1.3.1)](#flujo-15-pipeline-cicd-con-github-actions-y-despliegue-automático-spec-131)
 
 ---
 
@@ -210,3 +211,65 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
    - `odoo_admin_password`
 8. **Validación de logs limpios en Terraform Plan:**
    Ejecutar `terraform plan` en `infra/terraform/` y verificar que las credenciales no se impriman en texto plano en la terminal.
+
+---
+
+### Flujo 1.5: Pipeline CI/CD con GitHub Actions y Despliegue Automático (SPEC-1.3.1)
+
+> **Prerrequisito:** Disponer de acceso al repositorio en GitHub con permisos de visualización de Actions y Pull Requests, así como acceso al dashboard de Render.
+
+#### Fase A: Rechazo de Pull Request con errores de sintaxis (Escenario 1 del spec)
+
+1. **Crear rama temporal con error intencional de sintaxis o formato:**
+   ```bash
+   git checkout -b test/ci-syntax-error
+   ```
+2. **Introducir error en un archivo Python o XML de Odoo:**
+   - Ejemplo: agregar una línea con error de indentación PEP8 o sintaxis inválida en un archivo de prueba.
+3. **Enviar commit y abrir Pull Request hacia `develop` o `main`:**
+   ```bash
+   git add .
+   git commit -m "test: validar bloqueo de CI ante errores de sintaxis"
+   git push origin test/ci-syntax-error
+   ```
+4. **Comprobar fallo en GitHub Actions:**
+   - Navegar a la pestaña **Actions** o en la vista del Pull Request en GitHub.
+   - Verificar que el workflow `CI Quality & Static Validation Pipeline` se active automáticamente.
+   - Comprobar que el job `Lint & Static Code Analysis` finalice en estado **Fallido (rojo)** indicando en los logs el archivo y la línea exacta del error (Flake8, Black, Yamllint o XML).
+   - Verificar que el merge del Pull Request quede bloqueado por el fallo del check.
+5. **Limpieza:** Cerrar el Pull Request de prueba y eliminar la rama temporal.
+
+#### Fase B: Validación exitosa de Pull Request conforme (Escenario 2 del spec)
+
+6. **Crear rama de funcionalidad con código conforme:**
+   ```bash
+   git checkout -b test/ci-success-validation
+   ```
+7. **Verificar calidad localmente antes del push:**
+   ```bash
+   flake8 --config=.flake8 tests/
+   pytest tests/test_spec_1_3_1_ci_cd.py -v
+   ```
+8. **Enviar Pull Request hacia `develop` o `main`:**
+   ```bash
+   git push origin test/ci-success-validation
+   ```
+9. **Confirmar ejecución exitosa en GitHub Actions:**
+   - Observar en GitHub Actions que se ejecutan secuencialmente los jobs:
+     1. `Lint & Static Code Analysis` (Flake8, Black, Yamllint, Terraform, XML).
+     2. `Docker Build & Dependency Verification` (compilación con caché `type=gha`).
+   - Verificar que todos los checks finalicen en estado **Aprobado (verde)** en un tiempo total inferior a 5 minutos.
+10. **Limpieza:** Eliminar la rama de prueba o proceder con el merge.
+
+#### Fase C: Despliegue automático a Render y Health Check tras merge en main (Escenario 3 del spec)
+
+11. **Integrar cambios a la rama principal (`main`):**
+    - Realizar merge del Pull Request aprobado hacia `main` (o ejecutar `workflow_dispatch` manual en Actions).
+12. **Monitorear el workflow `CD Deployment Pipeline - Render`:**
+    - Verificar que el job `Build & Publish Docker Image (GHCR)` construya y publique la imagen en `ghcr.io` con tags `:latest` y `:<commit_sha>`.
+    - Verificar que el job `Trigger Render Deployment Webhook` invoque el `RENDER_DEPLOY_HOOK_URL` retornando código `HTTP 200` o `201`.
+    - Verificar que el job `Verify Public Endpoint Health Check` realice el sondeo de disponibilidad y confirme que el servicio responda con `HTTP 200` o `303`.
+13. **Comprobar despliegue en Render Dashboard:**
+    - Iniciar sesión en [dashboard.render.com](https://dashboard.render.com).
+    - Verificar en la pestaña *Events* y *Logs* del Web Service que se haya iniciado y completado un nuevo despliegue con la última imagen generada.
+

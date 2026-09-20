@@ -12,7 +12,6 @@ Valida el cumplimiento de criterios de aceptación y Definition of Done:
 
 import subprocess
 import urllib.request
-import pytest
 
 
 def test_docker_compose_syntax_config():
@@ -48,7 +47,18 @@ def test_odoo_http_endpoint_accessible():
 
 def test_volume_mount_extra_addons():
     """Valida que /mnt/extra-addons esté montado y sincronizado con custom_addons."""
-    cmd = ["docker", "compose", "-f", "infra/compose/docker-compose.yml", "exec", "-T", "web", "ls", "-la", "/mnt/extra-addons"]
+    cmd = [
+        "docker",
+        "compose",
+        "-f",
+        "infra/compose/docker-compose.yml",
+        "exec",
+        "-T",
+        "web",
+        "ls",
+        "-la",
+        "/mnt/extra-addons",
+    ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     assert result.returncode == 0, f"Error al acceder a /mnt/extra-addons: {result.stderr}"
     assert "caryvil_erp" in result.stdout
@@ -64,7 +74,20 @@ def test_non_root_runtime_user():
 
 def test_postgres_internal_healthcheck():
     """Valida que PostgreSQL esté disponible y responda al comando pg_isready."""
-    cmd = ["docker", "compose", "-f", "infra/compose/docker-compose.yml", "exec", "-T", "db", "pg_isready", "-U", "odoo", "-d", "postgres"]
+    cmd = [
+        "docker",
+        "compose",
+        "-f",
+        "infra/compose/docker-compose.yml",
+        "exec",
+        "-T",
+        "db",
+        "pg_isready",
+        "-U",
+        "odoo",
+        "-d",
+        "postgres",
+    ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     assert result.returncode == 0, f"PostgreSQL no está listo: {result.stderr}"
     assert "accepting connections" in result.stdout

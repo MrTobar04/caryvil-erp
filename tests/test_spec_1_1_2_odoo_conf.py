@@ -6,14 +6,13 @@ Valida el cumplimiento de criterios de aceptación y Definition of Done:
 2. Configuración correcta de addons_path (/mnt/extra-addons y addons base).
 3. Habilitación de proxy_mode = True para soporte de proxy inverso en Render.
 4. Parámetros de límites de recursos y optimización (workers, CPU, memoria, hilos cron).
-5. Instalación y disponibilidad operativa de dependencias Python requeridas (num2words, phonenumbers, qrcode, psycopg2, dotenv).
+5. Instalación y disponibilidad de librerías Python (num2words, phonenumbers, qrcode, psycopg2, dotenv).
 6. Funcionamiento del endpoint HTTP bajo cabeceras de proxy inverso (X-Forwarded-Proto, X-Forwarded-For).
 """
 
 import os
 import subprocess
 import urllib.request
-import pytest
 
 
 def test_odoo_conf_files_exist_locally():
@@ -32,10 +31,20 @@ def test_odoo_conf_files_exist_locally():
 
 def test_odoo_conf_mounted_in_container():
     """Valida que /etc/odoo/odoo.conf exista dentro del contenedor caryvil-web."""
-    cmd = ["docker", "compose", "-f", "infra/compose/docker-compose.yml", "exec", "-T", "web", "cat", "/etc/odoo/odoo.conf"]
+    cmd = [
+        "docker",
+        "compose",
+        "-f",
+        "infra/compose/docker-compose.yml",
+        "exec",
+        "-T",
+        "web",
+        "cat",
+        "/etc/odoo/odoo.conf",
+    ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     assert result.returncode == 0, f"Error al leer /etc/odoo/odoo.conf en el contenedor: {result.stderr}"
-    
+
     conf_content = result.stdout
     assert "addons_path" in conf_content
     assert "proxy_mode = True" in conf_content
@@ -44,12 +53,22 @@ def test_odoo_conf_mounted_in_container():
 
 def test_odoo_conf_addons_path_includes_extra_addons():
     """Valida que la directiva addons_path incluya la ruta de módulos personalizados /mnt/extra-addons."""
-    cmd = ["docker", "compose", "-f", "infra/compose/docker-compose.yml", "exec", "-T", "web", "cat", "/etc/odoo/odoo.conf"]
+    cmd = [
+        "docker",
+        "compose",
+        "-f",
+        "infra/compose/docker-compose.yml",
+        "exec",
+        "-T",
+        "web",
+        "cat",
+        "/etc/odoo/odoo.conf",
+    ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     assert result.returncode == 0
-    
+
     lines = result.stdout.splitlines()
-    addons_line = next((l for l in lines if l.strip().startswith("addons_path")), None)
+    addons_line = next((item for item in lines if item.strip().startswith("addons_path")), None)
     assert addons_line is not None, "Directiva addons_path no encontrada en odoo.conf"
     assert "/mnt/extra-addons" in addons_line
     assert "/usr/lib/python3/dist-packages/odoo/addons" in addons_line
@@ -57,10 +76,20 @@ def test_odoo_conf_addons_path_includes_extra_addons():
 
 def test_odoo_conf_resource_and_worker_limits():
     """Valida las directivas de consumo de memoria, límites de tiempo de CPU y trabajadores."""
-    cmd = ["docker", "compose", "-f", "infra/compose/docker-compose.yml", "exec", "-T", "web", "cat", "/etc/odoo/odoo.conf"]
+    cmd = [
+        "docker",
+        "compose",
+        "-f",
+        "infra/compose/docker-compose.yml",
+        "exec",
+        "-T",
+        "web",
+        "cat",
+        "/etc/odoo/odoo.conf",
+    ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     assert result.returncode == 0
-    
+
     conf_text = result.stdout
     assert "workers = 0" in conf_text
     assert "max_cron_threads = 1" in conf_text
@@ -88,8 +117,16 @@ def test_python_dependencies_import_and_execution():
         "print('PYTHON_DEPS_OK')\n"
     )
     cmd = [
-        "docker", "compose", "-f", "infra/compose/docker-compose.yml",
-        "exec", "-T", "web", "python3", "-c", python_eval_script
+        "docker",
+        "compose",
+        "-f",
+        "infra/compose/docker-compose.yml",
+        "exec",
+        "-T",
+        "web",
+        "python3",
+        "-c",
+        python_eval_script,
     ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     assert result.returncode == 0, f"Error al validar dependencias Python: {result.stderr}"
@@ -102,6 +139,7 @@ def test_http_proxy_mode_reverse_proxy_headers():
     Comprueba que con proxy_mode = True, Odoo respeta X-Forwarded-Proto y X-Forwarded-Host
     generando redirecciones con esquema https:// y host adecuado.
     """
+
     class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
         def http_error_301(self, req, fp, code, msg, hdrs):
             return fp
@@ -125,22 +163,32 @@ def test_http_proxy_mode_reverse_proxy_headers():
     }
     req = urllib.request.Request(url, headers=headers)
     response = opener.open(req, timeout=10)
-    
+
     code = response.status if hasattr(response, "status") else response.code
     assert code in [200, 301, 302, 303, 307], f"Código HTTP inesperado: {code}"
-    
+
     if code in [301, 302, 303, 307]:
         location = response.headers.get("Location", "")
-        assert location.startswith("https://caryvil-erp.onrender.com"), (
-            f"El encabezado Location ({location}) no respeta el esquema HTTPS del proxy inverso"
-        )
+        assert location.startswith(
+            "https://caryvil-erp.onrender.com"
+        ), f"El encabezado Location ({location}) no respeta el esquema HTTPS del proxy inverso"
 
 
 def test_custom_module_caryvil_erp_discoverable():
     """Valida que el módulo custom caryvil_erp sea accesible dentro del path /mnt/extra-addons."""
     cmd = [
-        "docker", "compose", "-f", "infra/compose/docker-compose.yml",
-        "exec", "-T", "web", "test", "-f", "/mnt/extra-addons/caryvil_erp/__manifest__.py"
+        "docker",
+        "compose",
+        "-f",
+        "infra/compose/docker-compose.yml",
+        "exec",
+        "-T",
+        "web",
+        "test",
+        "-f",
+        "/mnt/extra-addons/caryvil_erp/__manifest__.py",
     ]
     result = subprocess.run(cmd, capture_output=True, text=True)
-    assert result.returncode == 0, f"El manifiesto de caryvil_erp no está presente en /mnt/extra-addons: {result.stderr}"
+    assert (
+        result.returncode == 0
+    ), f"El manifiesto de caryvil_erp no está presente en /mnt/extra-addons: {result.stderr}"

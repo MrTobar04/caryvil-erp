@@ -11,7 +11,6 @@ Verifica el cumplimiento estricto de los criterios de aceptación y Definition o
 7. Disponibilidad de la guía técnica de documentación de variables y secretos.
 """
 
-import os
 import re
 import subprocess
 from pathlib import Path
@@ -81,9 +80,9 @@ class TestEnvExampleTemplates:
         real_token_pattern = r"rnd_[A-Za-z0-9]{20,}"
         for template in [ROOT_ENV_EXAMPLE, COMPOSE_ENV_EXAMPLE]:
             content = template.read_text(encoding="utf-8")
-            assert not re.search(real_token_pattern, content), (
-                f"{template.name} contiene lo que parece un token real de Render."
-            )
+            assert not re.search(
+                real_token_pattern, content
+            ), f"{template.name} contiene lo que parece un token real de Render."
 
 
 # ===========================================================================
@@ -133,9 +132,7 @@ class TestGitignoreSecurityRules:
         for f in allowed_files:
             cmd = ["git", "check-ignore", f]
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO_ROOT)
-            assert result.returncode == 1, (
-                f"La plantilla requerida '{f}' está siendo erróneamente ignorada por Git."
-            )
+            assert result.returncode == 1, f"La plantilla requerida '{f}' está siendo erróneamente ignorada por Git."
 
     def test_no_real_secret_files_tracked_in_git(self):
         """Verifica que ningún archivo .env o .tfvars real esté actualmente rastreado en Git."""
@@ -163,17 +160,17 @@ class TestTerraformSecretsConfiguration:
         """Cada variable de secreto en variables.tf debe tener sensitive = true."""
         variables_content = (TERRAFORM_DIR / "variables.tf").read_text(encoding="utf-8")
         pattern = rf'variable\s+"{varname}"\s*\{{[^}}]*sensitive\s*=\s*true'
-        assert re.search(pattern, variables_content, re.DOTALL), (
-            f"La variable de secreto '{varname}' debe tener 'sensitive = true' en variables.tf."
-        )
+        assert re.search(
+            pattern, variables_content, re.DOTALL
+        ), f"La variable de secreto '{varname}' debe tener 'sensitive = true' en variables.tf."
 
     def test_terraform_no_hardcoded_secrets_in_manifests(self):
         """Ningún manifiesto HCL en infra/terraform/ debe contener contraseñas quemadas."""
         for tf_file in TERRAFORM_DIR.glob("*.tf"):
             content = tf_file.read_text(encoding="utf-8")
-            assert not re.search(r'password\s*=\s*"[A-Za-z0-9@#$!%]{8,}"', content), (
-                f"Posible contraseña quemada en {tf_file.name}"
-            )
+            assert not re.search(
+                r'password\s*=\s*"[A-Za-z0-9@#$!%]{8,}"', content
+            ), f"Posible contraseña quemada en {tf_file.name}"
 
 
 # ===========================================================================
@@ -193,9 +190,7 @@ class TestDockerComposeInterpolation:
     def test_compose_uses_db_port_to_prevent_render_conflict(self):
         """El servicio web de Docker Compose debe usar DB_PORT para no colisionar con PORT."""
         content = COMPOSE_FILE.read_text(encoding="utf-8")
-        assert "DB_PORT" in content, (
-            "docker-compose.yml debe configurar DB_PORT para el puerto de PostgreSQL."
-        )
+        assert "DB_PORT" in content, "docker-compose.yml debe configurar DB_PORT para el puerto de PostgreSQL."
 
     def test_compose_exposes_standard_odoo_ports(self):
         """docker-compose.yml debe mapear los puertos 8069 y 8072."""
@@ -212,9 +207,9 @@ class TestDocumentationDeliverable:
 
     def test_technical_guide_exists(self):
         """La guía de variables y secretos debe existir en docs/guias/."""
-        assert DOCS_GUIDE_FILE.exists(), (
-            "Falta la guía técnica docs/guias/guia-variables-entorno-secretos.md requerida por el DoD."
-        )
+        assert (
+            DOCS_GUIDE_FILE.exists()
+        ), "Falta la guía técnica docs/guias/guia-variables-entorno-secretos.md requerida por el DoD."
 
     def test_technical_guide_documents_all_environments(self):
         """La guía debe documentar los entornos Local, CI/CD y Render."""
