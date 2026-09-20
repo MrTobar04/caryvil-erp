@@ -11,6 +11,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
 - [4. Flujos de Verificación](#4-flujos-de-verificación)
   - [Flujo 1.1: Despliegue, Persistencia y Montaje en Contenedores Docker (SPEC-1.1.1)](#flujo-11-despliegue-persistencia-y-montaje-en-contenedores-docker-spec-111)
   - [Flujo 1.2: Parámetros del Servidor Odoo, Proxy Inverso y Gestión de Base de Datos (SPEC-1.1.2)](#flujo-12-parámetros-del-servidor-odoo-proxy-inverso-y-gestión-de-base-de-datos-spec-112)
+  - [Flujo 1.3: Aprovisionamiento de Infraestructura en Render con Terraform (SPEC-1.2.1)](#flujo-13-aprovisionamiento-de-infraestructura-en-render-con-terraform-spec-121)
 
 ---
 
@@ -34,6 +35,7 @@ Este guión complementa la suite de pruebas unitarias automatizadas (`specs/spec
 Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 - **Docker Engine** v24.0+ y **Docker Compose** v2.20+
 - **Git** v2.30+
+- **Terraform CLI** v1.5.0+ instalado y disponible en el `PATH` del sistema.
 - **Navegador Web Moderno** (Google Chrome, Mozilla Firefox, Microsoft Edge o Safari)
 - **Herramienta de terminal / Shell** (Bash, Zsh o PowerShell)
 
@@ -128,4 +130,34 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 #### Casos Límite / Rutas de Excepción:
 1. **Persistencia de sesión en navegación protegida:** Navegar entre diferentes aplicaciones y menús del sistema recargando la página con `F5`, debes comprobar que la sesión de usuario y la apariencia gráfica se mantienen estables sin desconexiones inesperadas ni pérdida de estilos por reescritura de cabeceras.
 
+---
 
+### Flujo 1.3: Aprovisionamiento de Infraestructura en Render con Terraform (SPEC-1.2.1)
+
+> **Prerrequisito:** Tener `terraform.tfvars` completado con `render_api_key` y `render_owner_id` válidos.
+
+#### Fase A: Validación local del plan de infraestructura (Escenario 1 del spec)
+
+1. **Inicialización del provider:** En la terminal, navegar a `infra/terraform/` y ejecutar `terraform init`. Debes observar que Terraform descarga el provider `render-oss/render v1.3.x` sin errores, y que se crea el directorio `.terraform/` con los binarios del provider.
+2. **Verificación de formato HCL:** Ejecutar `terraform fmt -check`. El comando debe retornar código de salida `0` sin imprimir ningún nombre de archivo (indica que todos los archivos ya están correctamente formateados). Si retorna código `1` con nombres de archivo, ejecutar `terraform fmt` para auto-corregir y repetir la verificación.
+3. **Validación de sintaxis y tipos:** Ejecutar `terraform validate`. Debes obtener la respuesta `Success! The configuration is valid.` sin errores de sintaxis, tipos o referencias inexistentes.
+4. **Generación del plan de ejecución:** Ejecutar `terraform plan`. Terraform debe mostrar el plan con exactamente **2 recursos a crear** (`render_postgres.caryvil_db` y `render_web_service.caryvil_odoo`) y **0 a modificar** o **destruir**. Verificar que en el plan no aparezca ningún valor sensible expuesto en texto plano en los campos `render_api_key`, `PASSWORD` o `ADMIN_PASSWORD` (deben mostrarse como `(sensitive value)`).
+
+#### Fase B: Aprovisionamiento real en Render (Escenario 2 del spec)
+
+5. **Aplicar el plan:** Ejecutar `terraform apply -auto-approve`. Terraform debe completar el aprovisionamiento en menos de 10 minutos mostrando `Apply complete! Resources: 2 added, 0 changed, 0 destroyed.` al finalizar.
+6. **Verificar outputs de infraestructura:** Ejecutar `terraform output odoo_service_url`. Debes obtener una URL HTTPS con el formato `https://caryvil-erp-dev.onrender.com` (o similar). Acceder a esa URL en el navegador; puede tomar entre 30-120 segundos en el primer acceso (*cold start*) y debes llegar a la pantalla de login de Odoo o al gestor de bases de datos.
+7. **Comprobación en el Dashboard de Render:** Iniciar sesión en [dashboard.render.com](https://dashboard.render.com) y verificar que aparecen los servicios creados:
+   - Base de datos PostgreSQL nombrada `caryvil-postgres-dev` en estado `Available`.
+   - Web Service nombrado `caryvil-erp-dev` en estado `Live` con la imagen `ghcr.io/melissafloresa/odoo_erp_farmacia:latest`.
+   - Las variables de entorno `HOST`, `PORT`, `USER`, `PASSWORD`, `DB_NAME`, `ADMIN_PASSWORD` y `PROXY_MODE` visibles en la pestaña *Environment* del Web Service (sin exponer los valores, usando *Reveal*).  
+8. **Verificación de conectividad HTTP:** Desde la terminal del host, ejecutar `curl -sI <URL_DEL_SERVICIO>` y verificar que el encabezado de respuesta retorna código `200 OK` o `303 See Other`.
+
+#### Fase C: Destrucción limpia de recursos de prueba (Escenario 3 del spec)
+
+9. **Destruir la infraestructura:** Ejecutar `terraform destroy -auto-approve`. Terraform debe mostrar `Destroy complete! Resources: 2 destroyed.` al finalizar.
+10. **Confirmar eliminación en Render Dashboard:** Ingresar al Dashboard de Render y verificar que los servicios `caryvil-postgres-dev` y `caryvil-erp-dev` ya no aparecen en la lista de servicios activos, confirmando que no quedaron instancias huérfanas.
+
+#### Casos Límite / Rutas de Excepción:
+1. **Cold start del Web Service gratuito:** El Web Service en el plan *Free* de Render se suspende tras 15 minutos de inactividad. Al acceder por primera vez o después de un período de inactividad, el navegador puede demorar 30-50 segundos en recibir la primera respuesta. Este comportamiento es esperado y está documentado en el SPEC-1.2.1 §9 (Risk 1). Esperar la carga completa antes de reportar un error.
+2. **Error `No valid credential sources found` en `terraform init`:** Indica que `render_api_key` no está configurada. Verificar que `terraform.tfvars` existe en `infra/terraform/` con el valor correcto de `render_api_key`, o que la variable de entorno `TF_VAR_render_api_key` está configurada en la sesión actual.
