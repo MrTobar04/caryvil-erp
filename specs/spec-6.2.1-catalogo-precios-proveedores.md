@@ -12,8 +12,16 @@ Estructurar y parametrizar la gestión de listas de precios de compra, códigos 
   * `min_qty` (Float): Cantidad mínima requerida por el laboratorio para aplicar el precio (e.g., compra mínima de 5 cajas).
   * `delay` (Integer): Plazo de entrega garantizado en días para este producto específico.
   * `date_start` y `date_end` (Date): Periodo de vigencia de la lista de precios o convenio comercial.
+
+  > **(ACTUAL)** se agregó al modelo 2 campos nuevos: `product_presentation` (Char) y `discount_percentage` (Float, con recálculo automático del precio).
+
 * Inclusión de la pestaña **"Proveedores y Costos"** dentro de la vista formulario de medicamentos (`product.template`).
+
+  > **(ACTUAL)** No se creó una pestaña nueva llamada "Proveedores y Costos". Se reutilizó la pestaña **"Purchase"** (Compras) que Odoo ya trae de fábrica en la ficha de cada producto, agregándole ahí las 2 columnas nuevas (`product_presentation`, `discount_percentage`). El nombre de la pestaña no coincide con lo aquí escrito — pendiente decidir si se renombra o se deja así.
+
 * Mecanismo de autocompletado del precio de compra unitario en las líneas de Órdenes de Compra (`purchase.order.line`) basado en el proveedor seleccionado y la cantidad solicitada.
+
+  > **(ACTUAL)** No implementado ni verificado todavía. Es funcionalidad nativa de Odoo (`purchase.order` ya autocompleta desde `product.supplierinfo`), pero no se puede probar porque las Órdenes de Compra no existen aún (`SPEC-8.1.1`, bloqueada por `SPEC-7.1.1`/`7.1.2`). Queda pendiente de verificación cuando esas specs avancen.
 
 ### 2.2. Not Included (Out of Scope)
 * Creación de listas de precios de venta para clientes finales (se gestiona en `SPEC-7.1.1` y `SPEC-9.1.1`).
@@ -24,6 +32,8 @@ Estructurar y parametrizar la gestión de listas de precios de compra, códigos 
 * **Restrictions:**
   * Un medicamento puede tener múltiples proveedores registrados, pero debe existir un proveedor principal o preferente por defecto (`sequence = 1`).
   * Los precios de compra no deben ser visibles para usuarios con rol exclusivo de `Cajero`.
+
+  > **(ACTUAL)** Implementado: el campo nativo `price` y los 2 campos nuevos (`product_presentation`, `discount_percentage`) están restringidos al grupo `caryvil_erp.group_caryvil_compras_inventario`. No se probó manualmente con un usuario Cajero real.
 
 ## 4. Dependencias y Definición de Preparación (DoR)
 * **Dependencias Previas:**
@@ -53,6 +63,8 @@ Estructurar y parametrizar la gestión de listas de precios de compra, códigos 
 * **UI/UX Integration:**
   * Pestaña "Proveedores" en la ficha del medicamento con tabla editable: Nombre del Laboratorio, Código Proveedor, Cantidad Mínima, Plazo de Entrega y Precio Unitario de Costo ($).
 
+  > **(ACTUAL)** De esas columnas, "Nombre del Laboratorio" y "Precio" se ven por defecto. "Código Proveedor" (`product_code`), "Cantidad Mínima" (`min_qty`) y las fechas de vigencia quedan **ocultas por defecto** (`optional="hide"` en la vista base de Odoo)
+
 ## 6. Acceptance Criteria
 * **Scenario 1: Registro de múltiples proveedores para un mismo medicamento**
   * **Given** El medicamento "Amoxicilina 500mg (Caja x 50)".
@@ -67,14 +79,20 @@ Estructurar y parametrizar la gestión de listas de precios de compra, códigos 
   * **When** Se crea una orden por 12 cajas.
   * **Then** El sistema debe aplicar automáticamente el precio con descuento por volumen de `$4.20`.
 
+> **(ACTUAL)** Escenarios 2 y 3 **no verificados** — dependen de que existan Órdenes de Compra (`SPEC-8.1.1`). Solo se probó (con pruebas automatizadas) el Escenario 1: crear un `product.supplierinfo` con datos y que un mismo medicamento admita varios proveedores.
+
 ## 7. Verification Plan
 * **Automated Tests:**
   * Test unitario en Python creando un `product.supplierinfo` para un producto de prueba y verificando que al instanciar una línea de orden de compra con ese proveedor el precio retornado coincida con el configurado.
 * **Manual Verification:**
   * Crear una orden de compra, alternar entre dos proveedores distintos y comprobar que el precio de línea cambie de acuerdo a la lista de cada laboratorio.
 
+> **(ACTUAL)** Se escribieron 3 pruebas en `tests/test_product_supplierinfo.py` (todas pasando): crear un proveedor con presentación y precio, múltiples proveedores para un mismo medicamento, y que el % de descuento recalcule el precio. La prueba de "instanciar una línea de orden de compra" **no se hizo** — no existe `purchase.order.line` en el sistema todavía. La verificación manual tampoco se hizo (no hay Órdenes de Compra que crear).
+
 ## 8. Security and Privacy
 * La pestaña de proveedores y costos está protegida para ser visible únicamente por `Encargado de Compras e Inventario` y `Administrador`.
+
+> **(ACTUAL)** No se restringió la pestaña completa (sigue rigiéndose por el grupo nativo `purchase.group_purchase_user` de Odoo, fuera del alcance de esta spec). Lo que sí se restringió puntualmente a `group_caryvil_compras_inventario` son los campos de precio: `price` (nativo), `product_presentation` y `discount_percentage`.
 
 ## 9. Risks and Mitigation
 * **Risk:** Variaciones frecuentes de precios por parte de los laboratorios que dejen obsoletos los costos registrados.
@@ -85,9 +103,18 @@ Estructurar y parametrizar la gestión de listas de precios de compra, códigos 
 * Extensión de vista `views/product_template_views.xml` con la pestaña de proveedores.
 * Inclusión del modelo en `models/__init__.py`.
 
+> **(ACTUAL)** El archivo de vista real se llama `views/product_supplierinfo_views.xml` (no `product_template_views.xml`), porque termina inhereditando la vista de lista `product.supplierinfo`, no un formulario de `product.template` nuevo. También se agregó `tests/test_product_supplierinfo.py`
+
 ## 11. Definition of Done (DoD)
 * [ ] Modelo `product.supplierinfo` extendido con campos farmacéuticos.
 * [ ] Pestaña de proveedores integrada en la vista de medicamentos.
 * [ ] Autocompletado de precios en órdenes de compra validado.
 * [ ] Pruebas unitarias ejecutadas y aprobadas.
 * [ ] Aprobación funcional por el equipo de compras de Caryvil.
+
+> **(ACTUAL)** Estado real de cada punto:
+> * [x] Modelo extendido (`product_presentation`, `discount_percentage`).
+> * [x] Columnas integradas en la tabla de proveedores existente (no una pestaña nueva).
+> * [ ] Autocompletado de precios — bloqueado hasta `SPEC-8.1.1`.
+> * [x] Pruebas unitarias — 3 pruebas propias + 9 de `SPEC-6.1.1`, las 12 pasando.
+> * [ ] Aprobación del negocio — pendiente, es del equipo de Caryvil, no técnica.

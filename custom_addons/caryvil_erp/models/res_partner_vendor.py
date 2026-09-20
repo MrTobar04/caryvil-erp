@@ -24,6 +24,12 @@ class ResPartnerVendor(models.Model):
     )
     nit = fields.Char(string="NIT", size=17, help="Formato: 0000-000000-000-0")
     nrc = fields.Char(string="NRC", size=10, help="Formato: 00000-0")
+    purchase_order_ids = fields.One2many(
+        "purchase.order",
+        "partner_id",
+        string="Historial de Compras",
+        help="Órdenes de compra hechas directamente a este vendedor.",
+    )
 
     # Asigna el código autogenerado (P0001, P0002...) a proveedores/vendedores nuevos.
     @api.model_create_multi

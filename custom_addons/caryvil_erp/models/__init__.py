@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
-# Los modelos específicos de clientes, productos, lotes, ventas y compras
-# se importarán progresivamente conforme a las especificaciones de cada dominio.
+from . import res_partner_customer  # noqa: F401
 from . import res_partner_vendor  # noqa: F401
+from . import product_supplierinfo  # noqa: F401
+from . import purchase_order_medicine  # noqa: F401
+from . import stock_picking_reception  # noqa: F401
+from . import res_company_caryvil  # noqa: F401
+from . import product_medicine  # noqa: F401
+from . import purchase_order_abono  # noqa: F401
+
