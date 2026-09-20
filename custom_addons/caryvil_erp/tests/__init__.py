@@ -7,4 +7,3 @@ from . import test_stock_picking_reception  # noqa: F401
 from . import test_report_purchase_order  # noqa: F401
 from . import test_seed_data  # noqa: F401
 from . import test_demo_data  # noqa: F401
-

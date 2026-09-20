@@ -107,18 +107,22 @@ class TestResPartnerVendor(TransactionCase):
 
     # El historial de compras del vendedor solo incluye órdenes hechas a él directamente.
     def test_historial_compras_por_vendedor(self):
-        vendedor_1 = self.env['res.partner'].create({
-            'name': 'Carlos Méndez',
-            'is_pharmacy_vendor': True,
-            'parent_id': self.laboratorio.id,
-        })
-        vendedor_2 = self.env['res.partner'].create({
-            'name': 'Ana López',
-            'is_pharmacy_vendor': True,
-            'parent_id': self.laboratorio.id,
-        })
-        orden_1 = self.env['purchase.order'].create({'partner_id': vendedor_1.id})
-        self.env['purchase.order'].create({'partner_id': vendedor_2.id})
+        vendedor_1 = self.env["res.partner"].create(
+            {
+                "name": "Carlos Méndez",
+                "is_pharmacy_vendor": True,
+                "parent_id": self.laboratorio.id,
+            }
+        )
+        vendedor_2 = self.env["res.partner"].create(
+            {
+                "name": "Ana López",
+                "is_pharmacy_vendor": True,
+                "parent_id": self.laboratorio.id,
+            }
+        )
+        orden_1 = self.env["purchase.order"].create({"partner_id": vendedor_1.id})
+        self.env["purchase.order"].create({"partner_id": vendedor_2.id})
 
         self.assertEqual(len(vendedor_1.purchase_order_ids), 1)
         self.assertEqual(vendedor_1.purchase_order_ids, orden_1)
