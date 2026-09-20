@@ -99,7 +99,7 @@ Definir, documentar y estandarizar el esquema de configuración mediante variabl
 * Guía de configuración de variables en el archivo de documentación técnica.
 
 ## 11. Definition of Done (DoD)
-* [ ] Archivo `.env.example` creado y probado con `docker compose`.
-* [ ] `.gitignore` verificado para asegurar el bloqueo de `.env`, `.env.local` y `*.tfvars`.
-* [ ] Variables y secretos requeridos documentados con su tipo y propósito.
-* [ ] Revisión de seguridad aprobada por el equipo técnico.
+* [x] Archivo `.env.example` creado y probado con `docker compose`.
+* [x] `.gitignore` verificado para asegurar el bloqueo de `.env`, `.env.local` y `*.tfvars`.
+* [x] Variables y secretos requeridos documentados con su tipo y propósito.
+* [x] Revisión de seguridad aprobada por el equipo técnico.
