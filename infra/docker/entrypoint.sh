@@ -45,6 +45,32 @@ if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
         INIT_FLAGS=(-i "base,caryvil_erp")
     else
         echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' ya inicializada ==="
+
+        # -----------------------------------------------------------------------
+        # FASE DE ACTUALIZACIÓN DE MÓDULOS (pre-deploy migration step)
+        # Si ODOO_UPDATE_MODULES está definida, ejecuta Odoo en modo --stop-after-init
+        # con el flag -u para aplicar ALTER TABLE y sincronizar vistas XML antes del
+        # arranque normal del servidor. Esto resuelve el error UndefinedColumn al
+        # redesplegar con nuevos campos en modelos existentes (ej. res.company.legal_name).
+        #
+        # Uso en Render: agregar la variable de entorno ODOO_UPDATE_MODULES=caryvil_erp
+        # en el servicio desde el dashboard o desde render.yaml/Terraform.
+        # Una vez ejecutado el primer redespliegue exitoso, la variable puede mantenerse
+        # permanente (Odoo es idempotente en -u para módulos ya actualizados) o removerse.
+        # -----------------------------------------------------------------------
+        if [ -n "${ODOO_UPDATE_MODULES}" ]; then
+            echo "=== [Caryvil ERP] Detectada variable ODOO_UPDATE_MODULES='${ODOO_UPDATE_MODULES}'. Ejecutando actualización de esquema... ==="
+            odoo -c /etc/odoo/odoo.conf \
+                --db_host="${HOST}" \
+                --db_port="${DB_PORT}" \
+                --db_user="${USER}" \
+                --db_password="${PASSWORD}" \
+                -d "${DB_NAME}" \
+                -u "${ODOO_UPDATE_MODULES}" \
+                --stop-after-init \
+                --no-http
+            echo "=== [Caryvil ERP] Actualización de módulos completada. Iniciando servidor... ==="
+        fi
     fi
 fi
 
