@@ -56,11 +56,11 @@ class ResPartnerCustomer(models.Model):
                 super(ResPartnerCustomer, partner)._compute_display_name()
 
     @api.model
-    def _name_search(self, name="", args=None, operator="ilike", limit=100, name_get_uid=None):
-        args = list(args or [])
+    def _name_search(self, name="", domain=None, operator="ilike", limit=100, order=None, **kwargs):
+        domain = list(domain if domain is not None else kwargs.get("args") or [])
         if name:
             clean_term = name.replace("-", "").strip()
-            domain = [
+            search_domain = [
                 "|",
                 "|",
                 "|",
@@ -77,11 +77,11 @@ class ResPartnerCustomer(models.Model):
             ]
             if len(clean_term) == 9 and clean_term.isdigit():
                 formatted_dui = f"{clean_term[:8]}-{clean_term[8]}"
-                domain = ["|"] + domain + [("dui", operator, formatted_dui)]
+                search_domain = ["|"] + search_domain + [("dui", operator, formatted_dui)]
 
-            return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
+            return self._search(search_domain + domain, limit=limit, order=order)
         return super(ResPartnerCustomer, self)._name_search(
-            name=name, args=args, operator=operator, limit=limit, name_get_uid=name_get_uid
+            name=name, domain=domain, operator=operator, limit=limit, order=order, **kwargs
         )
 
     @api.model_create_multi
