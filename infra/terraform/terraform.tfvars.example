@@ -1,7 +1,13 @@
-render_api_key      = "rnd_example_api_key_xxxxxxxx"
-owner_id            = "tea_example_owner_id_xxxxxxxx"
-environment         = "staging"
+# ==============================================================================
+# TERRAFORM VARIABLES — PLANTILLA (SPEC-1.2.1)
+# Copia este archivo a terraform.tfvars y completa los valores.
+# NUNCA subas terraform.tfvars al repositorio Git (.gitignore lo excluye).
+# ==============================================================================
+
+render_api_key      = "rnd_example_api_key_xxxxxxxxxxxxxxxx"
+render_owner_id     = "tea_example_owner_id_xxxxxxxxxxxxxxxx"
+environment         = "dev"
 region              = "oregon"
 db_name             = "caryvil_erp_db"
-db_user             = "caryvil_db_admin"
-odoo_admin_password = "super_secure_master_password_example"
+db_user             = "caryvil_admin"
+odoo_admin_password = "super_secure_master_password_16chars!"

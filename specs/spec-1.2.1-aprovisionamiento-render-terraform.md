@@ -1,5 +1,7 @@
 # SPEC-1.2.1: Aprovisionamiento en Render con Terraform
 
+> **Status:** `Implemented` — 2026-09-20
+
 ## 1. Objective
 Automatizar la definición, aprovisionamiento y ciclo de vida de la infraestructura cloud en la plataforma Render mediante Terraform (Infraestructura como Código - IaC). Esta especificación permite desplegar de forma desatendida y reproducible el Web Service para el ERP Odoo de Farmacia Caryvil, el servicio de base de datos PostgreSQL gestionado, la parametrización de variables de entorno y el enlace de red entre ambos componentes.
 
@@ -104,8 +106,8 @@ Automatizar la definición, aprovisionamiento y ciclo de vida de la infraestruct
 * Reglas en `.gitignore` para bloquear `*.tfstate`, `*.tfstate.backup`, `.terraform/` y `*.tfvars`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Manifiestos de Terraform formateados y validados (`terraform validate`).
-* [ ] Despliegue de prueba exitoso realizado en Render mediante `terraform apply`.
-* [ ] URL pública accesible y conectada a la base de datos PostgreSQL.
-* [ ] Archivos de estado excluidos del repositorio Git.
+* [x] Manifiestos de Terraform formateados y validados (`terraform validate`).
+* [x] Despliegue de prueba exitoso realizado en Render mediante `terraform apply`.
+* [x] URL pública accesible y conectada a la base de datos PostgreSQL.
+* [x] Archivos de estado excluidos del repositorio Git.
 * [ ] Pull Request revisado y aprobado por el equipo de arquitectura.

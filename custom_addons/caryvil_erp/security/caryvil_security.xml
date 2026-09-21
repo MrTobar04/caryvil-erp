@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data>
         <!-- Categoría de Módulo para Grupos de Seguridad -->
         <record id="module_category_caryvil_erp" model="ir.module.category">
             <field name="name">Farmacia Caryvil ERP</field>
@@ -19,25 +19,38 @@
         <record id="group_caryvil_farmaceutico" model="res.groups">
             <field name="name">Farmacéutico / Dependiente</field>
             <field name="category_id" ref="module_category_caryvil_erp"/>
-            <field name="implied_ids" eval="[(4, ref('group_caryvil_cajero'))]"/>
+            <field name="implied_ids" eval="[(4, ref('group_caryvil_cajero')), (4, ref('stock.group_stock_user'))]"/>
         </record>
 
         <!-- Rol: Encargado de Compras e Inventario -->
-        <!-- Incluye el grupo nativo "Facturación" (account.group_account_invoice) porque Odoo   -->
-        <!-- exige ese grupo específico (a nivel de código, no solo de ir.model.access) para      -->
-        <!-- poder confirmar Facturas de Proveedor y registrar Pagos/abonos (SPEC-8.1.2). Sin él,  -->
-        <!-- el Encargado de Compras podría crear la factura pero no confirmarla ni cobrarla.      -->
+        <!-- Incluye:                                                                           -->
+        <!-- - Facturación (account.group_account_invoice): para facturas de proveedor y pagos.  -->
+        <!-- - Compras (purchase.group_purchase_user): habilita la pestaña 'Purchase' en ficha   -->
+        <!--   de producto y gestión de compras.                                                -->
+        <!-- - Inventario (stock.group_stock_user): habilita la pestaña 'Inventory' y stock.     -->
         <record id="group_caryvil_compras_inventario" model="res.groups">
             <field name="name">Encargado de Compras e Inventario</field>
             <field name="category_id" ref="module_category_caryvil_erp"/>
-            <field name="implied_ids" eval="[(4, ref('group_caryvil_farmaceutico')), (4, ref('account.group_account_invoice'))]"/>
+            <field name="implied_ids" eval="[
+                (4, ref('group_caryvil_farmaceutico')),
+                (4, ref('account.group_account_invoice')),
+                (4, ref('purchase.group_purchase_user')),
+                (4, ref('stock.group_stock_user'))
+            ]"/>
         </record>
 
         <!-- Rol: Administrador General -->
+        <!-- Se vinculan automáticamente el superusuario y el admin principal por defecto -->
         <record id="group_caryvil_admin" model="res.groups">
             <field name="name">Administrador General</field>
             <field name="category_id" ref="module_category_caryvil_erp"/>
-            <field name="implied_ids" eval="[(4, ref('group_caryvil_compras_inventario')), (4, ref('base.group_system'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+            <field name="implied_ids" eval="[
+                (4, ref('group_caryvil_compras_inventario')),
+                (4, ref('purchase.group_purchase_manager')),
+                (4, ref('stock.group_stock_manager')),
+                (4, ref('base.group_system'))
+            ]"/>
         </record>
     </data>
 </odoo>

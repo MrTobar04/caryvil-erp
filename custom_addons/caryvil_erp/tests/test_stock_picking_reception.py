@@ -3,41 +3,55 @@ from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase, tagged
 
 
-@tagged('post_install', '-at_install')
+@tagged("post_install", "-at_install")
 class TestStockPickingReception(TransactionCase):
 
     def setUp(self):
         super().setUp()
-        self.laboratorio = self.env['res.partner'].create({
-            'name': 'Laboratorios Vijosa',
-            'is_company': True,
-            'is_pharmacy_vendor': True,
-            'vendor_type': 'laboratorio',
-            'nit': '0614-123456-001-2',
-            'nrc': '12345-6',
-        })
-        self.vendedor = self.env['res.partner'].create({
-            'name': 'Carlos Méndez',
-            'is_pharmacy_vendor': True,
-            'parent_id': self.laboratorio.id,
-        })
-        self.producto = self.env['product.product'].create({
-            'name': 'Ibuprofeno 400mg',
-            'purchase_method': 'purchase',
-            'type': 'product',
-            'tracking': 'lot',
-        })
+        self.laboratorio = self.env["res.partner"].create(
+            {
+                "name": "Laboratorios Vijosa",
+                "is_company": True,
+                "is_pharmacy_vendor": True,
+                "vendor_type": "laboratorio",
+                "nit": "0614-123456-001-2",
+                "nrc": "12345-6",
+            }
+        )
+        self.vendedor = self.env["res.partner"].create(
+            {
+                "name": "Carlos Méndez",
+                "is_pharmacy_vendor": True,
+                "parent_id": self.laboratorio.id,
+            }
+        )
+        self.producto = self.env["product.product"].create(
+            {
+                "name": "Ibuprofeno 400mg",
+                "purchase_method": "purchase",
+                "type": "product",
+                "tracking": "lot",
+            }
+        )
 
     def _crear_orden_confirmada(self, qty=15, price=1.0):
-        orden = self.env['purchase.order'].create({
-            'partner_id': self.vendedor.id,
-            'order_line': [(0, 0, {
-                'product_id': self.producto.id,
-                'name': self.producto.name,
-                'product_qty': qty,
-                'price_unit': price,
-            })],
-        })
+        orden = self.env["purchase.order"].create(
+            {
+                "partner_id": self.vendedor.id,
+                "order_line": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.producto.id,
+                            "name": self.producto.name,
+                            "product_qty": qty,
+                            "price_unit": price,
+                        },
+                    )
+                ],
+            }
+        )
         orden.button_confirm()
         return orden
 
@@ -45,7 +59,7 @@ class TestStockPickingReception(TransactionCase):
     def test_bloqueo_recepcion_sin_lote(self):
         orden = self._crear_orden_confirmada()
         picking = orden.picking_ids[0]
-        picking.move_line_ids.write({'quantity': 15})
+        picking.move_line_ids.write({"quantity": 15})
         with self.assertRaises(ValidationError):
             picking.button_validate()
 
@@ -53,22 +67,26 @@ class TestStockPickingReception(TransactionCase):
     def test_recepcion_exitosa_con_lote_y_vencimiento(self):
         orden = self._crear_orden_confirmada()
         picking = orden.picking_ids[0]
-        picking.move_line_ids.write({
-            'quantity': 15,
-            'lot_name': 'LOT-IBU-2027-01',
-            'expiration_date': '2027-08-31',
-        })
+        picking.move_line_ids.write(
+            {
+                "quantity": 15,
+                "lot_name": "LOT-IBU-2027-01",
+                "expiration_date": "2027-08-31",
+            }
+        )
         picking.button_validate()
-        self.assertEqual(picking.state, 'done')
+        self.assertEqual(picking.state, "done")
 
     # Bloquea si hay lote pero no fecha de vencimiento.
     def test_bloqueo_recepcion_sin_fecha_vencimiento(self):
         orden = self._crear_orden_confirmada()
         picking = orden.picking_ids[0]
-        picking.move_line_ids.write({
-            'quantity': 15,
-            'lot_name': 'LOT-IBU-2027-01',
-        })
+        picking.move_line_ids.write(
+            {
+                "quantity": 15,
+                "lot_name": "LOT-IBU-2027-01",
+            }
+        )
         with self.assertRaises(ValidationError):
             picking.button_validate()
 
@@ -76,11 +94,13 @@ class TestStockPickingReception(TransactionCase):
     def test_bloqueo_recepcion_lote_caducado(self):
         orden = self._crear_orden_confirmada()
         picking = orden.picking_ids[0]
-        picking.move_line_ids.write({
-            'quantity': 15,
-            'lot_name': 'LOT-VIEJO',
-            'expiration_date': '2000-01-01',
-        })
+        picking.move_line_ids.write(
+            {
+                "quantity": 15,
+                "lot_name": "LOT-VIEJO",
+                "expiration_date": "2000-01-01",
+            }
+        )
         with self.assertRaises(ValidationError):
             picking.button_validate()
 
@@ -88,26 +108,30 @@ class TestStockPickingReception(TransactionCase):
     def test_recepcion_completa_bloquea_orden_de_compra(self):
         orden = self._crear_orden_confirmada(qty=15)
         picking = orden.picking_ids[0]
-        picking.move_line_ids.write({
-            'quantity': 15,
-            'lot_name': 'LOT-IBU-2027-01',
-            'expiration_date': '2027-08-31',
-        })
+        picking.move_line_ids.write(
+            {
+                "quantity": 15,
+                "lot_name": "LOT-IBU-2027-01",
+                "expiration_date": "2027-08-31",
+            }
+        )
         picking.button_validate()
-        self.assertEqual(orden.state, 'done')
+        self.assertEqual(orden.state, "done")
         self.assertEqual(orden.order_line[0].qty_received, 15)
 
     # SPEC-8.2.3: recepción parcial deja la orden en 'purchase' (no bloqueada) y marca discrepancia.
     def test_recepcion_parcial_marca_discrepancia_y_no_bloquea_orden(self):
         orden = self._crear_orden_confirmada(qty=30)
         picking = orden.picking_ids[0]
-        picking.move_line_ids.write({
-            'quantity': 20,
-            'lot_name': 'LOT-PARCIAL',
-            'expiration_date': '2027-08-31',
-        })
+        picking.move_line_ids.write(
+            {
+                "quantity": 20,
+                "lot_name": "LOT-PARCIAL",
+                "expiration_date": "2027-08-31",
+            }
+        )
         picking.with_context(skip_backorder=True, picking_ids_not_to_backorder=picking.ids).button_validate()
-        self.assertEqual(picking.state, 'done')
+        self.assertEqual(picking.state, "done")
         self.assertTrue(picking.has_discrepancy)
-        self.assertEqual(orden.state, 'purchase')
+        self.assertEqual(orden.state, "purchase")
         self.assertEqual(orden.order_line[0].qty_received, 20)

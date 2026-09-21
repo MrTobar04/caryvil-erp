@@ -4,15 +4,16 @@ variable "render_api_key" {
   sensitive   = true
 }
 
-variable "owner_id" {
-  description = "ID del usuario o equipo propietario en Render"
+variable "render_owner_id" {
+  description = "ID del usuario o equipo propietario en Render (formato usr-... o tea-...)"
   type        = string
+  sensitive   = true
 }
 
 variable "environment" {
-  description = "Ambiente de despliegue (staging | production)"
+  description = "Ambiente de despliegue (dev | staging | production)"
   type        = string
-  default     = "staging"
+  default     = "dev"
 }
 
 variable "region" {
@@ -30,11 +31,11 @@ variable "db_name" {
 variable "db_user" {
   description = "Usuario administrador de PostgreSQL"
   type        = string
-  default     = "caryvil_db_admin"
+  default     = "caryvil_admin"
 }
 
 variable "odoo_admin_password" {
-  description = "Contraseña maestra para la gestión de bases de datos de Odoo"
+  description = "Contraseña maestra para la gestión de bases de datos de Odoo (admin_passwd en odoo.conf)"
   type        = string
   sensitive   = true
 }
