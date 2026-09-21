@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Lotes para Amoxicilina 500mg -->
+        <record id="lot_amoxicilina_largo" model="stock.lot">
+            <field name="name">LOT-AMX-202801</field>
+            <field name="product_id" ref="caryvil_erp.med_amoxicilina_500"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-06-30 23:59:59</field>
+        </record>
+
+        <record id="lot_amoxicilina_critico" model="stock.lot">
+            <field name="name">LOT-AMX-CRITICO</field>
+            <field name="product_id" ref="caryvil_erp.med_amoxicilina_500"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2026-10-05 23:59:59</field>
+        </record>
+
+        <!-- Lotes para Ibuprofeno 400mg -->
+        <record id="lot_ibuprofeno_largo" model="stock.lot">
+            <field name="name">LOT-IBU-202712</field>
+            <field name="product_id" ref="caryvil_erp.med_ibuprofeno_400"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-12-31 23:59:59</field>
+        </record>
+
+        <record id="lot_ibuprofeno_medio" model="stock.lot">
+            <field name="name">LOT-IBU-MEDIO</field>
+            <field name="product_id" ref="caryvil_erp.med_ibuprofeno_400"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2026-11-10 23:59:59</field>
+        </record>
+
+        <!-- Lotes para Paracetamol 500mg -->
+        <record id="lot_paracetamol_largo" model="stock.lot">
+            <field name="name">LOT-PAR-202805</field>
+            <field name="product_id" ref="caryvil_erp.med_paracetamol_500"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-05-31 23:59:59</field>
+        </record>
+
+        <!-- Lotes para Omeprazol 20mg -->
+        <record id="lot_omeprazol_critico" model="stock.lot">
+            <field name="name">LOT-OME-CRITICO</field>
+            <field name="product_id" ref="caryvil_erp.med_omeprazol_20"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2026-09-30 23:59:59</field>
+        </record>
+    </data>
+</odoo>

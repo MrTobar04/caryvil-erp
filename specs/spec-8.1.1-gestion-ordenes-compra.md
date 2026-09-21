@@ -7,12 +7,14 @@ Modelar, configurar e implementar el flujo de gestión del ciclo de vida de **Ó
 ### 2.1. Included
 * Extensión del modelo `purchase.order` y `purchase.order.line` en `custom_addons/caryvil_erp/models/purchase_order_medicine.py`:
   * Ciclo de estados formal: `draft` (Solicitud de Presupuesto / RFQ) ➔ `sent` (Enviado al Laboratorio) ➔ `purchase` (Orden de Compra Confirmada) ➔ `done` (Completada tras recepción) ➔ `cancel` (Cancelada).
-  * `commercial_terms_id` (Many2one o Selection): Condiciones de pago pactadas (Contado, Crédito 15/30/60 días).
+  * `commercial_terms_id` (Many2one o Selection): Condiciones de pago pactadas (Contado, Crédito 15/30/45/60 días).
   * `expected_delivery_date` (Date): Fecha límite esperada de entrega de los medicamentos en farmacia.
   * `notes_reception` (Text): Requerimientos especiales de calidad (e.g., "Vigencia mínima de 18 meses para lotes").
+  * `laboratory_id` (Many2one `res.partner`, related a `partner_id.commercial_partner_id`, store=True): Empresa/Laboratorio a la que pertenece el vendedor (`partner_id`) seleccionado en la orden. Se deriva automáticamente de la jerarquía Empresa/Vendedor definida en `SPEC-6.1.1` (`parent_id`), no es un campo independiente editable.
+  * Descuento por línea (`Descuento %`): se usa el campo nativo `discount` de `purchase.order.line` (Odoo 17 Community lo incluye de fábrica, con `price_unit_discounted` calculado) — no requiere campo custom.
 * Autocompletado de impuestos locales: Aplicación del IVA (13%) salvadoreño sobre las líneas de compra gravadas.
 * Cálculo aritmético automático: Subtotal neto, IVA total desglosado y Total de la orden en USD ($).
-* Envío de la orden de compra en formato PDF por correo electrónico directamente desde Odoo al contacto comercial del laboratorio.
+* Envío de la orden de compra en formato PDF por correo electrónico directamente desde Odoo al contacto comercial del laboratorio. (NO APLICA)
 * Restricción de permisos: El `Encargado de Compras e Inventario` puede elaborar y confirmar órdenes; el `Administrador / Propietaria` tiene acceso irrestricto de aprobación y anulación.
 
 ### 2.2. Not Included (Out of Scope)
@@ -73,7 +75,7 @@ Modelar, configurar e implementar el flujo de gestión del ciclo de vida de **Ó
   * **Given** Un borrador de compra sin líneas registradas.
   * **When** Se intenta confirmar el pedido.
   * **Then** El sistema arroja un error de validación impidiendo el cambio de estado.
-* **Scenario 3: Envío de PDF por correo electrónico al proveedor**
+* **Scenario 3: Envío de PDF por correo electrónico al proveedor** (NO APLICA)
   * **Given** Una orden de compra confirmada.
   * **When** El usuario presiona "Enviar por Correo".
   * **Then** Odoo adjunta el PDF de la orden de compra (`SPEC-3.3.2`) en un correo electrónico con plantilla prediseñada dirigido al email del ejecutivo de ventas.

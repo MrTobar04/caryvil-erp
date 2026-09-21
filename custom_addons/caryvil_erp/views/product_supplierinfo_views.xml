@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================ -->
+        <!-- Extensión de la vista de lista de product.supplierinfo            -->
+        <!-- Integrada en la pestaña de Compras de la ficha de medicamentos.  -->
+        <!-- Protege los costos de adquisición para el rol de Compras y Admin -->
+        <!-- (Confidencialidad ante usuarios de rol Cajero / Mostrador).       -->
+        <!-- ================================================================ -->
+
+        <record id="view_product_supplierinfo_tree_caryvil" model="ir.ui.view">
+            <field name="name">product.supplierinfo.tree.caryvil</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+            <field name="arch" type="xml">
+                <!-- Forzar visibilidad de Código Proveedor -->
+                <field name="product_code" position="attributes">
+                    <attribute name="optional">show</attribute>
+                </field>
+
+                <!-- Presentación del medicamento según catálogo del laboratorio -->
+                <field name="product_code" position="after">
+                    <field name="product_presentation" optional="show"
+                           groups="caryvil_erp.group_caryvil_compras_inventario"/>
+                </field>
+
+                <!-- Forzar visibilidad de Cantidad Mínima para escalas de volumen -->
+                <field name="min_qty" position="attributes">
+                    <attribute name="optional">show</attribute>
+                </field>
+
+                <!-- Precio Bruto y % Descuento antes del Precio Neto de Costo -->
+                <field name="price" position="before">
+                    <field name="gross_price" optional="show" string="Precio Bruto"
+                           groups="caryvil_erp.group_caryvil_compras_inventario"/>
+                    <field name="discount_percentage" optional="show" string="% Desc."
+                           groups="caryvil_erp.group_caryvil_compras_inventario"/>
+                </field>
+
+                <!-- Proteger Precio Neto de compra ante usuarios no autorizados -->
+                <field name="price" position="attributes">
+                    <attribute name="string">Precio Neto</attribute>
+                    <attribute name="groups">caryvil_erp.group_caryvil_compras_inventario</attribute>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

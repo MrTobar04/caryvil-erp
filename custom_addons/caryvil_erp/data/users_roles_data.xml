@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Usuario Demostración: Cajero / Mostrador (SPEC-10.1.1) -->
+        <record id="user_cajero_demo" model="res.users">
+            <field name="name">Cajero Mostrador</field>
+            <field name="login">cajero@caryvil.com</field>
+            <field name="email">cajero@caryvil.com</field>
+            <field name="password">cajero123</field>
+            <field name="groups_id" eval="[(6, 0, [ref('group_caryvil_cajero')])]"/>
+        </record>
+
+        <!-- Usuario Demostración: Farmacéutico / Dependiente -->
+        <record id="user_farmaceutico_demo" model="res.users">
+            <field name="name">Farmacéutico Caryvil</field>
+            <field name="login">farmaceutico@caryvil.com</field>
+            <field name="email">farmaceutico@caryvil.com</field>
+            <field name="password">farma123</field>
+            <field name="groups_id" eval="[(6, 0, [ref('group_caryvil_farmaceutico')])]"/>
+        </record>
+
+        <!-- Usuario Demostración: Encargado de Compras e Inventario -->
+        <record id="user_compras_demo" model="res.users">
+            <field name="name">Encargado de Compras</field>
+            <field name="login">compras@caryvil.com</field>
+            <field name="email">compras@caryvil.com</field>
+            <field name="password">compras123</field>
+            <field name="groups_id" eval="[(6, 0, [ref('group_caryvil_compras_inventario')])]"/>
+        </record>
+
+        <!-- Usuario Demostración: Administrador General -->
+        <record id="user_admin_demo" model="res.users">
+            <field name="name">Administrador Caryvil</field>
+            <field name="login">admin_caryvil@caryvil.com</field>
+            <field name="email">admin@caryvil.com</field>
+            <field name="password">admin123</field>
+            <field name="groups_id" eval="[(6, 0, [ref('group_caryvil_admin')])]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================ -->
+        <!-- SPEC-8.2.1: agrega Fecha de Vencimiento a la tabla de             -->
+        <!-- "Operaciones Detalladas" (el panel que se despliega al hacer      -->
+        <!-- clic en el ícono de una línea de producto dentro del albarán),    -->
+        <!-- donde ya es posible declarar varios lotes para el mismo producto  -->
+        <!-- (botón nativo "Agregar una línea"). Se traducen las columnas al   -->
+        <!-- español: Código (lote), Fecha de Vencimiento, Stock Ingresado.    -->
+        <!-- ================================================================ -->
+
+        <record id="view_stock_move_line_operation_tree_caryvil" model="ir.ui.view">
+            <field name="name">stock.move.line.operations.tree.caryvil</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
+            <field name="arch" type="xml">
+                <field name="lot_name" position="attributes">
+                    <attribute name="string">Código de Lote</attribute>
+                </field>
+                <field name="lot_name" position="after">
+                    <field name="expiration_date" string="Fecha de Vencimiento"
+                           column_invisible="parent.has_tracking == 'none'"/>
+                </field>
+                <field name="quantity" position="attributes">
+                    <attribute name="string">Stock Ingresado</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- SPEC-8.2.3: muestra la alerta y notas de discrepancia en el       -->
+        <!-- albarán de entrada (cantidad recibida menor a la ordenada, o      -->
+        <!-- productos rechazados por daños en el transporte).                 -->
+        <!-- ================================================================ -->
+
+        <record id="view_picking_form_caryvil" model="ir.ui.view">
+            <field name="name">stock.picking.form.caryvil</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='note']" position="before">
+                    <page string="Discrepancias" name="caryvil_discrepancy"
+                          invisible="picking_type_code != 'incoming'">
+                        <field name="has_discrepancy" invisible="1"/>
+                        <div class="alert alert-warning" role="alert" invisible="not has_discrepancy">
+                            Esta recepción presenta discrepancia: la cantidad recibida es menor a la
+                            cantidad ordenada. Documenta el motivo (daños en transporte, faltantes,
+                            excedentes) para conciliar con la factura del proveedor.
+                        </div>
+                        <group>
+                            <field name="discrepancy_notes" nolabel="1"
+                                   placeholder="Ej: 5 frascos rotos rechazados al repartidor."/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

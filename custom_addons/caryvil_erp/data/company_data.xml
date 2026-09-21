@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="company_farmacia_caryvil" model="res.company">
+            <field name="name">Farmacia Caryvil</field>
+            <field name="legal_name">Farmacia Caryvil S.A. de C.V.</field>
+            <field name="street">Colonia San Antonio, Calle Principal #12</field>
+            <field name="city">Soyapango</field>
+            <field name="country_id" ref="base.sv"/>
+            <field name="currency_id" ref="base.USD"/>
+            <field name="phone">2270-1234</field>
+            <field name="email">contacto@farmaciacaryvil.com</field>
+            <field name="economic_activity">Venta al por menor de productos farmacéuticos y medicinales</field>
+        </record>
+    </data>
+</odoo>

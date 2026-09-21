@@ -42,6 +42,7 @@ services:
       - odoo-web-data:/var/lib/odoo
       - ../../custom_addons:/mnt/extra-addons
       - ../config:/etc/odoo
+      - ../docker/entrypoint.sh:/entrypoint.sh
     ports:
       - "8069:8069"
       - "8072:8072"

@@ -31,6 +31,7 @@ Modelar, controlar y hacer obligatoria la captura de números de lote y fechas d
 * **Definition of Ready (DoR):**
   * [x] Orden de compra confirmada con estado de albarán en `assigned` (Listo para recibir).
   * [x] Formulario de operaciones detalladas de albarán de entrada configurado.
+  * [ ] **PENDIENTE (estado ACTUAL, 2026-09-16):** `SPEC-7.1.1`/`SPEC-7.1.2` aún no activan `tracking = 'lot'` en el catálogo de medicamentos. Mientras esto no se configure producto por producto (o por categoría), la validación de lote/vencimiento de esta spec **no bloqueará ninguna recepción**, porque solo aplica a productos con seguimiento por lote activo. El código (`stock_picking_reception.py`) y la vista ya están listos; falta la configuración de datos del catálogo.
 
 ## 5. Design (Implementation Details)
 * **Validation Logic (`models/stock_picking_reception.py`):**
@@ -99,8 +100,9 @@ Modelar, controlar y hacer obligatoria la captura de números de lote y fechas d
 * Extensión de vista `views/stock_picking_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Captura de lote y fecha de vencimiento integrada en el albarán de entrada.
-* [ ] Bloqueo estricto ante ausencia de lote o fechas caducadas probado.
-* [ ] Creación automática de registros en `stock.production.lot` validada.
-* [ ] Pruebas unitarias aprobadas al 100%.
+* [x] Captura de lote y fecha de vencimiento integrada en el albarán de entrada (`stock_picking_reception.py`, `views/stock_picking_views.xml`).
+* [x] Bloqueo estricto ante ausencia de lote o fechas caducadas probado (unit tests).
+* [ ] Creación automática de registros en `stock.production.lot` validada — depende de que `tracking = 'lot'` esté activo en el producto (ver DoR, pendiente de `SPEC-7.1.1`/`SPEC-7.1.2`).
+* [x] Pruebas unitarias aprobadas al 100% (`tests/test_stock_picking_reception.py`, 6/6).
 * [ ] Validación con el encargado de bodega de Farmacia Caryvil.
+* [ ] **BLOQUEANTE PARA PRODUCCIÓN:** activar `tracking = 'lot'` en el catálogo de medicamentos (`SPEC-7.1.1`/`SPEC-7.1.2`) — sin esto, la validación de esta spec queda inactiva en la práctica.
