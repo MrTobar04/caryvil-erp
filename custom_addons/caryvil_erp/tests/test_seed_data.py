@@ -30,4 +30,4 @@ class TestSeedData(TransactionCase):
         """SPEC-10.1.1: Verificar la carga de usuarios semilla por rol"""
         user_cajero = self.env.ref("caryvil_erp.user_cajero_demo", raise_if_not_found=False)
         self.assertIsNotNone(user_cajero)
-        self.assertEqual(user_cajero.login, "cajero")
+        self.assertEqual(user_cajero.login, "cajero@caryvil.com")
