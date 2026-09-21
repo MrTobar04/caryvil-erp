@@ -165,6 +165,16 @@ class PurchaseOrderMedicine(models.Model):
             )
 
         if not self.invoice_ids:
+            lineas_sin_recibir = self.order_line.filtered(
+                lambda l: not l.display_type and l.product_id.purchase_method == "receive" and l.qty_received <= 0
+            )
+            if lineas_sin_recibir:
+                raise ValidationError(
+                    _(
+                        "No se puede generar la Factura Final porque la mercadería aún no ha sido recibida en inventario. "
+                        "Valide primero el albarán de entrada mediante el botón inteligente 'Recepción' antes de facturar."
+                    )
+                )
             self.action_create_invoice()
 
         borradores = self.invoice_ids.filtered(lambda m: m.state == "draft")
