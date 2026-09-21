@@ -1,18 +1,18 @@
 #!/bin/bash
 set -e
 
-# Configuración por defecto de variables de entorno (soporta DB_HOST y HOST)
-: ${HOST:="${DB_HOST:-db}"}
+# Configuración por defecto de variables de entorno (soporta DB_HOST, POSTGRES_HOST y HOST)
+: ${HOST:="${DB_HOST:-${POSTGRES_HOST:-db}}"}
 # DB_PORT: puerto de PostgreSQL (5432). Se usa DB_PORT para no colisionar con la
 # variable reservada PORT de Render, que indica el puerto HTTP del servicio web.
-: ${DB_PORT:="5432"}
-: ${USER:="${DB_USER:-odoo}"}
-: ${PASSWORD:="${DB_PASSWORD:-odoo_dev_password_2026}"}
-: ${DB_NAME:="caryvil_dev"}
+: ${DB_PORT:="${POSTGRES_PORT:-5432}"}
+: ${USER:="${DB_USER:-${POSTGRES_USER:-odoo}}"}
+: ${PASSWORD:="${DB_PASSWORD:-${POSTGRES_PASSWORD:-odoo_dev_password_2026}}"}
+: ${DB_NAME:="${POSTGRES_DB:-caryvil_dev}"}
 : ${ADMIN_PASSWORD:="admin_caryvil_secret_2026"}
 # PORT: puerto HTTP en el que Odoo debe escuchar. Render lo inyecta automáticamente.
 # Por defecto 8069 para desarrollo local con docker-compose.
-: ${PORT:="8069"}
+: ${PORT:="${ODOO_HTTP_PORT:-8069}"}
 
 # Sanitizar HOST en caso de recibir una cadena de conexión tipo URI (postgresql://user:pass@host/db)
 if echo "$HOST" | grep -q "@"; then
