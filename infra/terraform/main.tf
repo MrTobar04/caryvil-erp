@@ -65,5 +65,15 @@ resource "render_web_service" "caryvil_odoo" {
     PROXY_MODE = {
       value = "True"
     }
+    # -----------------------------------------------------------------------
+    # ODOO_UPDATE_MODULES: Activa la fase de actualización de esquema (ALTER TABLE)
+    # en redespliegues con nuevos campos en modelos existentes de Odoo.
+    # El entrypoint.sh ejecuta "-u caryvil_erp --stop-after-init" si esta variable
+    # está definida, garantizando la sincronización de la BD antes del arranque.
+    # Es idempotente: puede mantenerse en todos los redespliegues de forma segura.
+    # -----------------------------------------------------------------------
+    ODOO_UPDATE_MODULES = {
+      value = "caryvil_erp"
+    }
   }
 }
