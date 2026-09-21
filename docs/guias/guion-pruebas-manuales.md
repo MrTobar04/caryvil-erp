@@ -15,6 +15,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 1.4: Verificación de Variables de Entorno y Bloqueo de Secretos (SPEC-1.2.2)](#flujo-14-verificación-de-variables-de-entorno-y-bloqueo-de-secretos-spec-122)
   - [Flujo 1.5: Pipeline CI/CD con GitHub Actions y Despliegue Automático (SPEC-1.3.1)](#flujo-15-pipeline-cicd-con-github-actions-y-despliegue-automático-spec-131)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
+  - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
 
 ---
 
@@ -291,5 +292,30 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 2. **Rechazo por Formato Inválido de NIT:** En la ventana emergente de la Empresa, escribir en el campo *NIT* un valor incompleto como `0614-123` y hacer clic en **Guardar y cerrar**, debes ver la notificación de validación `El NIT de "Distribuidora Sin NRC" debe tener el formato 0000-000000-000-0.` bloqueando el registro.
 3. **Rechazo por Formato Inválido de Teléfono en Vendedor:** En el formulario del Vendedor, ingresar en el campo *Teléfono* una secuencia no conforme con el formato salvadoreño (ej. `12345`) y presionar **Guardar**, debes observar la alerta de validación `El teléfono de "..." debe tener el formato 0000-0000.` impidiendo el guardado.
 4. **Independencia de Validaciones frente a Clientes y Contactos Generales:** Iniciar sesión con el usuario de Cajero (`cajero@caryvil.com`), navegar a **Farmacia Caryvil** -> **Clientes**, hacer clic en **Nuevo** y crear un cliente con un teléfono de formato libre (ej. número telefónico fijo o internacional), debes verificar que el cliente se almacena normalmente sin verse afectado por las restricciones estrictas de proveedores farmacéuticos.
+
+---
+
+### Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)
+
+1. **Acceso a la Ficha del Medicamento desde Compras:** Iniciar sesión con el usuario de Encargado de Compras e Inventario (`compras@caryvil.com` / `compras123`), acceder al menú principal **Farmacia Caryvil** -> **Inventario y Medicamentos** -> **Medicamentos** (o catálogo de productos) y seleccionar un producto de prueba (ej. `Amoxicilina 500mg (Caja x 50)`), debes observar el formulario del medicamento con la pestaña **Compras** visible.
+2. **Registro de Laboratorio con Precio Bruto y Descuento (CA-1):** En la pestaña **Compras**, hacer clic en **Agregar una línea** dentro de la tabla de proveedores:
+   - Seleccionar en *Proveedor* a `Laboratorios Vijosa S.A. de C.V.`.
+   - Ingresar en *Código Proveedor* `VIJ-AMX-500`.
+   - En *Presentación Proveedor*, escribir `Caja con 50 tabletas`.
+   - En *Cantidad Mínima*, dejar `1.0`.
+   - En *Plazo de entrega*, ingresar `2` días.
+   - En *Precio Bruto*, ingresar `5.00`.
+   - En *% Desc.*, ingresar `10.0`.
+   - Debes comprobar que el campo **Precio Neto** se recalcula automáticamente a `$4.50`. Presionar **Guardar**.
+3. **Registro de Segundo Proveedor para Comparativa de Costos (CA-1):** En la misma tabla, agregar una segunda línea con *Proveedor* `Droguería Santa Lucía`, *Presentación Proveedor* `Caja x 50 cápsulas`, *Plazo de entrega* `1` día, *Precio Bruto* `4.80` y *% Desc.* `0.0` (Precio Neto `$4.80`). Guardar el producto, debes ver ambas opciones registradas permitiendo al comprador comparar costos y tiempos de entrega.
+4. **Configuración de Escala por Volumen (CA-3):** Agregar una tercera línea seleccionando a `Laboratorios Vijosa S.A. de C.V.` con *Cantidad Mínima* `10.0`, *Precio Bruto* `5.00` y *% Desc.* `16.0` (Precio Neto `$4.20`). Guardar.
+5. **Autocompletado de Precios y Escalas en Orden de Compra (CA-2 y CA-3):** Navegar a **Farmacia Caryvil** -> **Compras y Proveedores** -> **Órdenes de Compra**, presionar **Nuevo**, seleccionar como proveedor un contacto asociado a `Laboratorios Vijosa S.A. de C.V.` y en la tabla de productos agregar `Amoxicilina 500mg`:
+   - Con cantidad `5`, verificar que el precio unitario se autocompleta en `$4.50`.
+   - Cambiar la cantidad a `12`, verificar que el precio unitario se actualiza automáticamente a `$4.20` por la escala de volumen.
+6. **Protección de Confidencialidad de Precios ante Rol Cajero:** Cerrar sesión e ingresar como `cajero@caryvil.com` / `cajero123`. Abrir el catálogo de medicamentos y revisar la pestaña de compras, debes verificar que las columnas `Precio Bruto`, `% Desc.`, `Presentación Proveedor` y `Precio Neto` se encuentran totalmente ocultas.
+
+#### Casos Límite / Rutas de Excepción:
+1. **Modificación Sucesiva de Descuentos (No Acumulativo):** Con el usuario de compras, en una línea con Precio Bruto `$10.00`, ingresar `% Desc.` `10.0` (calcula `$9.00`). Luego cambiar a `20.0` (debe calcular `$8.00`, no `$7.20`) y finalmente a `0.0` (debe retornar a `$10.00`).
+2. **Validación de Rango de Descuento Comercial:** Ingresar valores como `150.0` o `-10.0`, el sistema acota el descuento entre `0.0` y `100.0%` sin generar precios negativos.
 
 
