@@ -14,6 +14,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 1.3: Aprovisionamiento de Infraestructura en Render con Terraform (SPEC-1.2.1)](#flujo-13-aprovisionamiento-de-infraestructura-en-render-con-terraform-spec-121)
   - [Flujo 1.4: Verificación de Variables de Entorno y Bloqueo de Secretos (SPEC-1.2.2)](#flujo-14-verificación-de-variables-de-entorno-y-bloqueo-de-secretos-spec-122)
   - [Flujo 1.5: Pipeline CI/CD con GitHub Actions y Despliegue Automático (SPEC-1.3.1)](#flujo-15-pipeline-cicd-con-github-actions-y-despliegue-automático-spec-131)
+  - [Flujo 2.1: Definición de Roles, Grupos de Seguridad y Herencia de Privilegios (SPEC-2.2.1)](#flujo-21-definición-de-roles-grupos-de-seguridad-y-herencia-de-privilegios-spec-221)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
@@ -78,14 +79,13 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 | **Puerto PostgreSQL** | `5432` |
 | **Contraseña Maestra de Odoo** | `admin_caryvil_secret_2026` |
 
-#### Matriz de Usuarios y Roles de Prueba:
+#### Matriz de Usuarios y Roles de Prueba (SPEC-2.2.1):
 
-| Rol de Usuario | Login / Correo | Contraseña | Alcance Operativo |
-|---|---|---|---|
-| **Administrador General** | `admin` | `admin` | Control total, instalación de addons y ajustes globales |
-| **Cajero / Mostrador** | `cajero@caryvil.com` | `cajero123` | Búsqueda rápida de clientes, venta en mostrador y facturación |
-| **Farmacéutico / Dispensador** | `farmaceutico@caryvil.com` | `farma123` | Consulta de existencias, dispensación FEFO y mermas |
-| **Encargado de Compras/Bodega** | `compras@caryvil.com` | `compras123` | Solicitudes de cotización, órdenes de compra y recepción de lotes |
+| Rol de Usuario | Grupo Técnico | Login / Correo | Contraseña | Alcance Operativo |
+|---|---|---|---|---|
+| **Administrador General / Propietaria** | `group_caryvil_manager` | `admin` o `admin_caryvil@caryvil.com` | `admin` o `admin123` | Control total, dashboard gerencial, anulación de transacciones y configuración |
+| **Encargado de Compras e Inventario** | `group_caryvil_inventory_purchases` | `compras@caryvil.com` | `compras123` | Órdenes de compra a laboratorios, recepción con lotes/vencimiento, catálogo y ajustes de existencias |
+| **Cajero / Dependiente de Mostrador** | `group_caryvil_cashier` | `cajero@caryvil.com` | `cajero123` | Punto de venta en mostrador, consulta de existencias/precios, registro de clientes y factura simple |
 
 ### 2.4. Instalación y Verificación del Módulo `caryvil_erp`
 1. Ingresar a [http://localhost:8069](http://localhost:8069) con el usuario `admin`.
@@ -278,6 +278,33 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 13. **Comprobar despliegue en Render Dashboard:**
     - Iniciar sesión en [dashboard.render.com](https://dashboard.render.com).
     - Verificar en la pestaña *Events* y *Logs* del Web Service que se haya iniciado y completado un nuevo despliegue con la última imagen generada.
+
+---
+
+### Flujo 2.1: Definición de Roles, Grupos de Seguridad y Herencia de Privilegios (SPEC-2.2.1)
+
+1. **Inspección de la Categoría y Grupos en el Gestor de Usuarios (UI):** Iniciar sesión con la cuenta de Administrador General (`admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`), activar el modo desarrollador (`?debug=1`), navegar a **Ajustes** -> **Usuarios y Compañías** -> **Grupos** (o filtrar por aplicación), buscar `Farmacia Caryvil`, debes ver la categoría de módulo `Farmacia Caryvil` (secuencia 10) conteniendo exactamente los tres roles definidos:
+   - `Cajero / Dependiente de Mostrador` (`group_caryvil_cashier`)
+   - `Encargado de Compras e Inventario` (`group_caryvil_inventory_purchases`)
+   - `Administrador / Propietario` (`group_caryvil_manager`)
+2. **Verificación del Rol Cajero / Dependiente de Mostrador (Escenario 1):** Cerrar sesión e ingresar con las credenciales del cajero (`cajero@caryvil.com` / `cajero123`):
+   - Acceder al menú principal **Farmacia Caryvil**: verificar que los menús disponibles son **Ventas y Caja**, **Medicamentos e Inventario** (solo consulta y venta) y **Clientes**.
+   - Comprobar que los menús **Compras y Proveedores**, **Configuración** y el **Dashboard** gerencial se encuentran totalmente ocultos e inaccesibles.
+   - Navegar a **Farmacia Caryvil** -> **Clientes**, presionar **Nuevo**, registrar un cliente de prueba con DUI y teléfono, debes comprobar que el guardado es exitoso (`perm_create = 1`, `perm_write = 1`), pero no se dispone de permisos para eliminar registros históricos de clientes.
+3. **Protección de Confidencialidad de Costos ante el Rol Cajero:** Con la sesión de cajero activa, abrir el catálogo de medicamentos y acceder a la ficha técnica de cualquier producto:
+   - Verificar que no se visualizan los costos de compra a laboratorios, precios de adquisición de proveedores ni los márgenes de ganancia.
+4. **Verificación del Rol Encargado de Compras e Inventario (Escenario 2):** Cerrar sesión e ingresar con las credenciales de compras e inventario (`compras@caryvil.com` / `compras123`):
+   - Acceder a **Farmacia Caryvil**: debes observar habilitados los menús **Compras y Proveedores**, **Medicamentos e Inventario** y **Clientes**, así como la herencia operativa del rol de mostrador/cajero.
+   - Navegar a **Compras y Proveedores** -> **Órdenes de Compra**, hacer clic en **Nuevo** y verificar la visibilidad de los campos de costos, descuentos comerciales y precios de proveedor.
+   - Acceder al albarán de recepción de mercadería y validar la captura de lotes y fechas de vencimiento.
+   - Verificar que no se tiene acceso al menú **Configuración** de la empresa ni a la eliminación o administración de cuentas de usuario en el ERP.
+5. **Verificación de Control Total del Rol Administrador / Propietaria (Escenario 3):** Cerrar sesión e iniciar sesión como Administrador General / Propietaria (`admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`):
+   - Verificar acceso integral irrestricto a todos los módulos: **Dashboard**, **Ventas y Caja**, **Medicamentos e Inventario**, **Compras y Proveedores**, **Clientes** y **Configuración**.
+   - Acceder a **Ajustes** -> **Usuarios y Compañías** -> **Usuarios**, abrir cualquier usuario y comprobar que la sección de permisos muestra el campo desplegable/selección para la categoría *Farmacia Caryvil* permitiendo promover o reasignar cualquiera de los 3 niveles funcionales.
+
+#### Casos Límite / Rutas de Excepción:
+1. **Comprobación de Herencia Transitiva en Cascada (*Implied Groups*):** En el formulario de edición de usuarios de Odoo (**Ajustes** -> **Usuarios y Compañías** -> **Usuarios**), crear un usuario temporal y asignarle el rol `Administrador / Propietario`. Al inspeccionar los grupos técnicos asignados, verificar que el usuario hereda automáticamente los grupos `group_caryvil_inventory_purchases`, `group_caryvil_cashier`, `stock.group_stock_manager`, `purchase.group_purchase_manager` y `sales_team.group_sale_manager` sin requerir marcación manual individual.
+2. **Bloqueo de Acceso Directo por URL a Vistas Restringidas:** Con la sesión iniciada como `cajero@caryvil.com`, intentar ingresar manualmente por URL a una acción de compras o configuración (ej. `http://localhost:8069/web#action=purchase.purchase_rfq`), debes ver que Odoo bloquea la carga de la vista y muestra una advertencia de permisos denegados (*AccessError*).
 
 ---
 
