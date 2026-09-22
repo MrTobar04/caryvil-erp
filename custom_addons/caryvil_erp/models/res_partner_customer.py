@@ -87,11 +87,26 @@ class ResPartnerCustomer(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            if not vals.get("name") and (vals.get("first_name") or vals.get("last_name")):
+                names = [vals.get("first_name") or "", vals.get("last_name") or ""]
+                full_name = " ".join(filter(None, names)).strip()
+                if full_name:
+                    vals["name"] = full_name
             if vals.get("is_pharmacy_customer") and not vals.get("ref"):
                 # Autogenerar código secuencial de cliente (CL0001, CL0002, etc.)
                 count = self.search_count([("is_pharmacy_customer", "=", True)]) + 1
                 vals["ref"] = f"CL{count:04d}"
         return super(ResPartnerCustomer, self).create(vals_list)
+
+    def write(self, vals):
+        if ("first_name" in vals or "last_name" in vals) and "name" not in vals:
+            for partner in self:
+                first = vals.get("first_name", partner.first_name) or ""
+                last = vals.get("last_name", partner.last_name) or ""
+                full_name = " ".join(filter(None, [first, last])).strip()
+                if full_name:
+                    vals["name"] = full_name
+        return super(ResPartnerCustomer, self).write(vals)
 
     @api.onchange("first_name", "last_name")
     def _onchange_names(self):

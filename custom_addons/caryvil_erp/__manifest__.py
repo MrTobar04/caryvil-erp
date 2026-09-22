@@ -21,6 +21,7 @@
         "base",
         "contacts",
         "stock",
+        "product_expiry",
         "purchase",
         "purchase_stock",
         "sale_management",
@@ -30,6 +31,7 @@
     "data": [
         "security/caryvil_security.xml",
         "security/ir.model.access.csv",
+        "security/caryvil_security_rules.xml",
         "data/company_data.xml",
         "data/tax_data.xml",
         "data/pharmacy_categories_data.xml",
