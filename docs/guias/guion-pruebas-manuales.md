@@ -308,6 +308,27 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 
 ---
 
+### Flujo 2.2: Reglas de Acceso Granular y Seguridad de Modelos (SPEC-2.2.2)
+
+1. **Intento de Eliminación de Medicamento por Rol Cajero (Escenario 1):** Iniciar sesión con la cuenta de Cajero (`cajero@caryvil.com` / `cajero123`), navegar a **Farmacia Caryvil** -> **Inventario y Medicamentos** -> **Medicamentos**:
+   - Abrir cualquier ficha técnica de medicamento (ej. `Paracetamol 500mg`).
+   - Hacer clic en el menú **Acción** (ícono de engranaje) en la parte superior del formulario.
+   - Comprobar que la opción **Suprimir / Eliminar** no se encuentra disponible, o al intentar eliminar un registro el sistema arroja una alerta bloqueante de permisos de acceso (*AccessError*).
+   - Iniciar sesión como Administrador (`admin` / `admin`) y verificar que la acción de eliminación sí está permitida para la gerencia.
+2. **Creación y Edición de Clientes en Mostrador vs Bloqueo de Eliminación (Escenario 2):** Con la sesión iniciada como `cajero@caryvil.com`:
+   - Navegar a **Farmacia Caryvil** -> **Clientes**, presionar el botón **Nuevo**.
+   - Registrar un paciente con nombres, apellidos, DUI válido (ej. `04589632-1`) y teléfono, presionar **Guardar**: debes verificar que el cliente se almacena correctamente (`perm_create = 1`).
+   - Modificar el número telefónico del cliente y presionar **Guardar**: debes comprobar que la edición se realiza sin restricciones (`perm_write = 1`).
+   - En la ficha del cliente, desplegar el menú **Acción**: debes verificar que la opción **Suprimir** se encuentra bloqueada impidiendo la eliminación del historial del cliente (`perm_unlink = 0`).
+3. **Inmutabilidad y Protección de Facturas Emitidas (Escenario 3):** Con la sesión de Administrador, emitir y validar/publicar una factura a consumidor final (`out_invoice` en estado `posted`).
+   - Iniciar sesión con el usuario de Cajero (`cajero@caryvil.com`).
+   - Abrir la factura emitida: verificar que los campos, líneas de detalle, cantidades y precios se encuentran bloqueados en modo solo lectura.
+   - Comprobar que el cajero puede consultar y reimprimir el ticket/factura, pero cualquier intento de alteración o anulación es rechazado por la regla de registro activa (`rule_caryvil_posted_invoices_readonly` / `rule_caryvil_invoices_cashier_write_draft`).
+4. **Protección de Órdenes de Venta Confirmadas y Albaranes Validados:**
+   - Como usuario de compras o cajero, intentar eliminar una orden de venta en estado `sale` (confirmada) o un albarán de recepción en estado `done` (validado): debes comprobar que el sistema bloquea la acción mediante la regla de registro de integridad histórica.
+
+---
+
 ### Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)
 
 1. **Acceso al Catálogo de Proveedores:** Iniciar sesión con la cuenta de Encargado de Compras e Inventario (`compras@caryvil.com` / `compras123`) o Administrador General (`admin` / `admin`), acceder al menú principal **Farmacia Caryvil**, hacer clic en el submenú **Compras y Proveedores** y seleccionar **Proveedores y Laboratorios**, debes ver la vista de lista con las columnas *Código*, *Nombre*, *Proveedor* y *Teléfono*, junto con el botón **Nuevo** en la barra superior.

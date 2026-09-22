@@ -122,10 +122,7 @@ def test_root_menu_xml_structure():
     root = tree.getroot()
 
     # Buscar menú raíz
-    root_menus = [
-        elem for elem in root.iter("menuitem")
-        if elem.get("id") == "menu_caryvil_root"
-    ]
+    root_menus = [elem for elem in root.iter("menuitem") if elem.get("id") == "menu_caryvil_root"]
     assert len(root_menus) == 1, "Debe existir exactamente un menú con id='menu_caryvil_root'"
     root_menu = root_menus[0]
 

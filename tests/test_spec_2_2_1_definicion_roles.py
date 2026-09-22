@@ -70,9 +70,9 @@ def test_security_xml_exists_and_in_manifest():
     assert os.path.isfile(SECURITY_XML_PATH), f"Falta el archivo {SECURITY_XML_PATH}"
     manifest = _load_manifest_dict()
     data_files = manifest.get("data", [])
-    assert "security/caryvil_security.xml" in data_files, (
-        "security/caryvil_security.xml debe estar declarado en data del manifiesto"
-    )
+    assert (
+        "security/caryvil_security.xml" in data_files
+    ), "security/caryvil_security.xml debe estar declarado en data del manifiesto"
     # Debe cargarse antes que ir.model.access.csv y vistas
     sec_index = data_files.index("security/caryvil_security.xml")
     if "security/ir.model.access.csv" in data_files:
@@ -215,4 +215,3 @@ def test_menu_security_restrictions():
     vendor_menus = {elem.get("id"): elem for elem in tree_vendor.findall(".//menuitem")}
     assert "menu_caryvil_proveedores" in vendor_menus
     assert vendor_menus["menu_caryvil_proveedores"].get("groups") == "caryvil_erp.group_caryvil_inventory_purchases"
-

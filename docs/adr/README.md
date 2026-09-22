@@ -23,6 +23,7 @@ Este directorio contiene los **Architecture Decision Records (ADR)** que formali
 | [ADR-0013](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0013-datos-semilla-operativos-y-lotes-de-demostracion.md) | Datos Semilla Operativos y Lotes de Demostración | `Accepted` | 2026-09-16 | `spec-10.2.1`, `spec-5.1.1`, `spec-6.1.1`, `spec-7.1.1`, `spec-7.2.1`, `spec-10.1.1` |
 | [ADR-0014](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0014-desacoplamiento-precio-bruto-y-gestion-descuentos-proveedores.md) | Desacoplamiento de Precio Bruto y Gestión de Descuentos en Catálogo de Proveedores | `Accepted` | 2026-09-20 | `spec-6.2.1`, `spec-6.1.1`, `spec-8.1.1` |
 | [ADR-0015](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0015-jerarquia-roles-y-grupos-seguridad-rbac.md) | Jerarquía de Roles de Usuario y Grupos de Seguridad RBAC en Farmacia Caryvil | `Accepted` | 2026-09-21 | `spec-2.2.1`, `spec-2.2.2` |
+| [ADR-0016](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0016-reglas-acceso-y-seguridad-a-nivel-de-modelo-y-registro.md) | Reglas de Acceso Granular y Seguridad a Nivel de Modelo y Registro en Farmacia Caryvil | `Accepted` | 2026-09-21 | `spec-2.2.2`, `spec-2.2.1` |
 
 
 

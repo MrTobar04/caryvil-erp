@@ -112,7 +112,7 @@ Definir y configurar de forma granular los permisos de lectura, escritura, creac
 * Registro de ambos archivos en el manifiesto `__manifest__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Archivo `ir.model.access.csv` configurado sin advertencias en la carga del módulo.
-* [ ] Reglas de registro `caryvil_security_rules.xml` activas y probadas.
-* [ ] Pruebas unitarias de denegación y autorización de acceso superadas al 100%.
-* [ ] Revisión de seguridad y permisos aprobada por el líder técnico.
+* [x] Archivo `ir.model.access.csv` configurado sin advertencias en la carga del módulo.
+* [x] Reglas de registro `caryvil_security_rules.xml` activas y probadas.
+* [x] Pruebas unitarias de denegación y autorización de acceso superadas al 100%.
+* [x] Revisión de seguridad y permisos aprobada por el líder técnico.
