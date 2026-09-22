@@ -12,7 +12,8 @@ def migrate(cr, version):
         return
 
     # 1. Renombrar XML IDs existentes de grupos en ir_model_data
-    cr.execute("""
+    cr.execute(
+        """
         UPDATE ir_model_data
         SET name = 'group_caryvil_cashier'
         WHERE module = 'caryvil_erp' AND name = 'group_caryvil_cajero';
@@ -24,10 +25,12 @@ def migrate(cr, version):
         UPDATE ir_model_data
         SET name = 'group_caryvil_manager'
         WHERE module = 'caryvil_erp' AND name = 'group_caryvil_admin';
-    """)
+    """
+    )
 
     # 2. Si el grupo ya existía en base de datos pero no estaba vinculado al nuevo ID, vincularlo
-    cr.execute("""
+    cr.execute(
+        """
         INSERT INTO ir_model_data (name, module, model, res_id, noupdate)
         SELECT 'group_caryvil_inventory_purchases', 'caryvil_erp', 'res.groups', g.id, false
         FROM res_groups g
@@ -60,4 +63,5 @@ def migrate(cr, version):
               WHERE module = 'caryvil_erp' AND name = 'group_caryvil_manager'
           )
         LIMIT 1;
-    """)
+    """
+    )

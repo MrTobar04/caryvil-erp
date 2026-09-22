@@ -20,44 +20,56 @@ class TestCaryvilSecurityRules(TransactionCase):
         self.group_manager = self.env.ref("caryvil_erp.group_caryvil_manager")
 
         # Usuarios de prueba para cada rol
-        self.user_cashier = self.env["res.users"].create({
-            "name": "Cajero Seguridad Test",
-            "login": "cashier_sec_test",
-            "email": "cashier_sec@caryvil.test",
-            "groups_id": [(6, 0, [self.group_cashier.id])],
-        })
+        self.user_cashier = self.env["res.users"].create(
+            {
+                "name": "Cajero Seguridad Test",
+                "login": "cashier_sec_test",
+                "email": "cashier_sec@caryvil.test",
+                "groups_id": [(6, 0, [self.group_cashier.id])],
+            }
+        )
 
-        self.user_inventory = self.env["res.users"].create({
-            "name": "Inventario Seguridad Test",
-            "login": "inv_sec_test",
-            "email": "inv_sec@caryvil.test",
-            "groups_id": [(6, 0, [self.group_inventory.id])],
-        })
+        self.user_inventory = self.env["res.users"].create(
+            {
+                "name": "Inventario Seguridad Test",
+                "login": "inv_sec_test",
+                "email": "inv_sec@caryvil.test",
+                "groups_id": [(6, 0, [self.group_inventory.id])],
+            }
+        )
 
-        self.user_manager = self.env["res.users"].create({
-            "name": "Manager Seguridad Test",
-            "login": "mgr_sec_test",
-            "email": "mgr_sec@caryvil.test",
-            "groups_id": [(6, 0, [self.group_manager.id])],
-        })
+        self.user_manager = self.env["res.users"].create(
+            {
+                "name": "Manager Seguridad Test",
+                "login": "mgr_sec_test",
+                "email": "mgr_sec@caryvil.test",
+                "groups_id": [(6, 0, [self.group_manager.id])],
+            }
+        )
 
         # Datos base de prueba
-        self.category = self.env["product.category"].create({
-            "name": "Categoría Test Seguridad",
-        })
+        self.category = self.env["product.category"].create(
+            {
+                "name": "Categoría Test Seguridad",
+            }
+        )
 
-        self.medicine = self.env["product.template"].create({
-            "name": "Paracetamol 500mg Test Sec",
-            "categ_id": self.category.id,
-            "type": "consu",
-            "list_price": 1.50,
-        })
+        self.medicine = self.env["product.template"].create(
+            {
+                "name": "Paracetamol 500mg Test Sec",
+                "categ_id": self.category.id,
+                "type": "consu",
+                "list_price": 1.50,
+            }
+        )
 
-        self.customer = self.env["res.partner"].create({
-            "name": "Cliente Test Seguridad",
-            "customer_rank": 1,
-            "dui": "01234567-8",
-        })
+        self.customer = self.env["res.partner"].create(
+            {
+                "name": "Cliente Test Seguridad",
+                "customer_rank": 1,
+                "dui": "01234567-8",
+            }
+        )
 
     def test_01_cashier_product_read_only_and_no_unlink(self):
         """Scenario 1: Cajero puede leer catálogo pero no puede crear, modificar ni eliminar productos."""
@@ -71,10 +83,12 @@ class TestCaryvilSecurityRules(TransactionCase):
 
         # Intento de creación -> AccessError
         with self.assertRaises(AccessError):
-            self.env["product.template"].with_user(self.user_cashier).create({
-                "name": "Amoxicilina 500mg No Autorizada",
-                "categ_id": self.category.id,
-            })
+            self.env["product.template"].with_user(self.user_cashier).create(
+                {
+                    "name": "Amoxicilina 500mg No Autorizada",
+                    "categ_id": self.category.id,
+                }
+            )
 
         # Intento de eliminación -> AccessError
         with self.assertRaises(AccessError):
@@ -83,11 +97,17 @@ class TestCaryvilSecurityRules(TransactionCase):
     def test_02_cashier_partner_create_edit_allowed_unlink_denied(self):
         """Scenario 2: Cajero puede crear y editar clientes en mostrador, pero no puede eliminarlos."""
         # Creación permitida
-        new_partner = self.env["res.partner"].with_user(self.user_cashier).create({
-            "name": "Nuevo Paciente Mostrador",
-            "dui": "09876543-2",
-            "customer_rank": 1,
-        })
+        new_partner = (
+            self.env["res.partner"]
+            .with_user(self.user_cashier)
+            .create(
+                {
+                    "name": "Nuevo Paciente Mostrador",
+                    "dui": "09876543-2",
+                    "customer_rank": 1,
+                }
+            )
+        )
         self.assertTrue(new_partner.id, "El cajero debe poder registrar nuevos clientes")
 
         # Modificación permitida
@@ -106,23 +126,33 @@ class TestCaryvilSecurityRules(TransactionCase):
         """Scenario 3: Cajero no puede modificar facturas en estado publicado (posted)."""
         journal = self.env["account.journal"].search([("type", "=", "sale")], limit=1)
         if not journal:
-            journal = self.env["account.journal"].create({
-                "name": "Ventas Test Sec",
-                "code": "VTSEC",
-                "type": "sale",
-            })
+            journal = self.env["account.journal"].create(
+                {
+                    "name": "Ventas Test Sec",
+                    "code": "VTSEC",
+                    "type": "sale",
+                }
+            )
 
         # Crear factura en borrador con usuario administrador
-        invoice = self.env["account.move"].create({
-            "partner_id": self.customer.id,
-            "move_type": "out_invoice",
-            "journal_id": journal.id,
-            "invoice_line_ids": [(0, 0, {
-                "name": "Venta Medicamento Test",
-                "quantity": 2,
-                "price_unit": 3.00,
-            })],
-        })
+        invoice = self.env["account.move"].create(
+            {
+                "partner_id": self.customer.id,
+                "move_type": "out_invoice",
+                "journal_id": journal.id,
+                "invoice_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "name": "Venta Medicamento Test",
+                            "quantity": 2,
+                            "price_unit": 3.00,
+                        },
+                    )
+                ],
+            }
+        )
 
         # Cajero puede leer la factura
         inv_cashier = invoice.with_user(self.user_cashier)
@@ -143,11 +173,17 @@ class TestCaryvilSecurityRules(TransactionCase):
     def test_04_inventory_product_crud_no_unlink(self):
         """Valida que el rol Inventario puede crear/editar productos pero no eliminarlos."""
         # Creación permitida
-        med_inv = self.env["product.template"].with_user(self.user_inventory).create({
-            "name": "Ibuprofeno 400mg Inv Test",
-            "categ_id": self.category.id,
-            "list_price": 0.80,
-        })
+        med_inv = (
+            self.env["product.template"]
+            .with_user(self.user_inventory)
+            .create(
+                {
+                    "name": "Ibuprofeno 400mg Inv Test",
+                    "categ_id": self.category.id,
+                    "list_price": 0.80,
+                }
+            )
+        )
         self.assertTrue(med_inv.id)
 
         # Modificación permitida
@@ -164,15 +200,19 @@ class TestCaryvilSecurityRules(TransactionCase):
 
     def test_05_sale_order_cashier_visibility_and_unlink_restriction(self):
         """Valida regla de ventas accesibles por cajero y restricción de eliminación en confirmadas."""
-        sale_order_other = self.env["sale.order"].create({
-            "partner_id": self.customer.id,
-            "user_id": self.user_inventory.id,
-        })
+        sale_order_other = self.env["sale.order"].create(
+            {
+                "partner_id": self.customer.id,
+                "user_id": self.user_inventory.id,
+            }
+        )
 
-        sale_order_own = self.env["sale.order"].create({
-            "partner_id": self.customer.id,
-            "user_id": self.user_cashier.id,
-        })
+        sale_order_own = self.env["sale.order"].create(
+            {
+                "partner_id": self.customer.id,
+                "user_id": self.user_cashier.id,
+            }
+        )
 
         # Cajero solo puede ver ventas asignadas a él o sin asignar
         visible_sales = self.env["sale.order"].with_user(self.user_cashier).search([])

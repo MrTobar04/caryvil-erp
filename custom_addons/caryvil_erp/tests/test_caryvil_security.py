@@ -20,26 +20,32 @@ class TestCaryvilSecurity(TransactionCase):
         self.group_manager = self.env.ref("caryvil_erp.group_caryvil_manager")
 
         # Usuarios de prueba para cada rol
-        self.user_cashier = self.env["res.users"].create({
-            "name": "Test Cajero Dependiente",
-            "login": "test_cashier_user",
-            "email": "test_cashier@caryvil.test",
-            "groups_id": [(6, 0, [self.group_cashier.id])],
-        })
+        self.user_cashier = self.env["res.users"].create(
+            {
+                "name": "Test Cajero Dependiente",
+                "login": "test_cashier_user",
+                "email": "test_cashier@caryvil.test",
+                "groups_id": [(6, 0, [self.group_cashier.id])],
+            }
+        )
 
-        self.user_inventory = self.env["res.users"].create({
-            "name": "Test Encargado Compras e Inventario",
-            "login": "test_inventory_user",
-            "email": "test_inventory@caryvil.test",
-            "groups_id": [(6, 0, [self.group_inventory.id])],
-        })
+        self.user_inventory = self.env["res.users"].create(
+            {
+                "name": "Test Encargado Compras e Inventario",
+                "login": "test_inventory_user",
+                "email": "test_inventory@caryvil.test",
+                "groups_id": [(6, 0, [self.group_inventory.id])],
+            }
+        )
 
-        self.user_manager = self.env["res.users"].create({
-            "name": "Test Administrador General",
-            "login": "test_manager_user",
-            "email": "test_manager@caryvil.test",
-            "groups_id": [(6, 0, [self.group_manager.id])],
-        })
+        self.user_manager = self.env["res.users"].create(
+            {
+                "name": "Test Administrador General",
+                "login": "test_manager_user",
+                "email": "test_manager@caryvil.test",
+                "groups_id": [(6, 0, [self.group_manager.id])],
+            }
+        )
 
     def test_01_security_category_definition(self):
         """Valida que la categoría de módulo exista con el nombre y secuencia configurados."""
