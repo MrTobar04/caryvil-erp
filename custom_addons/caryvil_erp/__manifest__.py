@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Farmacia Caryvil ERP",
-    "version": "17.0.1.0.0",
+    "version": "17.0.1.0.1",
     "category": "Pharmacy/ERP",
     "summary": "Sistema integral de gestión farmacéutica: Inventario, Ventas, Compras y Clientes",
     "description": """
