@@ -215,4 +215,3 @@ def test_menu_security_restrictions():
     vendor_menus = {elem.get("id"): elem for elem in tree_vendor.findall(".//menuitem")}
     assert "menu_caryvil_proveedores" in vendor_menus
     assert vendor_menus["menu_caryvil_proveedores"].get("groups") == "caryvil_erp.group_caryvil_inventory_purchases"
-

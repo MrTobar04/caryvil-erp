@@ -31,7 +31,10 @@ def migrate(cr, version):
         INSERT INTO ir_model_data (name, module, model, res_id, noupdate)
         SELECT 'group_caryvil_inventory_purchases', 'caryvil_erp', 'res.groups', g.id, false
         FROM res_groups g
-        WHERE (g.name->>'en_US' = 'Encargado de Compras e Inventario' OR g.name->>'es_ES' = 'Encargado de Compras e Inventario')
+        WHERE (
+            g.name->>'en_US' = 'Encargado de Compras e Inventario'
+            OR g.name->>'es_ES' = 'Encargado de Compras e Inventario'
+        )
           AND NOT EXISTS (
               SELECT 1 FROM ir_model_data
               WHERE module = 'caryvil_erp' AND name = 'group_caryvil_inventory_purchases'
