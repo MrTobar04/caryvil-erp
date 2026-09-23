@@ -124,6 +124,7 @@
                   name="Proveedores y Laboratorios"
                   parent="menu_caryvil_compras"
                   action="action_res_partner_vendor"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"
                   sequence="10"/>
 
         <!-- ================================================================ -->

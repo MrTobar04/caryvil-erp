@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Regla: Cajero solo puede ver ventas de su propia sesión/usuario o activas sin asignar -->
+        <record id="rule_caryvil_sale_order_cashier" model="ir.rule">
+            <field name="name">Ventas accesibles por Cajero</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="groups" eval="[(4, ref('caryvil_erp.group_caryvil_cashier'))]"/>
+            <field name="domain_force">['|', ('user_id', '=', user.id), ('user_id', '=', False)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Regla: Impedir anulación o eliminación de facturas publicadas para no administradores (SPEC-2.2.2) -->
+        <record id="rule_caryvil_posted_invoices_readonly" model="ir.rule">
+            <field name="name">Facturas Publicadas Solo Lectura para Cajeros</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="groups" eval="[(4, ref('caryvil_erp.group_caryvil_cashier'))]"/>
+            <field name="domain_force">[('state', '=', 'posted')]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Regla: Cajeros solo pueden editar facturas en estado borrador o cancelado -->
+        <record id="rule_caryvil_invoices_cashier_write_draft" model="ir.rule">
+            <field name="name">Facturas: Cajeros solo modifican facturas en borrador</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="groups" eval="[(4, ref('caryvil_erp.group_caryvil_cashier'))]"/>
+            <field name="domain_force">[('state', 'in', ['draft', 'cancel'])]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Regla: Bloquear eliminación de órdenes de venta confirmadas para no administradores -->
+        <record id="rule_caryvil_sale_order_unlink_draft_only" model="ir.rule">
+            <field name="name">Órdenes de Venta: Prohibir eliminar confirmadas a no administradores</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="groups" eval="[(4, ref('caryvil_erp.group_caryvil_cashier')), (4, ref('caryvil_erp.group_caryvil_inventory_purchases'))]"/>
+            <field name="domain_force">[('state', 'in', ['draft', 'cancel'])]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Regla: Bloquear eliminación de albaranes validados (done) para personal de inventario -->
+        <record id="rule_caryvil_stock_picking_unlink_non_done" model="ir.rule">
+            <field name="name">Albaranes: Prohibir eliminar albaranes validados a no administradores</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="groups" eval="[(4, ref('caryvil_erp.group_caryvil_inventory_purchases'))]"/>
+            <field name="domain_force">[('state', '!=', 'done')]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+</odoo>

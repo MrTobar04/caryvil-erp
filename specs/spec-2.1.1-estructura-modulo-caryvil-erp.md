@@ -142,8 +142,9 @@ Definir, estructurar y crear el andamiaje (*scaffolding*) del módulo personaliz
 * Archivo de icono `custom_addons/caryvil_erp/static/description/icon.png`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Estructura de carpetas y archivos base creada bajo estándares Odoo.
-* [ ] Manifiesto `__manifest__.py` configurado con todas las dependencias requeridas.
-* [ ] Instalación y desinstalación del módulo verificada en Odoo sin errores en logs.
-* [ ] Menú raíz de Farmacia Caryvil visible en el backend.
-* [ ] Revisión de código completada y fusionada en la rama principal.
+* [x] Estructura de carpetas y archivos base creada bajo estándares Odoo.
+* [x] Manifiesto `__manifest__.py` configurado con todas las dependencias requeridas.
+* [x] Instalación y desinstalación del módulo verificada en Odoo sin errores en logs.
+* [x] Menú raíz de Farmacia Caryvil visible en el backend.
+* [x] Revisión de código completada y fusionada en la rama principal.
+

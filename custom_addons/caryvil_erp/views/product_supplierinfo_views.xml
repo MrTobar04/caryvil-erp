@@ -22,7 +22,7 @@
                 <!-- Presentación del medicamento según catálogo del laboratorio -->
                 <field name="product_code" position="after">
                     <field name="product_presentation" optional="show"
-                           groups="caryvil_erp.group_caryvil_compras_inventario"/>
+                           groups="caryvil_erp.group_caryvil_inventory_purchases"/>
                 </field>
 
                 <!-- Forzar visibilidad de Cantidad Mínima para escalas de volumen -->
@@ -33,15 +33,15 @@
                 <!-- Precio Bruto y % Descuento antes del Precio Neto de Costo -->
                 <field name="price" position="before">
                     <field name="gross_price" optional="show" string="Precio Bruto"
-                           groups="caryvil_erp.group_caryvil_compras_inventario"/>
+                           groups="caryvil_erp.group_caryvil_inventory_purchases"/>
                     <field name="discount_percentage" optional="show" string="% Desc."
-                           groups="caryvil_erp.group_caryvil_compras_inventario"/>
+                           groups="caryvil_erp.group_caryvil_inventory_purchases"/>
                 </field>
 
                 <!-- Proteger Precio Neto de compra ante usuarios no autorizados -->
                 <field name="price" position="attributes">
                     <attribute name="string">Precio Neto</attribute>
-                    <attribute name="groups">caryvil_erp.group_caryvil_compras_inventario</attribute>
+                    <attribute name="groups">caryvil_erp.group_caryvil_inventory_purchases</attribute>
                 </field>
             </field>
         </record>
