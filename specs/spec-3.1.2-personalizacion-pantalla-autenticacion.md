@@ -1,35 +1,35 @@
 # SPEC-3.1.2: Personalización de Pantalla de Autenticación
 
 ## 1. Objective
-Personalizar visual y estructuralmente la pantalla de inicio de sesión (*Login*) de Odoo para Farmacia Caryvil mediante la sobreescritura de la plantilla QWeb `web.login`. Esta especificación proporciona una interfaz de bienvenida corporativa, moderna y limpia que proyecta la identidad institucional de la farmacia, incorporando el logotipo oficial, mensaje descriptivo de la sucursal de Soyapango, formulario estilizado y pie de página institucional.
+Personalizar visual y estructuralmente la pantalla de inicio de sesión (*Login*) de Odoo para Farmacia Caryvil mediante la sobreescritura de la plantilla QWeb `web.login`, alineándola con la identidad visual corporativa definida en los mockups del sistema (`docs/mockups/`). Esta especificación proporciona una interfaz de bienvenida profesional, moderna y sobria que combina el azul marino corporativo (`#002B49`), una tarjeta de acceso minimalista con bordes redondeados y sombra suave, el distintivo institucional de la farmacia en Soyapango y el botón de acción principal en color verde salud (`#28A745`).
 
 ## 2. Scope
 ### 2.1. Included
 * Creación del archivo de vista XML `custom_addons/caryvil_erp/views/web_login_templates.xml` extendiendo la plantilla `web.login`.
-* Creación de los estilos asociados en `custom_addons/caryvil_erp/static/src/scss/custom_login.scss` vinculado a `web.assets_frontend`.
-* Integración del logotipo principal de Farmacia Caryvil en alta resolución sobre la tarjeta de autenticación.
-* Inclusión del subtítulo institucional: "Sistema Integral de Gestión ERP • Farmacia Caryvil • Soyapango".
-* Personalización de los campos de entrada (*inputs*) de correo/usuario y contraseña con iconos descriptivos, foco resaltado en azul corporativo y botón de ingreso en verde institucional.
-* Inclusión de pie de página discreto con créditos de la Universidad Don Bosco (UDB) y aviso de confidencialidad.
+* Creación de los estilos asociados en `custom_addons/caryvil_erp/static/src/scss/custom_login.scss` vinculado al bundle `web.assets_frontend`.
+* Integración del encabezado corporativo con el logotipo/isotipo oficial y el identificador de marca "ERP FARMACIA • Farmacia Caryvil".
+* Inclusión del subtítulo institucional descriptivo: "Sistema de Gestión ERP • Sucursal Soyapango".
+* Personalización de los campos de entrada (*inputs*) de correo electrónico y contraseña con borde activo en azul marino (`#002B49`) / cian (`#38B6FF`) y botón de inicio de sesión en verde vibrante (`#28A745` / `#22C55E`).
+* Inclusión de pie de página discreto con créditos institucionales y aviso de confidencialidad de la farmacia.
 
 ### 2.2. Not Included (Out of Scope)
-* Mecanismos de autenticación federada o single sign-on (SSO/OAuth) (fuera de alcance del proyecto).
+* Mecanismos de autenticación federada o Single Sign-On (SSO/OAuth) (fuera de alcance del proyecto).
 * Personalización de la interfaz backend post-login (cubierto en `SPEC-3.1.1` y `SPEC-3.2.1`).
 
 ## 3. Context and Restrictions
-* **Context:** Es el primer punto de contacto visual para los usuarios (propietaria, cajeros y encargados de compras) al ingresar al sistema desde cualquier dispositivo en la farmacia o de forma remota.
+* **Context:** Es el primer punto de contacto visual para los usuarios (propietaria, cajeros y encargados de inventario/compras) al ingresar al sistema desde computadoras de mostrador o de forma remota.
 * **Restrictions:**
-  * Debe mantener intacta la lógica de seguridad CSRF y el flujo de autenticación nativo de Odoo (`/web/login`).
-  * Debe ser completamente responsivo, adaptándose con elegancia tanto a pantallas móviles como a monitores de escritorio.
-  * No debe depender de CDNs externos para permitir arranque rápido en redes locales o con baja latencia.
+  * Mantener intacta la lógica de seguridad CSRF y el controlador nativo de autenticación de Odoo (`/web/login`).
+  * Diseño completamente responsivo adaptado tanto a pantallas de escritorio como a dispositivos móviles o terminales compactas.
+  * Sin dependencias de CDNs externos para permitir una carga instantánea y autónoma.
 
 ## 4. Dependencias y Definición de Preparación (DoR)
 * **Dependencias Previas:**
   * `SPEC-2.1.1` (Estructura del Módulo Personalizado caryvil_erp).
   * `SPEC-3.1.1` (Personalización de Marca y Tema Visual).
 * **Definition of Ready (DoR):**
-  * [x] Logotipo oficial en alta resolución optimizado para fondos claros/oscuros.
-  * [x] Prototipo de pantalla de login en Figma validado.
+  * [x] Identidad de marca y colores institucionales extraídos de los mockups de diseño (`docs/mockups/`).
+  * [x] Logotipo y gráficos vectoriales preparados para fondo claro.
 
 ## 5. Design (Implementation Details)
 * **Template Extension (`views/web_login_templates.xml`):**
@@ -38,18 +38,18 @@ Personalizar visual y estructuralmente la pantalla de inicio de sesión (*Login*
   <odoo>
       <template id="caryvil_web_login" inherit_id="web.login" name="Farmacia Caryvil Login">
           <xpath expr="//div[hasclass('card-body')]" position="before">
-              <div class="text-center py-3 caryvil-login-header">
+              <div class="text-center py-4 caryvil-login-header">
                   <img src="/caryvil_erp/static/src/img/caryvil_logo_full.png" 
                        alt="Farmacia Caryvil" 
                        class="img-fluid caryvil-login-logo mb-2" 
-                       style="max-height: 80px;"/>
-                  <h4 class="fw-bold text-primary mb-1">Farmacia Caryvil</h4>
-                  <p class="text-muted small mb-0">Sistema de Gestión Farmacéutica • Soyapango</p>
+                       style="max-height: 75px;"/>
+                  <h3 class="fw-bold mb-1" style="color: #002B49; letter-spacing: 0.5px;">ERP FARMACIA</h3>
+                  <p class="text-muted small mb-0">Farmacia Caryvil • Soyapango</p>
               </div>
           </xpath>
           <xpath expr="//div[hasclass('card-body')]" position="after">
-              <div class="text-center py-2 text-muted small border-top">
-                  <span>© 2026 Farmacia Caryvil • Universidad Don Bosco</span>
+              <div class="text-center py-3 text-muted small border-top bg-light">
+                  <span>© 2026 Farmacia Caryvil • Todos los derechos reservados</span>
               </div>
           </xpath>
       </template>
@@ -58,7 +58,7 @@ Personalizar visual y estructuralmente la pantalla de inicio de sesión (*Login*
 * **Styles (`static/src/scss/custom_login.scss`):**
   ```scss
   body.o_home_menu_background, .oe_website_login_container {
-      background: linear-gradient(135deg, #EBF3FB 0%, #D8EAF8 100%) !important;
+      background: linear-gradient(135deg, #F0F4F8 0%, #D9E4EC 100%) !important;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -66,65 +66,72 @@ Personalizar visual y estructuralmente la pantalla de inicio de sesión (*Login*
   }
 
   .card.oe_login_form {
-      border: none !important;
+      border: 1px solid #E5E7EB !important;
       border-radius: 12px !important;
-      box-shadow: 0 10px 25px rgba(0, 64, 133, 0.12) !important;
+      box-shadow: 0 12px 30px rgba(0, 43, 73, 0.1) !important;
+      background-color: #FFFFFF !important;
       overflow: hidden;
       max-width: 420px;
       width: 100%;
   }
 
-  .btn-primary.btn-block {
-      background-color: #198754 !important;
-      border-color: #198754 !important;
+  .form-control:focus {
+      border-color: #38B6FF !important;
+      box-shadow: 0 0 0 0.2rem rgba(56, 182, 255, 0.25) !important;
+  }
+
+  .btn-primary.btn-block, button[type="submit"] {
+      background-color: #28A745 !important;
+      border-color: #28A745 !important;
+      color: #FFFFFF !important;
       font-size: 1rem;
       padding: 10px 0;
       font-weight: 600;
-      border-radius: 6px;
+      border-radius: 8px;
+      transition: background-color 0.2s ease-in-out;
+      
       &:hover {
-          background-color: #146c43 !important;
+          background-color: #218838 !important;
+          border-color: #1e7e34 !important;
       }
   }
   ```
 
 ## 6. Acceptance Criteria
-* **Scenario 1: Acceso a la ruta `/web/login`**
-  * **Given** Un usuario navegando a la URL del ERP `http://localhost:8069/web/login`.
-  * **When** La página carga completamente.
-  * **Then** Debe mostrarse la tarjeta de inicio de sesión con el logotipo oficial de Farmacia Caryvil, el subtítulo de Soyapango y el degradado azul suave de fondo.
+* **Scenario 1: Despliegue de la interfaz de autenticación corporativa**
+  * **Given** Un usuario ingresando a la URL `/web/login`.
+  * **When** La página se renderiza.
+  * **Then** La tarjeta de inicio de sesión debe mostrar el encabezado "ERP FARMACIA", el subtítulo "Farmacia Caryvil • Soyapango", los campos estilizados y el botón de acceso en verde institucional (`#28A745`).
 * **Scenario 2: Autenticación exitosa con credenciales válidas**
-  * **Given** Un usuario ingresando su correo y contraseña correctos.
-  * **When** Hace clic en el botón "Iniciar Sesión" (color verde).
-  * **Then** El sistema debe autenticar la sesión, validar el token CSRF y redirigir al usuario al backend de Odoo.
-* **Scenario 3: Manejo de errores con credenciales inválidas**
-  * **Given** Un usuario ingresando una contraseña incorrecta.
-  * **When** Presiona ingresar.
-  * **Then** La pantalla debe mostrar el mensaje de alerta nativo de Odoo "Contraseña/Usuario incorrecto" con formato estilizado sin romper el layout corporativo.
+  * **Given** Un usuario digitando su usuario y contraseña autorizados.
+  * **When** Presiona el botón verde de inicio de sesión.
+  * **Then** Odoo valida el token CSRF, inicia la sesión y redirige al dashboard o módulo asignado según su rol.
+* **Scenario 3: Despliegue de errores ante credenciales incorrectas**
+  * **Given** Un intento de inicio de sesión con datos erróneos.
+  * **When** Se procesa la petición.
+  * **Then** Se muestra la notificación de error en un contenedor alert estilizado sin desconfigurar el diseño centrado de la tarjeta.
 
 ## 7. Verification Plan
 * **Automated Tests:**
-  * Prueba de renderizado de la plantilla XML en el test suite de Odoo (`test_web_login_render`).
+  * Test de renderizado de la plantilla QWeb en el suite de pruebas de Odoo.
 * **Manual Verification:**
-  * Abrir la pantalla de login en modo incógnito desde desktop y dispositivo móvil.
-  * Validar la correcta carga de imágenes y estilos sin advertencias en la consola del navegador.
+  * Abrir la pantalla de login en navegadores de escritorio y móviles para verificar alineación, proporciones del logotipo y contraste visual.
 
 ## 8. Security and Privacy
-* Preservación del campo oculto `csrf_token` generado por el controlador web de Odoo.
-* Protección contra visualización de contraseñas mediante campos de tipo `password`.
+* Preservación estricta de las medidas de seguridad nativas de Odoo contra ataques de falsificación de peticiones (CSRF) y fuerza bruta.
 
 ## 9. Risks and Mitigation
-* **Risk:** Ruptura visual del login en pantallas de baja resolución (smartphones o POS compactos).
-  * **Mitigation:** Uso de clases responsivas de Bootstrap (`img-fluid`, `max-width: 420px`) y contenedor flexible centrado.
+* **Risk:** Superposición de estilos al actualizar dependencias del framework web.
+  * **Mitigation:** Uso de selectores SCSS específicos de `oe_login_form` sin modificar el árbol DOM nativo de campos de formulario.
 
 ## 10. Deliverables & Config as Code
 * Archivo `custom_addons/caryvil_erp/views/web_login_templates.xml`.
 * Archivo `custom_addons/caryvil_erp/static/src/scss/custom_login.scss`.
-* Archivo de imagen `custom_addons/caryvil_erp/static/src/img/caryvil_logo_full.png`.
 * Declaración del bundle `web.assets_frontend` en `__manifest__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Plantilla XML `web_login_templates.xml` extendida e integrada en el manifiesto.
-* [ ] Hoja de estilos `custom_login.scss` aplicada y verificada.
-* [ ] Imagen del logotipo visible y escalada correctamente.
-* [ ] Flujo de autenticación y manejo de errores de credenciales probado.
-* [ ] Aprobación de diseño UI/UX confirmada.
+* [ ] Plantilla XML `web_login_templates.xml` implementada y enlazada.
+* [ ] Hoja de estilos `custom_login.scss` registrada y probada.
+* [ ] Encabezado corporativo "ERP FARMACIA" y botón verde renderizados.
+* [ ] Validación de accesibilidad y funcionamiento de login completada.
+

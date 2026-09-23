@@ -29,6 +29,7 @@
             <field name="name">Administrador / Propietario</field>
             <field name="category_id" ref="module_category_caryvil_erp"/>
             <field name="implied_ids" eval="[(4, ref('group_caryvil_inventory_purchases')), (4, ref('stock.group_stock_manager')), (4, ref('purchase.group_purchase_manager')), (4, ref('sales_team.group_sale_manager'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
             <field name="comment">Acceso total al sistema, configuraciones, costos y dashboard analítico.</field>
         </record>
     </data>

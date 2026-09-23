@@ -1,29 +1,1471 @@
-// Farmacia Caryvil - Custom Theme Tokens & Style System
+// =============================================================================
+// Farmacia Caryvil ERP — Custom Theme & Brand System
+// SPEC-3.1.1: Personalización de Marca y Tema Visual
+// Odoo 17 / Bootstrap 5 / SCSS
+// =============================================================================
+// Fuente de verdad: docs/mockups/caryvil-design.md
+// Paleta derivada de los mockups oficiales aprobados.
+// =============================================================================
 
+// -----------------------------------------------------------------------------
+// 1. TIPOGRAFÍA INSTITUCIONAL
+//    Pila tipográfica sans-serif con preferencia Inter y fallbacks nativos del sistema.
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// 2. TOKENS DE DISEÑO INSTITUCIONALES — CSS Custom Properties en :root
+// -----------------------------------------------------------------------------
 :root {
-  --caryvil-primary: #0284c7;
-  --caryvil-primary-dark: #0369a1;
-  --caryvil-primary-light: #e0f2fe;
-  --caryvil-secondary: #0d9488;
-  --caryvil-accent: #f59e0b;
-  --caryvil-danger: #ef4444;
-  --caryvil-success: #10b981;
-  --caryvil-warning: #f59e0b;
-  --caryvil-bg-app: #f8fafc;
-  --caryvil-surface: #ffffff;
-  --caryvil-border: #e2e8f0;
-  --caryvil-text-main: #0f172a;
-  --caryvil-text-muted: #64748b;
+    // ── Paleta Institucional: Sidebar ──────────────────────────────────────
+    --caryvil-sidebar-bg:           #002B49;
+    --caryvil-sidebar-hover:        #003861;
+    --caryvil-sidebar-active:       #38B6FF;
+    --caryvil-sidebar-text:         rgba(255, 255, 255, 0.85);
+    --caryvil-sidebar-text-active:  #38B6FF;
+    --caryvil-sidebar-width:        240px;
+
+    // ── Paleta Institucional: Topbar ───────────────────────────────────────
+    --caryvil-topbar-bg:            #5C6F84;
+    --caryvil-topbar-height:        60px;
+    --caryvil-topbar-text:          #FFFFFF;
+
+    // ── Paleta Institucional: Acciones ────────────────────────────────────
+    --caryvil-primary-green:        #1E7A3A;   // Verde salud WCAG-AA (ratio > 4.5:1 vs blanco)
+    --caryvil-primary-green-hover:  #166130;   // Hover verde WCAG-AA
+    --caryvil-primary-green-active: #0F4D25;   // Active verde WCAG-AA
+    --caryvil-accent-cyan:          #38B6FF;
+    --caryvil-accent-blue:          #0369A1;   // Azul accion WCAG-AA (ratio > 4.5:1 vs blanco)
+    --caryvil-accent-blue-hover:    #025585;
+
+    // ── Fondos y Superficies ───────────────────────────────────────────────
+    --caryvil-surface-bg:           #F8F9FA;
+    --caryvil-card-bg:              #FFFFFF;
+    --caryvil-card-border:          #E5E7EB;
+    --caryvil-card-shadow:          0 4px 12px rgba(0, 0, 0, 0.03);
+    --caryvil-card-radius:          12px;
+    --caryvil-input-bg:             #E9ECEF;
+    --caryvil-table-header-bg:      #F3F4F6;
+
+    // ── Tipografía y Textos ────────────────────────────────────────────────
+    --caryvil-font-family:          'Inter', -apple-system, BlinkMacSystemFont,
+                                    'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --caryvil-text-main:            #212529;
+    --caryvil-text-body:            #1F2937;
+    --caryvil-text-heading:         #111827;
+    --caryvil-text-muted:           #6C757D;
+    --caryvil-text-subtle:          #9CA3AF;
+    --caryvil-text-table-header:    #374151;
+    --caryvil-text-light:           #FFFFFF;
+
+    // ── Badges y Estados Semánticos ───────────────────────────────────────
+    --caryvil-badge-low-stock-bg:     #FEF3C7;
+    --caryvil-badge-low-stock-text:   #B45309;
+    --caryvil-badge-low-stock-border: #FDE68A;
+    --caryvil-badge-expiring-bg:      #FEE2E2;
+    --caryvil-badge-expiring-text:    #B91C1C;   // Rojo WCAG-AA (ratio > 4.5:1 vs #FEE2E2)
+    --caryvil-badge-expiring-border:  #FECACA;
+    --caryvil-badge-ok-bg:            #DCFCE7;
+    --caryvil-badge-ok-text:          #15803D;
+    --caryvil-badge-ok-border:        #BBF7D0;
+    --caryvil-badge-damaged-bg:       #E2E3E5;
+    --caryvil-badge-damaged-text:     #383D41;
+    --caryvil-badge-damaged-border:   #D6D8DB;
+
+    // ── Sobreescritura de Variables Nativas de Odoo 17 ────────────────────
+    --o-brand-primary:              var(--caryvil-primary-green);
+    --o-brand-odoo:                 var(--caryvil-sidebar-bg);
+    --o-action-color:               var(--caryvil-primary-green);
+    --o-navbar-bg:                  var(--caryvil-sidebar-bg);
+    --o-navbar-color:               var(--caryvil-text-light);
+    --o-control-panel-bg:           var(--caryvil-topbar-bg);
+    --o-control-panel-color:        var(--caryvil-topbar-text);
+    --bs-primary:                   var(--caryvil-primary-green);
+    --bs-primary-rgb:               30, 122, 58;
+    --bs-link-color:                var(--caryvil-accent-blue);
+    --bs-link-hover-color:          var(--caryvil-accent-blue-hover);
+    --bs-nav-link-color:            #495057;
+    --bs-nav-link-hover-color:      var(--caryvil-sidebar-bg);
+    --bs-nav-tabs-link-active-color: var(--caryvil-sidebar-bg);
+    --bs-nav-tabs-link-active-border-color: var(--caryvil-card-border) var(--caryvil-card-border) #FFFFFF;
+    --o-stat-text-color:            var(--caryvil-sidebar-bg);
+    --o-stat-button-color:          var(--caryvil-accent-blue);
+    --bs-btn-disabled-color:        rgba(255, 255, 255, 0.85);
 }
 
+// -----------------------------------------------------------------------------
+// 3. TIPOGRAFÍA GLOBAL
+// -----------------------------------------------------------------------------
+body,
+.o_web_client,
+.o_action_manager,
+.o_view_controller {
+    font-family: var(--caryvil-font-family) !important;
+    color: var(--caryvil-text-main);
+    background-color: var(--caryvil-surface-bg);
+}
+
+// -----------------------------------------------------------------------------
+// 4. BARRA LATERAL DE NAVEGACIÓN (SIDEBAR) — Odoo 17
+// -----------------------------------------------------------------------------
 .o_main_navbar {
-  border-bottom: 2px solid var(--caryvil-primary) !important;
+    background-color: var(--caryvil-sidebar-bg) !important;
+    border-bottom: none !important;
+    height: var(--caryvil-topbar-height);
+    min-height: var(--caryvil-topbar-height);
+    color: var(--caryvil-text-light) !important;
+
+    // Marca Institucional
+    .o_menu_brand {
+        color: var(--caryvil-text-light) !important;
+        font-family: var(--caryvil-font-family) !important;
+        font-weight: 700 !important;
+        font-size: 1.15rem !important;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 0 1rem;
+
+        &:hover {
+            color: var(--caryvil-sidebar-active) !important;
+        }
+    }
+
+    // Botón de aplicaciones / menú hamburguesa
+    .o_navbar_apps_menu button,
+    .o_navbar_apps_menu .dropdown-toggle {
+        color: var(--caryvil-text-light) !important;
+        background-color: transparent !important;
+        border: none !important;
+
+        &:hover,
+        &:focus {
+            background-color: var(--caryvil-sidebar-hover) !important;
+        }
+    }
+
+    // Secciones de Menú Superior (Medicamentos e Inventario, Compras, etc.)
+    // Elimina el fondo morado (#714B67) heredado de Odoo Community
+    .o_menu_sections {
+        background-color: var(--caryvil-sidebar-bg) !important;
+        border: none !important;
+
+        button,
+        a,
+        .dropdown-toggle,
+        .o_nav_entry {
+            background-color: transparent !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-family: var(--caryvil-font-family) !important;
+            font-weight: 500 !important;
+            font-size: 0.9375rem !important;
+            padding: 0.6rem 1rem !important;
+            border: none !important;
+            border-radius: 4px !important;
+            box-shadow: none !important;
+            transition: all 0.15s ease-in-out;
+
+            &:hover,
+            &:focus,
+            &[aria-expanded="true"] {
+                background-color: var(--caryvil-sidebar-hover) !important;
+                color: var(--caryvil-text-light) !important;
+            }
+
+            &.active,
+            &.o_active {
+                color: var(--caryvil-sidebar-active) !important;
+                background-color: rgba(56, 182, 255, 0.12) !important;
+                font-weight: 700 !important;
+            }
+        }
+
+        // Submenús desplegables (dropdown-menu)
+        .dropdown-menu {
+            background-color: var(--caryvil-card-bg) !important;
+            border: 1px solid var(--caryvil-card-border) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 8px 24px rgba(0, 43, 73, 0.15) !important;
+            padding: 0.5rem 0 !important;
+
+            .dropdown-item {
+                color: var(--caryvil-text-main) !important;
+                font-weight: 500 !important;
+                padding: 0.5rem 1.25rem !important;
+
+                &:hover,
+                &:focus {
+                    background-color: var(--caryvil-surface-bg) !important;
+                    color: var(--caryvil-primary-green) !important;
+                }
+
+                &.active,
+                &:active {
+                    background-color: var(--caryvil-primary-green) !important;
+                    color: #FFFFFF !important;
+                }
+            }
+        }
+    }
+
+    .o_nav_entry {
+        color: var(--caryvil-sidebar-text) !important;
+        font-weight: 500;
+        border-radius: 6px;
+
+        &:hover,
+        &:focus {
+            background-color: var(--caryvil-sidebar-hover) !important;
+            color: var(--caryvil-text-light) !important;
+        }
+
+        &.active,
+        &.o_active {
+            color: var(--caryvil-sidebar-active) !important;
+            font-weight: 700;
+        }
+    }
+
+    .o_notification_icon,
+    .o_mail_messaging_menu_icon {
+        color: var(--caryvil-text-light) !important;
+    }
+
+    .o_user_menu {
+        color: var(--caryvil-text-light) !important;
+
+        .o_user_menu_button {
+            color: var(--caryvil-text-light) !important;
+        }
+    }
 }
 
-.caryvil_badge_fefo {
-  background-color: var(--caryvil-primary-light);
-  color: var(--caryvil-primary-dark);
-  font-weight: 600;
-  border-radius: 4px;
-  padding: 2px 6px;
+.o_action_manager + .o_apps,
+.o_app_navigation,
+.o_sidebar {
+    background-color: var(--caryvil-sidebar-bg) !important;
+    width: var(--caryvil-sidebar-width) !important;
+    min-width: var(--caryvil-sidebar-width) !important;
 }
+
+.o_menu_sections,
+.o_nav_section {
+    background-color: var(--caryvil-sidebar-bg) !important;
+
+    .o_nav_entry {
+        color: var(--caryvil-sidebar-text);
+        font-weight: 500;
+        font-size: 0.9375rem;
+        padding: 0.6rem 1rem;
+        border-radius: 0;
+        position: relative;
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            background-color: var(--caryvil-sidebar-hover) !important;
+            color: var(--caryvil-text-light) !important;
+        }
+
+        &.active,
+        &[aria-current="page"],
+        &.o_active {
+            color: var(--caryvil-sidebar-active) !important;
+            background-color: rgba(56, 182, 255, 0.08) !important;
+            font-weight: 700;
+
+            &::after {
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 15%;
+                height: 70%;
+                width: 4px;
+                background-color: var(--caryvil-sidebar-active);
+                border-radius: 2px 0 0 2px;
+            }
+        }
+    }
+}
+
+.caryvil-sidebar {
+    background-color: var(--caryvil-sidebar-bg) !important;
+    font-family: var(--caryvil-font-family);
+
+    .brand-title {
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: var(--caryvil-text-light);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 1.25rem 1rem;
+        display: block;
+    }
+
+    .nav-item {
+        color: var(--caryvil-sidebar-text);
+        font-weight: 500;
+        font-size: 0.9375rem;
+        padding: 0.6rem 1rem;
+        position: relative;
+        transition: all 0.15s ease-in-out;
+
+        &:hover {
+            background-color: var(--caryvil-sidebar-hover);
+            color: var(--caryvil-text-light);
+        }
+
+        &.active {
+            color: var(--caryvil-sidebar-active) !important;
+            background-color: rgba(56, 182, 255, 0.08);
+            font-weight: 700;
+
+            &::after {
+                content: "";
+                position: absolute;
+                right: 0;
+                top: 15%;
+                height: 70%;
+                width: 4px;
+                background-color: var(--caryvil-sidebar-active);
+                border-radius: 2px 0 0 2px;
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 5. BARRA SUPERIOR DE CONTEXTO (TOPBAR / CONTROL PANEL) — Odoo 17
+// -----------------------------------------------------------------------------
+.o_control_panel,
+.o_control_panel_top,
+.o_control_panel_bottom {
+    background-color: var(--caryvil-topbar-bg) !important;
+    color: var(--caryvil-topbar-text) !important;
+    min-height: var(--caryvil-topbar-height);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+
+    // Breadcrumbs, títulos de sección y migas de pan
+    .o_control_panel_breadcrumbs,
+    .o_breadcrumb,
+    .breadcrumb,
+    .breadcrumb-item,
+    .o_breadcrumb_title,
+    .o_page_title,
+    .o_last_breadcrumb_item {
+        color: #FFFFFF !important;
+        font-weight: 600 !important;
+        font-size: 1.05rem !important;
+
+        span,
+        a,
+        a:hover,
+        .text-truncate {
+            color: #FFFFFF !important;
+            text-decoration: none !important;
+        }
+
+        &.active {
+            color: #FFFFFF !important;
+        }
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    // Botón de engranaje (configuración / acciones)
+    .o_cog_menu_toggler,
+    .o_control_panel_breadcrumbs_actions button,
+    .oi-cog,
+    .fa-cog {
+        color: rgba(255, 255, 255, 0.85) !important;
+        border: none !important;
+        background: transparent !important;
+
+        &:hover,
+        &:focus {
+            color: #FFFFFF !important;
+            background-color: rgba(255, 255, 255, 0.15) !important;
+        }
+    }
+
+    // Paginador de vistas ("1-55 / 55") con alto contraste
+    .o_pager,
+    .o_cp_pager {
+        color: #FFFFFF !important;
+
+        .o_pager_counter,
+        .o_pager_value,
+        .o_pager_limit,
+        span {
+            color: #FFFFFF !important;
+            font-weight: 500 !important;
+            font-size: 0.9rem !important;
+        }
+
+        .o_pager_previous,
+        .o_pager_next,
+        button {
+            color: #FFFFFF !important;
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            border-radius: 4px !important;
+            padding: 3px 8px !important;
+            margin: 0 2px !important;
+            transition: all 0.15s ease-in-out;
+
+            &:hover:not(:disabled) {
+                background-color: rgba(255, 255, 255, 0.3) !important;
+                color: #FFFFFF !important;
+            }
+
+            &:disabled {
+                opacity: 0.4 !important;
+                cursor: not-allowed !important;
+            }
+        }
+    }
+
+    // Alternador de vistas (Kanban, Lista)
+    .o_cp_switch_buttons {
+        button.o_switch_view,
+        .btn {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: #495057 !important;
+            border-radius: 6px !important;
+            padding: 5px 9px !important;
+            margin-left: 4px !important;
+            transition: all 0.15s ease;
+
+            &:hover {
+                background-color: #FFFFFF !important;
+                color: var(--caryvil-sidebar-bg) !important;
+            }
+
+            &.active {
+                background-color: var(--caryvil-sidebar-bg) !important;
+                color: #FFFFFF !important;
+                border-color: var(--caryvil-sidebar-bg) !important;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+            }
+        }
+    }
+
+    // Botones de acción principales del Control Panel (Crear / New, Guardar, Descartar)
+    .o_control_panel_main_buttons,
+    .o_cp_buttons,
+    .o_control_panel_collapsed_create {
+        .btn-primary,
+        .o_form_button_create,
+        .o_list_button_add,
+        button[data-hotkey="c"] {
+            background-color: var(--caryvil-primary-green) !important;
+            border: 1px solid var(--caryvil-primary-green) !important;
+            color: #FFFFFF !important;
+            font-weight: 600 !important;
+            border-radius: 6px !important;
+            --bs-btn-color: #FFFFFF !important;
+            --bs-btn-border-color: var(--caryvil-primary-green) !important;
+
+            &:hover:not(:disabled) {
+                background-color: var(--caryvil-primary-green-hover) !important;
+                border-color: var(--caryvil-primary-green-active) !important;
+                color: #FFFFFF !important;
+            }
+
+            &:disabled,
+            &.disabled {
+                background-color: rgba(255, 255, 255, 0.18) !important;
+                border: 1px solid rgba(255, 255, 255, 0.45) !important;
+                color: #FFFFFF !important;
+                --bs-btn-color: #FFFFFF !important;
+                --bs-btn-disabled-color: #FFFFFF !important;
+                --bs-btn-disabled-border-color: rgba(255, 255, 255, 0.45) !important;
+                opacity: 0.85 !important;
+                cursor: not-allowed !important;
+            }
+        }
+
+        .btn-outline-primary {
+            background-color: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            color: #FFFFFF !important;
+            font-weight: 600 !important;
+            border-radius: 6px !important;
+            --bs-btn-color: #FFFFFF !important;
+            --bs-btn-border-color: rgba(255, 255, 255, 0.5) !important;
+
+            &:hover:not(:disabled) {
+                background-color: rgba(255, 255, 255, 0.28) !important;
+                border-color: #FFFFFF !important;
+                color: #FFFFFF !important;
+            }
+
+            &:disabled,
+            &.disabled {
+                background-color: rgba(255, 255, 255, 0.18) !important;
+                border: 1px solid rgba(255, 255, 255, 0.45) !important;
+                color: #FFFFFF !important;
+                --bs-btn-color: #FFFFFF !important;
+                --bs-btn-disabled-color: #FFFFFF !important;
+                --bs-btn-disabled-border-color: rgba(255, 255, 255, 0.45) !important;
+                opacity: 0.85 !important;
+                cursor: not-allowed !important;
+            }
+        }
+    }
+
+    // Indicador de estado de formulario (Guardado automático, Deshacer)
+    .o_form_status_indicator {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        margin-left: 6px !important;
+
+        .o_form_status_indicator_buttons .btn {
+            color: #495057 !important;
+            padding: 2px 6px !important;
+
+            &:hover {
+                color: var(--caryvil-primary-green) !important;
+            }
+        }
+    }
+}
+
+.caryvil-topbar {
+    background-color: var(--caryvil-topbar-bg) !important;
+    color: var(--caryvil-topbar-text) !important;
+    height: var(--caryvil-topbar-height);
+
+    .breadcrumb-item,
+    .o_page_title {
+        color: var(--caryvil-topbar-text) !important;
+        font-weight: 600;
+    }
+
+    .breadcrumb-item.active {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 6. BOTONES DE ACCIÓN
+// -----------------------------------------------------------------------------
+
+// 6.1 Botón Primario / Guardar / Crear (Verde Salud)
+.btn-primary,
+.btn-success,
+.o_form_button_save,
+.btn-caryvil-primary,
+.btn-caryvil-success {
+    background-color: var(--caryvil-primary-green) !important;
+    border-color: var(--caryvil-primary-green) !important;
+    color: var(--caryvil-text-light) !important;
+    font-family: var(--caryvil-font-family) !important;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 8px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    &:hover,
+    &:focus {
+        background-color: var(--caryvil-primary-green-hover) !important;
+        border-color: var(--caryvil-primary-green-active) !important;
+        color: var(--caryvil-text-light) !important;
+        box-shadow: 0 4px 12px rgba(30, 122, 58, 0.25);
+    }
+
+    &:active,
+    &:focus-visible {
+        background-color: var(--caryvil-primary-green-active) !important;
+        outline: 3px solid rgba(30, 122, 58, 0.4);
+        outline-offset: 2px;
+    }
+}
+
+// 6.2 Botón Secundario / Cancelar
+.btn-secondary,
+.o_form_button_cancel,
+.btn-caryvil-secondary,
+.btn-caryvil-cancel {
+    background-color: var(--caryvil-card-bg) !important;
+    border: 1px solid #CED4DA !important;
+    color: #495057 !important;
+    font-family: var(--caryvil-font-family) !important;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    padding: 8px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    &:hover,
+    &:focus {
+        background-color: #F8F9FA !important;
+        border-color: #ADB5BD !important;
+        color: #343A40 !important;
+    }
+}
+
+// 6.3 Enlace de Acción Interactiva (Agregar línea, Añadir lote)
+.btn-link,
+.o_field_one2many .o_field_one2many_list_row_add a,
+.o_field_x2many .o_field_x2many_list_row_add a,
+.btn-caryvil-link {
+    color: var(--caryvil-accent-blue) !important;
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-decoration: none;
+    background: transparent !important;
+    border: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+        text-decoration: underline !important;
+        color: var(--caryvil-accent-blue-hover) !important;
+    }
+}
+
+// 6.4 Botones de Eliminación / Peligro
+.btn-danger,
+.o_form_button_remove,
+.o_delete {
+    background-color: #DC3545 !important;
+    border-color: #DC3545 !important;
+    color: var(--caryvil-text-light) !important;
+    border-radius: 8px;
+    font-weight: 600;
+
+    &:hover {
+        background-color: #C82333 !important;
+        border-color: #BD2130 !important;
+    }
+}
+
+// 6.5 Smart Buttons (Botones Estadísticos / Tarjetas Clínicas de Alto Contraste)
+.o-form-buttonbox,
+.oe_button_box,
+.o_control_panel .o-form-buttonbox,
+.o_control_panel .oe_button_box,
+.o_form_sheet .o-form-buttonbox,
+.o_form_sheet .oe_button_box,
+.o_form_view .o-form-buttonbox,
+.o_form_view .oe_button_box {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    align-items: center !important;
+
+    .oe_stat_button,
+    .btn.oe_stat_button,
+    button.oe_stat_button,
+    div.oe_stat_button,
+    .o_button_more {
+        background-color: #FFFFFF !important;
+        border: 1px solid #CED4DA !important;
+        border-radius: 6px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+        color: var(--caryvil-text-main) !important;
+        margin: 2px !important;
+        padding: 4px 12px !important;
+        transition: all 0.15s ease-in-out !important;
+        opacity: 1 !important;
+
+        &:hover {
+            background-color: var(--caryvil-surface-bg) !important;
+            border-color: var(--caryvil-accent-blue) !important;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12) !important;
+        }
+
+        .o_button_icon,
+        i,
+        .fa,
+        .oi {
+            color: var(--caryvil-accent-blue) !important;
+            font-size: 1.15rem !important;
+        }
+
+        .o_stat_info,
+        .o_field_statinfo {
+            .o_stat_text {
+                color: #4B5563 !important;
+                font-size: 0.75rem !important;
+                font-weight: 500 !important;
+            }
+
+            .o_stat_value {
+                color: var(--caryvil-sidebar-bg) !important;
+                font-size: 0.95rem !important;
+                font-weight: 700 !important;
+            }
+        }
+
+        &.dropdown-toggle,
+        .dropdown-toggle {
+            color: var(--caryvil-sidebar-bg) !important;
+            font-weight: 600 !important;
+        }
+    }
+
+    // Dropdown "More" de Smart Buttons
+    .oe_stat_button.dropdown,
+    .dropdown {
+        .o_dropdown_more {
+            background-color: #FFFFFF !important;
+            border: 1px solid #CED4DA !important;
+            border-radius: 8px !important;
+            box-shadow: 0 8px 24px rgba(0, 43, 73, 0.15) !important;
+            padding: 4px !important;
+            z-index: 1050 !important;
+
+            .oe_stat_button {
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 4px !important;
+                width: 100% !important;
+
+                &:hover {
+                    background-color: #F8F9FA !important;
+                }
+            }
+        }
+    }
+}
+
+// 6.6 Botones de Barra de Estado del Formulario
+.o_form_statusbar {
+    background-color: #FFFFFF !important;
+    border-bottom: 1px solid #E5E7EB !important;
+    padding: 0.4rem 1rem !important;
+
+    .o_statusbar_buttons {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+
+        .btn {
+            font-family: var(--caryvil-font-family) !important;
+            font-weight: 500 !important;
+            font-size: 0.875rem !important;
+            border-radius: 6px !important;
+            padding: 6px 14px !important;
+            transition: all 0.15s ease-in-out !important;
+
+            &.btn-primary {
+                background-color: var(--caryvil-primary-green) !important;
+                border: 1px solid var(--caryvil-primary-green) !important;
+                color: #FFFFFF !important;
+                font-weight: 600 !important;
+
+                &:hover:not(:disabled) {
+                    background-color: var(--caryvil-primary-green-hover) !important;
+                    border-color: var(--caryvil-primary-green-active) !important;
+                    color: #FFFFFF !important;
+                }
+            }
+
+            &.btn-secondary {
+                background-color: #FFFFFF !important;
+                border: 1px solid #CED4DA !important;
+                color: #374151 !important;
+
+                &:hover:not(:disabled) {
+                    background-color: #F8F9FA !important;
+                    border-color: #ADB5BD !important;
+                    color: #111827 !important;
+                }
+            }
+        }
+    }
+}
+
+// 6.7 Sobreescritura Global de Botones Outline (eliminar morado heredado)
+.btn-outline-primary {
+    --bs-btn-color: var(--caryvil-primary-green);
+    --bs-btn-border-color: var(--caryvil-primary-green);
+    --bs-btn-hover-color: #FFFFFF;
+    --bs-btn-hover-bg: var(--caryvil-primary-green);
+    --bs-btn-hover-border-color: var(--caryvil-primary-green);
+    --bs-btn-active-color: #FFFFFF;
+    --bs-btn-active-bg: var(--caryvil-primary-green-active);
+    --bs-btn-active-border-color: var(--caryvil-primary-green-active);
+    --bs-btn-disabled-color: rgba(255, 255, 255, 0.85);
+    --bs-btn-disabled-border-color: rgba(255, 255, 255, 0.45);
+}
+
+// -----------------------------------------------------------------------------
+// 7. BADGES Y ETIQUETAS DE ESTADO SEMÁNTICAS (Pill Badges)
+// -----------------------------------------------------------------------------
+.badge-caryvil,
+.badge-bajo-stock,
+.badge-por-vencer,
+.badge-ok,
+.badge-pagado,
+.badge-recibida,
+.badge-danado,
+.badge-low-stock,
+.badge-expiring,
+.badge-damaged {
+    display: inline-block;
+    padding: 4px 14px;
+    font-size: 0.8125rem;
+    font-family: var(--caryvil-font-family);
+    font-weight: 600;
+    border-radius: 50rem;
+    text-align: center;
+    line-height: 1.2;
+    border-width: 1px;
+    border-style: solid;
+    white-space: nowrap;
+}
+
+// 7.1 Bajo Stock — Amarillo/Ámbar pastel
+.badge-bajo-stock,
+.badge-low-stock {
+    background-color: var(--caryvil-badge-low-stock-bg) !important;
+    color: var(--caryvil-badge-low-stock-text) !important;
+    border-color: var(--caryvil-badge-low-stock-border) !important;
+}
+
+// 7.2 Por Vencer — Rosa/Rojo pastel
+.badge-por-vencer,
+.badge-expiring {
+    background-color: var(--caryvil-badge-expiring-bg) !important;
+    color: var(--caryvil-badge-expiring-text) !important;
+    border-color: var(--caryvil-badge-expiring-border) !important;
+}
+
+// 7.3 OK / Pagado / Recibida — Verde menta pastel
+.badge-ok,
+.badge-pagado,
+.badge-recibida,
+.badge-paid {
+    background-color: var(--caryvil-badge-ok-bg) !important;
+    color: var(--caryvil-badge-ok-text) !important;
+    border-color: var(--caryvil-badge-ok-border) !important;
+}
+
+// 7.4 Dañado / Descartado — Gris neutro
+.badge-danado,
+.badge-damaged {
+    background-color: var(--caryvil-badge-damaged-bg) !important;
+    color: var(--caryvil-badge-damaged-text) !important;
+    border-color: var(--caryvil-badge-damaged-border) !important;
+}
+
+// 7.5 Badges agrupados dentro de .badge-caryvil
+.badge-caryvil {
+    &.badge-low-stock {
+        background-color: var(--caryvil-badge-low-stock-bg);
+        color: var(--caryvil-badge-low-stock-text);
+        border-color: var(--caryvil-badge-low-stock-border);
+    }
+    &.badge-expiring {
+        background-color: var(--caryvil-badge-expiring-bg);
+        color: var(--caryvil-badge-expiring-text);
+        border-color: var(--caryvil-badge-expiring-border);
+    }
+    &.badge-ok,
+    &.badge-paid {
+        background-color: var(--caryvil-badge-ok-bg);
+        color: var(--caryvil-badge-ok-text);
+        border-color: var(--caryvil-badge-ok-border);
+    }
+    &.badge-damaged {
+        background-color: var(--caryvil-badge-damaged-bg);
+        color: var(--caryvil-badge-damaged-text);
+        border-color: var(--caryvil-badge-damaged-border);
+    }
+}
+
+// 7.6 Compatibilidad con badge heredada FEFO
+.caryvil_badge_fefo {
+    display: inline-block;
+    background-color: var(--caryvil-badge-expiring-bg);
+    color: var(--caryvil-badge-expiring-text);
+    border: 1px solid var(--caryvil-badge-expiring-border);
+    font-weight: 600;
+    border-radius: 50rem;
+    padding: 4px 12px;
+    font-size: 0.8125rem;
+    font-family: var(--caryvil-font-family);
+}
+
+// -----------------------------------------------------------------------------
+// 8. BARRA DE BÚSQUEDA Y FILTROS — Pill / Cápsula redondeada
+// -----------------------------------------------------------------------------
+.o_searchview {
+    background-color: #FFFFFF !important;
+    border: 1px solid #CED4DA !important;
+    border-radius: 50rem !important;
+    padding: 2px 12px !important;
+    transition: all 0.2s ease-in-out !important;
+
+    &:focus-within {
+        border-color: var(--caryvil-accent-cyan) !important;
+        box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.25) !important;
+        outline: none !important;
+    }
+
+    .o_searchview_input_container {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .o_searchview_input {
+        background-color: transparent !important;
+        border-radius: 50rem !important;
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        padding: 0.35rem 0.5rem !important;
+        font-family: var(--caryvil-font-family);
+        font-size: 0.9rem;
+        color: var(--caryvil-text-main) !important;
+
+        &::placeholder {
+            color: var(--caryvil-text-subtle);
+        }
+
+        &:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+    }
+
+    .o_searchview_facet {
+        border-radius: 50rem !important;
+        background-color: rgba(56, 182, 255, 0.15) !important;
+        border: 1px solid rgba(56, 182, 255, 0.35) !important;
+        color: var(--caryvil-sidebar-bg) !important;
+        font-size: 0.8125rem !important;
+        font-weight: 500 !important;
+    }
+
+    .o_searchview_icon,
+    .fa-search,
+    .oi-search {
+        color: #5C6F84 !important;
+    }
+}
+
+.caryvil-search-pill {
+    background-color: var(--caryvil-input-bg);
+    border-radius: 50rem;
+    border: 1px solid var(--caryvil-card-border);
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    font-family: var(--caryvil-font-family);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    input {
+        border: none;
+        background: transparent;
+        outline: none;
+        flex: 1;
+        font-family: inherit;
+        color: var(--caryvil-text-main);
+
+        &::placeholder {
+            color: var(--caryvil-text-subtle);
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 9. TARJETAS KPI Y CARDS DE MÉTRICAS (Dashboard / Inicio)
+// -----------------------------------------------------------------------------
+.caryvil-kpi-card {
+    background-color: var(--caryvil-card-bg);
+    border-radius: var(--caryvil-card-radius);
+    border: 1px solid var(--caryvil-card-border);
+    box-shadow: var(--caryvil-card-shadow);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    .caryvil-kpi-icon {
+        flex-shrink: 0;
+        width: 52px;
+        height: 52px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--caryvil-input-bg);
+        font-size: 1.5rem;
+    }
+
+    .caryvil-kpi-content {
+        flex: 1;
+        min-width: 0;
+
+        .caryvil-kpi-title {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--caryvil-text-muted);
+            margin-bottom: 0.15rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .caryvil-kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--caryvil-text-body);
+            line-height: 1.1;
+        }
+
+        .caryvil-kpi-subtitle {
+            font-size: 0.8rem;
+            color: var(--caryvil-text-subtle);
+            margin-top: 0.15rem;
+        }
+    }
+}
+
+// Override para kanban cards estándar de Odoo
+.o_kanban_view .o_kanban_record {
+    background-color: var(--caryvil-card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--caryvil-card-border);
+    box-shadow: var(--caryvil-card-shadow);
+    transition: box-shadow 0.2s ease, transform 0.1s ease;
+
+    &:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        transform: translateY(-1px);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 10. FORMULARIOS Y TARJETAS DE DETALLE
+// -----------------------------------------------------------------------------
+.o_form_view {
+    background-color: var(--caryvil-surface-bg);
+
+    .o_form_sheet_bg {
+        background-color: var(--caryvil-surface-bg);
+        padding: 1rem;
+    }
+
+    .o_form_sheet {
+        background-color: var(--caryvil-card-bg);
+        border: 1px solid #DEE2E6;
+        border-radius: var(--caryvil-card-radius);
+        padding: 2rem;
+        box-shadow: var(--caryvil-card-shadow);
+        max-width: none;
+    }
+
+    .o_form_label {
+        font-weight: 600;
+        color: var(--caryvil-text-heading);
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .o_field_widget input,
+    .o_field_widget textarea,
+    .o_field_widget select {
+        border-radius: 6px;
+        border: 1px solid var(--caryvil-card-border);
+        background-color: var(--caryvil-card-bg);
+        color: var(--caryvil-text-main);
+        font-family: var(--caryvil-font-family);
+        padding: 0.375rem 0.75rem;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+        &:focus {
+            border-color: var(--caryvil-accent-cyan);
+            box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.15);
+            outline: none;
+        }
+    }
+
+    .o_notebook,
+    .o_notebook_headers {
+        .nav-tabs {
+            border-bottom: 2px solid var(--caryvil-card-border) !important;
+            background-color: transparent !important;
+            gap: 2px !important;
+
+            .nav-item {
+                margin-bottom: -2px !important;
+
+                .nav-link {
+                    color: #495057 !important;
+                    background-color: transparent !important;
+                    border: none !important;
+                    border-bottom: 3px solid transparent !important;
+                    border-radius: 0 !important;
+                    font-family: var(--caryvil-font-family) !important;
+                    font-weight: 500 !important;
+                    font-size: 0.9375rem !important;
+                    padding: 0.75rem 1.25rem !important;
+                    transition: all 0.2s ease-in-out !important;
+
+                    &:hover {
+                        color: var(--caryvil-sidebar-bg) !important;
+                        border-bottom-color: rgba(0, 43, 73, 0.3) !important;
+                        background-color: rgba(0, 43, 73, 0.03) !important;
+                    }
+
+                    &.active {
+                        color: var(--caryvil-sidebar-bg) !important;
+                        font-weight: 700 !important;
+                        background-color: #FFFFFF !important;
+                        border: none !important;
+                        border-bottom: 3px solid var(--caryvil-primary-green) !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Estilos globales de pestañas (tabs) fuera o dentro de formularios
+.nav-tabs {
+    border-bottom: 2px solid var(--caryvil-card-border) !important;
+
+    .nav-link {
+        color: #495057 !important;
+
+        &:hover {
+            color: var(--caryvil-sidebar-bg) !important;
+            border-bottom-color: rgba(0, 43, 73, 0.3) !important;
+        }
+
+        &.active {
+            color: var(--caryvil-sidebar-bg) !important;
+            font-weight: 700 !important;
+            border-bottom: 3px solid var(--caryvil-primary-green) !important;
+        }
+    }
+}
+
+// Pestañas tipo pastilla (nav-pills)
+.nav-pills {
+    .nav-link {
+        color: #495057 !important;
+
+        &.active {
+            background-color: var(--caryvil-sidebar-bg) !important;
+            color: #FFFFFF !important;
+        }
+    }
+}
+
+// Statusbar en vistas de formulario (eliminar flechas moradas)
+.o_statusbar_status {
+    .o_arrow_button {
+        &.btn-primary:not(:disabled) {
+            background-color: var(--caryvil-sidebar-bg) !important;
+            border-color: var(--caryvil-sidebar-bg) !important;
+            color: #FFFFFF !important;
+
+            &::after {
+                border-left-color: var(--caryvil-sidebar-bg) !important;
+            }
+        }
+
+        &:hover:not(:disabled) {
+            background-color: var(--caryvil-sidebar-hover) !important;
+            border-color: var(--caryvil-sidebar-hover) !important;
+            color: #FFFFFF !important;
+        }
+    }
+}
+
+.caryvil-form-card {
+    background-color: var(--caryvil-card-bg);
+    border: 1px solid #DEE2E6;
+    border-radius: var(--caryvil-card-radius);
+    padding: 2rem;
+    box-shadow: var(--caryvil-card-shadow);
+}
+
+// -----------------------------------------------------------------------------
+// 11. TABLAS Y LISTAS
+// -----------------------------------------------------------------------------
+.o_list_view {
+    background-color: var(--caryvil-card-bg);
+    border: 1px solid var(--caryvil-card-border);
+    border-radius: 8px;
+    overflow: hidden;
+
+    .o_list_table thead > tr > th {
+        background-color: var(--caryvil-table-header-bg) !important;
+        color: var(--caryvil-text-table-header);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        font-family: var(--caryvil-font-family);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--caryvil-card-border);
+        border-top: none;
+    }
+
+    .o_list_table tbody > tr {
+        background-color: var(--caryvil-card-bg);
+        transition: background-color 0.1s ease;
+
+        &:hover {
+            background-color: rgba(56, 182, 255, 0.04) !important;
+        }
+
+        > td {
+            font-size: 0.875rem;
+            color: var(--caryvil-text-body);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--caryvil-card-border);
+            font-family: var(--caryvil-font-family);
+        }
+    }
+
+    .o_list_table tbody > tr.o_data_row.o_selected {
+        background-color: rgba(40, 167, 69, 0.06) !important;
+        border-left: 3px solid var(--caryvil-primary-green);
+    }
+}
+
+.caryvil-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--caryvil-font-family);
+
+    thead > tr > th {
+        background-color: var(--caryvil-table-header-bg);
+        color: var(--caryvil-text-table-header);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        padding: 0.75rem 1rem;
+        border-bottom: 2px solid var(--caryvil-card-border);
+        text-align: left;
+    }
+
+    tbody > tr > td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--caryvil-card-border);
+        font-size: 0.875rem;
+        color: var(--caryvil-text-body);
+    }
+
+    tbody > tr:hover {
+        background-color: rgba(56, 182, 255, 0.04);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 12. PAGINACIÓN
+// -----------------------------------------------------------------------------
+.o_pager,
+.o_list_pagination {
+    .o_pager_previous,
+    .o_pager_next {
+        color: var(--caryvil-accent-blue);
+        border-color: var(--caryvil-card-border);
+        border-radius: 6px;
+        font-weight: 500;
+
+        &:hover {
+            background-color: var(--caryvil-input-bg);
+            color: var(--caryvil-accent-blue-hover);
+        }
+    }
+
+    .o_pager_limit,
+    .o_pager_value {
+        color: var(--caryvil-text-muted);
+        font-size: 0.875rem;
+    }
+}
+
+.caryvil-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.75rem 0;
+    font-family: var(--caryvil-font-family);
+
+    .page-item {
+        .page-link {
+            border-radius: 6px;
+            border: 1px solid var(--caryvil-card-border);
+            color: var(--caryvil-text-main);
+            font-size: 0.875rem;
+            padding: 0.35rem 0.75rem;
+            transition: all 0.15s ease;
+
+            &:hover {
+                background-color: var(--caryvil-input-bg);
+            }
+        }
+
+        &.active .page-link {
+            background-color: var(--caryvil-sidebar-bg);
+            color: var(--caryvil-text-light);
+            border-color: var(--caryvil-sidebar-bg);
+            font-weight: 700;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 13. BLOQUE DE TOTALES Y LIQUIDACIÓN FINANCIERA
+// -----------------------------------------------------------------------------
+.caryvil-totals-block {
+    font-family: var(--caryvil-font-family);
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    background-color: var(--caryvil-card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--caryvil-card-border);
+
+    .caryvil-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.4rem 0;
+        font-size: 0.9375rem;
+        color: var(--caryvil-text-body);
+        border-bottom: 1px solid var(--caryvil-card-border);
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .caryvil-total-label {
+            font-weight: 500;
+        }
+
+        .caryvil-total-value {
+            font-weight: 600;
+        }
+
+        &.caryvil-total-final {
+            border-top: 2px solid var(--caryvil-accent-cyan);
+            margin-top: 0.5rem;
+            padding-top: 0.75rem;
+            font-size: 1.05rem;
+
+            .caryvil-total-label {
+                font-weight: 700;
+                color: var(--caryvil-sidebar-bg);
+            }
+
+            .caryvil-total-value {
+                font-weight: 700;
+                font-size: 1.15rem;
+                color: var(--caryvil-accent-blue);
+            }
+        }
+    }
+}
+
+.o_field_monetary.o_form_field.o_form_field_total,
+.oe_subtotal_footer_separator,
+td[name="amount_total"],
+.oe_subtotal_footer {
+    color: var(--caryvil-accent-blue);
+    font-weight: 700;
+}
+
+// -----------------------------------------------------------------------------
+// 14. ALERTAS Y NOTIFICACIONES
+// -----------------------------------------------------------------------------
+.o_notification_bar,
+.o_notification {
+    border-radius: 8px;
+    font-family: var(--caryvil-font-family);
+    font-weight: 500;
+
+    &.bg-success,
+    &.o_notification_success {
+        background-color: var(--caryvil-badge-ok-bg) !important;
+        color: var(--caryvil-badge-ok-text) !important;
+        border-left: 4px solid var(--caryvil-primary-green);
+    }
+
+    &.bg-danger,
+    &.o_notification_danger,
+    &.o_notification_warning {
+        background-color: var(--caryvil-badge-expiring-bg) !important;
+        color: var(--caryvil-badge-expiring-text) !important;
+        border-left: 4px solid var(--caryvil-badge-expiring-text);
+    }
+
+    &.bg-warning,
+    &.o_notification_info {
+        background-color: var(--caryvil-badge-low-stock-bg) !important;
+        color: var(--caryvil-badge-low-stock-text) !important;
+        border-left: 4px solid var(--caryvil-badge-low-stock-text);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 15. RESPONSIVIDAD — Optimización 1366x768 (POS estándar) y 1920x1080
+// -----------------------------------------------------------------------------
+
+// Pantalla POS estándar (1366x768)
+@media (max-width: 1366px) {
+    :root {
+        --caryvil-sidebar-width: 220px;
+    }
+
+    .caryvil-kpi-card .caryvil-kpi-value {
+        font-size: 1.5rem;
+    }
+
+    .o_form_sheet {
+        padding: 1.25rem !important;
+    }
+}
+
+// Tablets y pantallas pequeñas
+@media (max-width: 991px) {
+    :root {
+        --caryvil-sidebar-width: 100%;
+    }
+
+    .o_form_sheet {
+        padding: 1rem !important;
+    }
+}
+
+// Full HD (1920x1080)
+@media (min-width: 1920px) {
+    :root {
+        --caryvil-sidebar-width: 260px;
+    }
+
+    .caryvil-kpi-card .caryvil-kpi-value {
+        font-size: 2rem;
+    }
+}
+
+// =============================================================================
+// Fin de custom_theme.scss — Farmacia Caryvil ERP — SPEC-3.1.1
+// =============================================================================
