@@ -79,38 +79,38 @@ def test_xml_template_file_exists_and_is_valid():
     templates = root.findall(".//template")
     assert len(templates) >= 1, "No se encontro ninguna etiqueta <template> en el XML."
 
-    login_tmpl = (
-        root.find(".//template[@id='caryvil_web_login_layout']")
-        or root.find(".//template[@id='caryvil_web_login']")
+    login_tmpl = root.find(".//template[@id='caryvil_web_login_layout']") or root.find(
+        ".//template[@id='caryvil_web_login']"
     )
     assert login_tmpl is not None, "No se encontro el template de login en el XML."
-    assert login_tmpl.get("inherit_id") in ["web.login_layout", "web.login"], (
-        f"El template debe heredar de 'web.login_layout' o 'web.login', actual: {login_tmpl.get('inherit_id')}"
-    )
+    assert login_tmpl.get("inherit_id") in [
+        "web.login_layout",
+        "web.login",
+    ], f"El template debe heredar de 'web.login_layout' o 'web.login', actual: {login_tmpl.get('inherit_id')}"
 
 
 def test_xml_template_structure_and_branding():
     xml_content = _read_file(XML_RELATIVE_PATH)
     assert "ERP FARMACIA" in xml_content, "El texto de marca 'ERP FARMACIA' no esta en la plantilla XML."
     assert "Soyapango" in xml_content, "La referencia a 'Soyapango' no esta en la plantilla XML."
-    assert "caryvil_logo_full.png" in xml_content or "caryvil_logo.png" in xml_content, (
-        "No se encontro referencia a la imagen del logotipo institucional en el XML."
-    )
-    assert "caryvil-login-body" in xml_content or "card-body" in xml_content, (
-        "La plantilla XML debe contener el contenedor de formulario de login."
-    )
+    assert (
+        "caryvil_logo_full.png" in xml_content or "caryvil_logo.png" in xml_content
+    ), "No se encontro referencia a la imagen del logotipo institucional en el XML."
+    assert (
+        "caryvil-login-body" in xml_content or "card-body" in xml_content
+    ), "La plantilla XML debe contener el contenedor de formulario de login."
     assert "Farmacia Caryvil" in xml_content, "La marca 'Farmacia Caryvil' no esta en el XML."
-    assert "derechos reservados" in xml_content.lower(), (
-        "El texto de pie de pagina de derechos reservados no esta presente."
-    )
+    assert (
+        "derechos reservados" in xml_content.lower()
+    ), "El texto de pie de pagina de derechos reservados no esta presente."
 
 
 def test_manifest_registration():
     manifest = _load_manifest_dict()
     data_files = manifest.get("data", [])
-    assert "views/web_login_templates.xml" in data_files, (
-        "El archivo 'views/web_login_templates.xml' no esta registrado en la seccion 'data' del __manifest__.py"
-    )
+    assert (
+        "views/web_login_templates.xml" in data_files
+    ), "El archivo 'views/web_login_templates.xml' no esta registrado en la seccion 'data' del __manifest__.py"
 
     assets = manifest.get("assets", {})
     frontend_assets = assets.get("web.assets_frontend", [])
@@ -174,9 +174,8 @@ def test_login_contrast_wcag_aa():
                 f"    Ratio calculado: {ratio:.2f}:1 (minimo requerido: {WCAG_AA_THRESHOLD}:1)"
             )
 
-    assert not failures, (
-        "Los siguientes pares de color de la pantalla de login NO cumplen WCAG AA:\n"
-        + "\n".join(failures)
+    assert not failures, "Los siguientes pares de color de la pantalla de login NO cumplen WCAG AA:\n" + "\n".join(
+        failures
     )
 
 
