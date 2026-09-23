@@ -46,6 +46,7 @@
         "views/product_supplierinfo_views.xml",
         "views/purchase_order_views.xml",
         "views/stock_picking_views.xml",
+        "views/web_login_templates.xml",
         "reports/report_purchase_order.xml",
         "reports/purchase_order_report_action.xml",
     ],
@@ -61,6 +62,9 @@
             "caryvil_erp/static/src/js/masked_char_field.js",
             "caryvil_erp/static/src/js/purchase_live_totals.js",
             "caryvil_erp/static/src/xml/purchase_live_totals.xml",
+        ],
+        "web.assets_frontend": [
+            "caryvil_erp/static/src/scss/custom_login.scss",
         ],
     },
     "installable": True,

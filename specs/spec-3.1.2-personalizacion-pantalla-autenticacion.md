@@ -130,8 +130,9 @@ Personalizar visual y estructuralmente la pantalla de inicio de sesión (*Login*
 * Declaración del bundle `web.assets_frontend` en `__manifest__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Plantilla XML `web_login_templates.xml` implementada y enlazada.
-* [ ] Hoja de estilos `custom_login.scss` registrada y probada.
-* [ ] Encabezado corporativo "ERP FARMACIA" y botón verde renderizados.
-* [ ] Validación de accesibilidad y funcionamiento de login completada.
+* [x] Plantilla XML `web_login_templates.xml` implementada y enlazada.
+* [x] Hoja de estilos `custom_login.scss` registrada y probada.
+* [x] Encabezado corporativo "ERP FARMACIA" y botón verde renderizados.
+* [x] Validación de accesibilidad y funcionamiento de login completada.
+
 

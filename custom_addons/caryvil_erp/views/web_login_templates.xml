@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="caryvil_web_login_layout" inherit_id="web.login_layout" name="Farmacia Caryvil Login Layout">
+        <xpath expr="//div[hasclass('container')]" position="replace">
+            <div class="caryvil-login-wrapper">
+                <div class="caryvil-login-card">
+                    <!-- Encabezado de Marca Corporativo -->
+                    <div class="caryvil-login-header">
+                        <div class="caryvil-logo-badge">
+                            <img src="/caryvil_erp/static/src/img/caryvil_logo_full.png" 
+                                 alt="Farmacia Caryvil" 
+                                 class="caryvil-login-logo"/>
+                        </div>
+                        <h2 class="caryvil-brand-title">ERP FARMACIA</h2>
+                        <p class="caryvil-brand-subtitle">Farmacia Caryvil • Sucursal Soyapango</p>
+                    </div>
+
+                    <!-- Contenedor del Formulario -->
+                    <div class="caryvil-login-body">
+                        <t t-out="0"/>
+                    </div>
+
+                    <!-- Pie de Página Institucional -->
+                    <div class="caryvil-login-footer">
+                        <span>© 2026 Farmacia Caryvil • Todos los derechos reservados</span>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
