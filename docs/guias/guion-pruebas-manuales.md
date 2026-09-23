@@ -15,6 +15,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 1.4: Verificación de Variables de Entorno y Bloqueo de Secretos (SPEC-1.2.2)](#flujo-14-verificación-de-variables-de-entorno-y-bloqueo-de-secretos-spec-122)
   - [Flujo 1.5: Pipeline CI/CD con GitHub Actions y Despliegue Automático (SPEC-1.3.1)](#flujo-15-pipeline-cicd-con-github-actions-y-despliegue-automático-spec-131)
   - [Flujo 2.1: Definición de Roles, Grupos de Seguridad y Herencia de Privilegios (SPEC-2.2.1)](#flujo-21-definición-de-roles-grupos-de-seguridad-y-herencia-de-privilegios-spec-221)
+  - [Flujo 3.1: Personalización de Marca y Tema Visual (SPEC-3.1.1)](#flujo-31-personalización-de-marca-y-tema-visual-spec-311)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
@@ -435,5 +436,66 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 #### Casos Límite / Rutas de Excepción:
 1. **Ausencia de Falsos Positivos en Recepción Conforme:** En una recepción donde se recibe físicamente la totalidad de las unidades solicitadas (ej. demanda 15 = recibido 15), verificar que el campo `has_discrepancy` permanece en falso, el banner amarillo de advertencia en la pestaña *Discrepancias* se mantiene oculto y no se emite ninguna notificación en el chatter.
 2. **Trazabilidad y Filtro de Entregas Pendientes:** Navegar a **Inventario** -> **Operaciones** -> **Albaranes**, hacer clic en la barra de búsqueda y seleccionar el filtro predeterminado **Entregas Pendientes / Retrasadas**, debes verificar que todos los backorders generados aparecen agrupados y visibles para el seguimiento periódico con los laboratorios.
+---
+
+### Flujo 3.1: Personalización de Marca y Tema Visual (SPEC-3.1.1)
+
+> **Prerrequisito:** El módulo `caryvil_erp` debe estar instalado y los contenedores deben estar corriendo. Activar el **Modo Desarrollador** (`?debug=1` en la URL).
+
+#### Fase A: Verificación de Barra Lateral (Sidebar) y Barra Superior (Topbar) — Escenario 1
+
+1. **Inspección del color de fondo del Sidebar:** Iniciar sesión como Administrador (`admin` / `admin`), navegar a cualquier sección del módulo Farmacia Caryvil. En el navegador, abrir las **Herramientas de Desarrollador** (`F12`), seleccionar la pestaña **Inspector de Elementos** (o *Elements*), y hacer clic sobre la barra de navegación principal izquierda. Verificar que el `background-color` computado del elemento `.o_main_navbar` o equivalente sea **`#1e7a3a`** *(nota: el sidebar usa el azul marino corporativo `#002B49` definido en `--caryvil-sidebar-bg`)*. Debes confirmar en **Estilos Computados** que `background-color: rgb(0, 43, 73)` corresponde exactamente al token `#002B49`.
+2. **Verificación del título de marca "ERP FARMACIA":** En el navbar superior o sidebar, debes observar el texto `ERP FARMACIA` (o `Farmacia Caryvil`) en tipografía blanca (`#FFFFFF`), negrita (`font-weight: 700`) y en mayúsculas con `letter-spacing` visible. El texto debe ser legible y no aparecer cortado en ninguna resolución.
+3. **Inspección del color de fondo del Topbar:** Localizar la barra de control superior (donde aparecen las migas de pan, los botones de Guardar/Cancelar y el nombre de sección). Verificar en las Herramientas de Desarrollador que el elemento `.o_control_panel` o `.o_control_panel_top` tiene `background-color: rgb(92, 111, 132)`, correspondiente al token `--caryvil-topbar-bg: #5C6F84`.
+4. **Verificación de migas de pan (Breadcrumbs) en blanco:** Navegar a **Farmacia Caryvil** → **Compras y Proveedores** → **Nueva Orden de Compra**. Debes observar la miga de pan `Órdenes de Compra > Nueva Orden de Compra` (o similar) en texto **blanco** (`#FFFFFF`) sobre el fondo gris-azul del topbar. Comprobar en los estilos computados que `color: rgb(255, 255, 255)`.
+5. **Verificación del elemento de menú activo con indicador lateral:** Hacer clic en diferentes secciones del menú lateral (Inicio, Inventario, Ventas, etc.). La sección activa debe mostrarse con texto en color cian eléctrico (`#38B6FF`, `rgb(56, 182, 255)`) y debe ser visible una **barra indicadora vertical de 4px en el extremo derecho** del ítem activo. Comprobar en los estilos del pseudo-elemento `::after` que `width: 4px`, `background-color: #38B6FF` y `border-radius: 2px 0 0 2px`.
+
+#### Fase B: Verificación de Botones de Acción — Escenario 2
+
+6. **Botón de confirmación en verde salud:** Navegar a **Farmacia Caryvil** → **Clientes**, presionar **Nuevo** para abrir el formulario de creación de cliente. En la barra de control superior, debes observar el botón **Guardar** (o **Crear**) con:
+   - Fondo verde oscuro (`#1E7A3A` — valor WCAG-AA corregido, `rgb(30, 122, 58)`).
+   - Texto blanco (`#FFFFFF`).
+   - Bordes redondeados (`border-radius: 8px`).
+   - Efecto de hover que oscurece el verde al pasar el cursor (`#166130`).
+7. **Botón Cancelar con contorno gris y fondo blanco:** En el mismo formulario, debes observar el botón **Cancelar** con:
+   - Fondo blanco (`#FFFFFF`).
+   - Borde gris (`border: 1px solid #CED4DA`).
+   - Texto en gris oscuro (`#495057`).
+   - Sin color rojo (no destructivo por convención de diseño Caryvil).
+8. **Verificación en múltiples módulos:** Repetir la inspección de botones al abrir un formulario de **Nueva Orden de Compra** (`Compras y Proveedores` → `Nueva Compra`) y un formulario de **Nuevo Proveedor**. Los botones primarios y secundarios deben ser consistentes en todos los módulos.
+
+#### Fase C: Verificación de Badges de Estado Contextual — Escenario 3
+
+9. **Badge "Bajo stock":** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**. Localizar en la lista un medicamento con el estado **Bajo stock**. Verificar que el badge sea una **píldora redondeada** (`border-radius: 50rem`) con:
+   - Fondo amarillo suave `#FEF3C7` (`rgb(254, 243, 199)`).
+   - Texto ámbar oscuro `#B45309` (`rgb(180, 83, 9)`).
+   - Borde `#FDE68A`.
+10. **Badge "Por vencer":** En la misma lista o en una vista de Lotes, localizar un medicamento con estado **Por vencer** (próximo a expirar en 60-90 días). El badge debe mostrar:
+    - Fondo rosa suave `#FEE2E2` (`rgb(254, 226, 226)`).
+    - Texto rojo oscuro WCAG-AA `#B91C1C` (`rgb(185, 28, 28)`).
+    - Borde `#FECACA`.
+11. **Badge "OK" / "Pagado" / "Recibida":** Localizar un lote vigente o una orden de compra en estado **Recibida/Pagado**. Verificar:
+    - Fondo verde menta suave `#DCFCE7` (`rgb(220, 252, 231)`).
+    - Texto verde oscuro `#15803D` (`rgb(21, 128, 61)`).
+    - Borde `#BBF7D0`.
+12. **Badge "Dañado" / "Descartado":** Localizar un registro con estado de daño o descarte. Verificar:
+    - Fondo gris neutro `#E2E3E5` (`rgb(226, 227, 229)`).
+    - Texto gris oscuro `#383D41` (`rgb(56, 61, 65)`).
+    - Borde `#D6D8DB`.
+
+#### Fase D: Verificación de Tipografía y Contraste WCAG AA — Escenario 4
+
+13. **Verificación de la fuente Inter:** En las Herramientas de Desarrollador, inspeccionar cualquier párrafo o etiqueta de campo del formulario. El estilo computado debe mostrar `font-family` con `Inter` como primera fuente en la pila tipográfica.
+14. **Prueba de contraste con Lighthouse:** En Google Chrome, abrir las DevTools (`F12`), ir a la pestaña **Lighthouse**, seleccionar la categoría **Accessibility** y ejecutar el análisis. El reporte de accesibilidad no debe reportar ninguna falla de contraste de color en los elementos de la interfaz principal de Caryvil ERP. El ratio mínimo aceptado es **4.5:1 (WCAG AA)** para texto normal.
+15. **Verificación de Responsividad en 1366×768:** Usando las DevTools en Chrome (o Firefox), activar la simulación de dispositivo y ajustar la resolución a **1366×768 píxeles** (resolución POS estándar). Verificar que:
+    - El sidebar no desborda ni oculta contenido.
+    - Los botones de acción son plenamente visibles y clicables.
+    - Los badges de estado son legibles sin truncamiento.
+    - Los formularios se adaptan correctamente sin scroll horizontal.
+
+#### Casos Límite / Rutas de Excepción:
+1. **Verificación de que los colores de Odoo por defecto no se filtran:** Con el Modo Desarrollador activo, navegar a cualquier sección del ERP nativa de Odoo (no de Caryvil) como **Ajustes** o **Discusión**. Verificar que los colores de la marca Caryvil no sobreescriben incorrectamente elementos de otras aplicaciones de Odoo que estén fuera del módulo `caryvil_erp`. El tema debe aplicarse globalmente al backend (color de navbar y botones) pero sin romper la usabilidad de módulos base de Odoo.
+2. **Ausencia de errores de consola JavaScript:** Al cargar cualquier vista del módulo, abrir la consola del navegador (`F12` → **Console**) y verificar que no existen errores JavaScript relacionados con la carga de assets del módulo `caryvil_erp` ni advertencias de `Content-Security-Policy` bloqueando recursos de `fonts.googleapis.com`.
+3. **Verificación del badge FEFO heredado:** Si existen registros de lotes con seguimiento FEFO en el sistema, verificar que la clase `.caryvil_badge_fefo` muestra correctamente el estado de vencimiento con el estilo de píldora roja/rosada (`#FEE2E2` / `#B91C1C`) sin romper la apariencia de las vistas de inventario existentes.
 
 

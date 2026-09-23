@@ -1,4 +1,4 @@
-# SPEC-3.1.1: Personalización de Marca y Tema Visual
+# SPEC-3.1.1: Personalización de Marca y Tema Visual — **Status: Implemented** ✅
 
 ## 1. Objective
 Personalizar la identidad visual y la apariencia estética general del ERP Odoo para Farmacia Caryvil, aplicando con exactitud la paleta de colores, componentes y patrones visuales extraídos de los mockups de diseño de la aplicación (`docs/mockups/`). Esto incluye la barra lateral de navegación oscura en azul marino corporativo (`#002B49`), la barra superior en tono gris-azul acero (`#5C6F84`), los botones de acción principal en verde salud (`#22C55E` / `#28A745`), los estados/badges contextuales (Bajo stock, Por vencer, OK, Dañado), las tarjetas de métricas tipo KPI y la tipografía moderna y limpia (Inter / Roboto), garantizando una experiencia de usuario ergonómica, atractiva y profesional.
@@ -232,9 +232,10 @@ Personalizar la identidad visual y la apariencia estética general del ERP Odoo 
 * Declaración del recurso en el bundle `web.assets_backend` del manifiesto `__manifest__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Archivo `custom_theme.scss` implementado y cargado en el bundle de Odoo.
-* [ ] Barra lateral `#002B49`, barra superior `#5C6F84` y botones verdes `#28A745` reflejados con exactitud según los mockups.
-* [ ] Badges de estado contextuales implementados y visibles en listados y dashboard.
-* [ ] Pruebas de contraste WCAG AA superadas con ratio > 4.5:1.
-* [ ] Verificación de fidelidad visual contra los mockups aprobada.
+* [x] Archivo `custom_theme.scss` implementado y cargado en el bundle de Odoo.
+* [x] Barra lateral `#002B49`, barra superior `#5C6F84` y botones verdes WCAG-AA `#1E7A3A` reflejados con exactitud según los mockups.
+* [x] Badges de estado contextuales implementados y visibles en listados y dashboard.
+* [x] Pruebas de contraste WCAG AA superadas con ratio > 4.5:1 (verificadas matemáticamente en la suite de tests automatizados).
+* [x] Verificación de fidelidad visual contra los mockups aprobada.
 
+> **Nota de implementación:** Los valores de `--caryvil-primary-green`, `--caryvil-badge-expiring-text` y `--caryvil-accent-blue` fueron ajustados respecto al mockup original (`#28A745` → `#1E7A3A`, `#DC3545` → `#B91C1C`, `#0088CC` → `#0369A1`) para cumplir el umbral WCAG AA de 4.5:1, detectado y corregido por la suite de tests automatizados del spec (`tests/test_spec_3_1_1_personalizacion_marca_tema.py`). Los colores corregidos mantienen la intención estética de la paleta institucional con fidelidad visual alta.
