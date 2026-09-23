@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Búsqueda de productos incluyendo principio activo -->
+        <record id="view_product_template_search_caryvil_medicine" model="ir.ui.view">
+            <field name="name">product.template.search.caryvil.medicine</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="filter_domain">
+                        ['|', '|', '|', '|',
+                        ('default_code', 'ilike', self),
+                        ('product_variant_ids.default_code', 'ilike', self),
+                        ('name', 'ilike', self),
+                        ('barcode', 'ilike', self),
+                        ('active_ingredient_id.name', 'ilike', self)]
+                    </attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- Formulario de producto -->
+        <record id="view_product_template_form_caryvil_medicine" model="ir.ui.view">
+            <field name="name">product.template.form.caryvil.medicine</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//page[@name='general_information']" position="after">
+                    <page string="Información Farmacéutica" name="pharma_information">
+                        <group>
+                        <group>
+                            <field name="active_ingredient_id"/>
+                            <field name="therapeutic_category_id"/>
+                            <field name="dosage_form"/>
+                            <field name="concentration"/>
+                        </group>
+
+                        <group>
+                            <field name="prescription_required"/>
+                            <field name="barcode"/>
+                            <field name="list_price"/>
+                        </group>
+
+                        <div class="alert alert-warning"
+                            role="alert"
+                            invisible="not prescription_required">
+                            <strong>⚠ Requiere receta médica</strong>
+                            <br/>
+                            Este medicamento requiere receta médica antes de su dispensación.
+                        </div>
+                    </group>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>
