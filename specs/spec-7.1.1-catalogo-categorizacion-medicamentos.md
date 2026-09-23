@@ -109,8 +109,8 @@ Estructurar, modelar y personalizar la ficha técnica y categorización del cat�
 * Archivo `custom_addons/caryvil_erp/views/product_template_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Modelos de categorías terapéuticas y principios activos implementados.
-* [ ] Extensión de `product.template` con campos farmacéuticos configurada.
-* [ ] Trazabilidad por lotes (`tracking = 'lot'`) predeterminada en nuevos medicamentos.
+* [x] Modelos de categorías terapéuticas y principios activos implementados.
+* [x] Extensión de `product.template` con campos farmacéuticos configurada.
+* [x] Trazabilidad por lotes (`tracking = 'lot'`) predeterminada en nuevos medicamentos.
 * [ ] Pruebas unitarias aprobadas al 100%.
 * [ ] Validación de la ficha médica con la farmacéutica responsable.
