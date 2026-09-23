@@ -15,7 +15,6 @@ Valida el cumplimiento exhaustivo de criterios de aceptacion y Definition of Don
 
 import ast
 import os
-import math
 
 MODULE_ROOT = os.path.join("custom_addons", "caryvil_erp")
 SCSS_RELATIVE_PATH = os.path.join("static", "src", "scss", "custom_theme.scss")
@@ -53,6 +52,7 @@ def _relative_luminance(rgb: tuple) -> float:
         if srgb <= 0.04045:
             return srgb / 12.92
         return ((srgb + 0.055) / 1.055) ** 2.4
+
     r, g, b = rgb
     return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b)
 
@@ -73,9 +73,9 @@ def test_scss_file_exists_and_is_nonempty():
         f"El archivo SCSS parece incompleto: solo tiene {len(content)} bytes. "
         "Se esperan al menos 2000 bytes con la implementacion completa."
     )
-    assert ":root {" in content or ":root{" in content, (
-        "El bloque :root con las CSS Custom Properties no fue encontrado en custom_theme.scss."
-    )
+    assert (
+        ":root {" in content or ":root{" in content
+    ), "El bloque :root con las CSS Custom Properties no fue encontrado en custom_theme.scss."
 
 
 def test_scss_registered_in_web_assets_backend():
@@ -112,9 +112,9 @@ def test_institutional_color_tokens_present():
     for token, hex_val in required.items():
         assert token in content, f"Token de diseno '{token}' no encontrado en custom_theme.scss."
         if hex_val:
-            assert hex_val.upper() in content_upper, (
-                f"Valor {hex_val} del token '{token}' no encontrado en custom_theme.scss."
-            )
+            assert (
+                hex_val.upper() in content_upper
+            ), f"Valor {hex_val} del token '{token}' no encontrado en custom_theme.scss."
 
     assert "Inter" in content, "La fuente 'Inter' no esta referenciada en custom_theme.scss."
 
@@ -124,25 +124,25 @@ def test_semantic_badge_tokens_present():
     content_upper = content.upper()
 
     badge_tokens = {
-        "--caryvil-badge-low-stock-bg":     "#FEF3C7",
-        "--caryvil-badge-low-stock-text":   "#B45309",
+        "--caryvil-badge-low-stock-bg": "#FEF3C7",
+        "--caryvil-badge-low-stock-text": "#B45309",
         "--caryvil-badge-low-stock-border": "#FDE68A",
-        "--caryvil-badge-expiring-bg":      "#FEE2E2",
-        "--caryvil-badge-expiring-text":    "#DC3545",
-        "--caryvil-badge-expiring-border":  "#FECACA",
-        "--caryvil-badge-ok-bg":            "#DCFCE7",
-        "--caryvil-badge-ok-text":          "#15803D",
-        "--caryvil-badge-ok-border":        "#BBF7D0",
-        "--caryvil-badge-damaged-bg":       "#E2E3E5",
-        "--caryvil-badge-damaged-text":     "#383D41",
-        "--caryvil-badge-damaged-border":   "#D6D8DB",
+        "--caryvil-badge-expiring-bg": "#FEE2E2",
+        "--caryvil-badge-expiring-text": "#DC3545",
+        "--caryvil-badge-expiring-border": "#FECACA",
+        "--caryvil-badge-ok-bg": "#DCFCE7",
+        "--caryvil-badge-ok-text": "#15803D",
+        "--caryvil-badge-ok-border": "#BBF7D0",
+        "--caryvil-badge-damaged-bg": "#E2E3E5",
+        "--caryvil-badge-damaged-text": "#383D41",
+        "--caryvil-badge-damaged-border": "#D6D8DB",
     }
 
     for token_name, hex_value in badge_tokens.items():
         assert token_name in content, f"Token de badge '{token_name}' no encontrado."
-        assert hex_value.upper() in content_upper, (
-            f"Valor {hex_value} del token '{token_name}' no encontrado en custom_theme.scss."
-        )
+        assert (
+            hex_value.upper() in content_upper
+        ), f"Valor {hex_value} del token '{token_name}' no encontrado en custom_theme.scss."
 
 
 def test_odoo_native_variable_overrides_present():
@@ -198,35 +198,28 @@ def test_component_selectors_present():
         ".o_pager": "Paginador de Odoo",
     }
 
-    missing = [
-        f"  '{sel}' ({desc})"
-        for sel, desc in selectors.items()
-        if sel not in content
-    ]
-    assert not missing, (
-        "Los siguientes selectores requeridos no estan implementados en custom_theme.scss:\n"
-        + "\n".join(missing)
-    )
+    missing = [f"  '{sel}' ({desc})" for sel, desc in selectors.items() if sel not in content]
+    assert (
+        not missing
+    ), "Los siguientes selectores requeridos no estan implementados en custom_theme.scss:\n" + "\n".join(missing)
 
-    assert "width: 4px" in content, (
-        "La barra indicadora vertical de 4px del elemento activo no esta definida."
-    )
-    assert "border-radius: 2px 0 0 2px" in content, (
-        "El border-radius de la barra indicadora lateral (2px 0 0 2px) no esta definido."
-    )
-    assert "border-radius: 50rem" in content, (
-        "La forma de pildora (border-radius: 50rem) no esta definida para los badges."
-    )
+    assert "width: 4px" in content, "La barra indicadora vertical de 4px del elemento activo no esta definida."
+    assert (
+        "border-radius: 2px 0 0 2px" in content
+    ), "El border-radius de la barra indicadora lateral (2px 0 0 2px) no esta definido."
+    assert (
+        "border-radius: 50rem" in content
+    ), "La forma de pildora (border-radius: 50rem) no esta definida para los badges."
 
 
 def test_responsive_breakpoints_present():
     content = _read_scss()
-    assert "@media (max-width: 1366px)" in content, (
-        "El media query para la resolucion POS estandar (max-width: 1366px) no esta implementado."
-    )
-    assert "@media (min-width: 1920px)" in content, (
-        "El media query para Full HD (min-width: 1920px) no esta implementado."
-    )
+    assert (
+        "@media (max-width: 1366px)" in content
+    ), "El media query para la resolucion POS estandar (max-width: 1366px) no esta implementado."
+    assert (
+        "@media (min-width: 1920px)" in content
+    ), "El media query para Full HD (min-width: 1920px) no esta implementado."
 
 
 def test_wcag_aa_contrast_ratios():
@@ -259,8 +252,7 @@ def test_wcag_aa_contrast_ratios():
 
     assert not failures, (
         f"Los siguientes pares de color NO cumplen el estandar WCAG AA "
-        f"(ratio minimo {WCAG_AA_THRESHOLD}:1):\n"
-        + "\n".join(failures)
+        f"(ratio minimo {WCAG_AA_THRESHOLD}:1):\n" + "\n".join(failures)
     )
 
 
@@ -286,6 +278,3 @@ if __name__ == "__main__":
     print(f"\nResultado: {passed}/{len(tests)} pruebas pasadas.")
     if passed != len(tests):
         exit(1)
-
-
-
