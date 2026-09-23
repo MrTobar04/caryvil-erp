@@ -79,7 +79,10 @@ def test_xml_template_file_exists_and_is_valid():
     templates = root.findall(".//template")
     assert len(templates) >= 1, "No se encontro ninguna etiqueta <template> en el XML."
 
-    login_tmpl = root.find(".//template[@id='caryvil_web_login_layout']") or root.find(".//template[@id='caryvil_web_login']")
+    login_tmpl = (
+        root.find(".//template[@id='caryvil_web_login_layout']")
+        or root.find(".//template[@id='caryvil_web_login']")
+    )
     assert login_tmpl is not None, "No se encontro el template de login en el XML."
     assert login_tmpl.get("inherit_id") in ["web.login_layout", "web.login"], (
         f"El template debe heredar de 'web.login_layout' o 'web.login', actual: {login_tmpl.get('inherit_id')}"
@@ -97,7 +100,9 @@ def test_xml_template_structure_and_branding():
         "La plantilla XML debe contener el contenedor de formulario de login."
     )
     assert "Farmacia Caryvil" in xml_content, "La marca 'Farmacia Caryvil' no esta en el XML."
-    assert "derechos reservados" in xml_content.lower(), "El texto de pie de pagina de derechos reservados no esta presente."
+    assert "derechos reservados" in xml_content.lower(), (
+        "El texto de pie de pagina de derechos reservados no esta presente."
+    )
 
 
 def test_manifest_registration():
@@ -170,7 +175,8 @@ def test_login_contrast_wcag_aa():
             )
 
     assert not failures, (
-        f"Los siguientes pares de color de la pantalla de login NO cumplen WCAG AA:\n" + "\n".join(failures)
+        "Los siguientes pares de color de la pantalla de login NO cumplen WCAG AA:\n"
+        + "\n".join(failures)
     )
 
 
