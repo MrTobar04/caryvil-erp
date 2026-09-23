@@ -5,6 +5,7 @@
         <record id="cat_analgesicos" model="product.category">
             <field name="name">Analgésicos y Antiinflamatorios</field>
         </record>
+       
 
         <record id="cat_antibioticos" model="product.category">
             <field name="name">Antibióticos y Antimicrobianos</field>
@@ -41,5 +42,47 @@
         <record id="cat_oftalmicos" model="product.category">
             <field name="name">Oftálmicos y Otológicos</field>
         </record>
+
+        <!-- Categorías Terapéuticas Farmacéuticas - SPEC-7.1.1 -->
+
+        <record id="therapeutic_analgesicos" model="caryvil.therapeutic.category">
+            <field name="name">Analgésicos y Antiinflamatorios</field>
+        </record>
+
+        <record id="therapeutic_antibioticos" model="caryvil.therapeutic.category">
+            <field name="name">Antibióticos y Antimicrobianos</field>
+        </record>
+
+        <record id="therapeutic_antihistaminicos" model="caryvil.therapeutic.category">
+            <field name="name">Antihistamínicos y Antialérgicos</field>
+        </record>
+
+        <record id="therapeutic_antihipertensivos" model="caryvil.therapeutic.category">
+            <field name="name">Antihipertensivos y Cardiovasculares</field>
+        </record>
+
+        <record id="therapeutic_gastrointestinales" model="caryvil.therapeutic.category">
+            <field name="name">Gastrointestinales y Antiácidos</field>
+        </record>
+
+        <record id="therapeutic_antidiabeticos" model="caryvil.therapeutic.category">
+            <field name="name">Antidiabéticos y Metabólicos</field>
+        </record>
+
+        <record id="therapeutic_vitaminas" model="caryvil.therapeutic.category">
+            <field name="name">Vitaminas y Suplementos</field>
+        </record>
+
+        <record id="therapeutic_dermatologicos" model="caryvil.therapeutic.category">
+            <field name="name">Dermatológicos y Tópicos</field>
+        </record>
+
+        <record id="therapeutic_respiratorios" model="caryvil.therapeutic.category">
+            <field name="name">Respiratorios y Broncodilatadores</field>
+        </record>
+
+        <record id="therapeutic_oftalmicos" model="caryvil.therapeutic.category">
+            <field name="name">Oftálmicos y Otológicos</field>
+        </record>   
     </data>
 </odoo>
