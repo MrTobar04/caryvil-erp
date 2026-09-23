@@ -16,6 +16,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 1.5: Pipeline CI/CD con GitHub Actions y Despliegue Automático (SPEC-1.3.1)](#flujo-15-pipeline-cicd-con-github-actions-y-despliegue-automático-spec-131)
   - [Flujo 2.1: Definición de Roles, Grupos de Seguridad y Herencia de Privilegios (SPEC-2.2.1)](#flujo-21-definición-de-roles-grupos-de-seguridad-y-herencia-de-privilegios-spec-221)
   - [Flujo 3.1: Personalización de Marca y Tema Visual (SPEC-3.1.1)](#flujo-31-personalización-de-marca-y-tema-visual-spec-311)
+  - [Flujo 3.2: Personalización de Pantalla de Autenticación (SPEC-3.1.2)](#flujo-32-personalización-de-pantalla-de-autenticación-spec-312)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
@@ -497,5 +498,42 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 1. **Verificación de que los colores de Odoo por defecto no se filtran:** Con el Modo Desarrollador activo, navegar a cualquier sección del ERP nativa de Odoo (no de Caryvil) como **Ajustes** o **Discusión**. Verificar que los colores de la marca Caryvil no sobreescriben incorrectamente elementos de otras aplicaciones de Odoo que estén fuera del módulo `caryvil_erp`. El tema debe aplicarse globalmente al backend (color de navbar y botones) pero sin romper la usabilidad de módulos base de Odoo.
 2. **Ausencia de errores de consola JavaScript:** Al cargar cualquier vista del módulo, abrir la consola del navegador (`F12` → **Console**) y verificar que no existen errores JavaScript relacionados con la carga de assets del módulo `caryvil_erp` ni advertencias de `Content-Security-Policy` bloqueando recursos de `fonts.googleapis.com`.
 3. **Verificación del badge FEFO heredado:** Si existen registros de lotes con seguimiento FEFO en el sistema, verificar que la clase `.caryvil_badge_fefo` muestra correctamente el estado de vencimiento con el estilo de píldora roja/rosada (`#FEE2E2` / `#B91C1C`) sin romper la apariencia de las vistas de inventario existentes.
+
+---
+
+### Flujo 3.2: Personalización de Pantalla de Autenticación (SPEC-3.1.2)
+
+> **Prerrequisito:** El módulo `caryvil_erp` debe estar instalado y los servicios web y base de datos activos en Docker o entorno local.
+
+#### Fase A: Renderizado y Jerarquía Visual de la Pantalla de Login (Escenario 1)
+
+1. **Acceso inicial y renderizado del contenedor:** En el navegador web, navegar a la ruta de autenticación [http://localhost:8069/web/login](http://localhost:8069/web/login) (cerrar sesión previamente si hay una sesión activa). Debes observar que la página carga con un fondo degradado suave institucional en tonos gris-azul (`#F0F4F8` a `#D9E4EC`) y el formulario centrado vertical y horizontalmente en pantalla.
+2. **Inspección de la tarjeta de inicio de sesión:** Verificar que el formulario de acceso se aloja dentro de una tarjeta blanca (`#FFFFFF`) con bordes redondeados (`border-radius: 12px`), contorno gris sutil (`#E5E7EB`) y sombra de elevación (`0 12px 30px rgba(0, 43, 73, 0.1)`).
+3. **Validación del encabezado corporativo:** En la parte superior de la tarjeta de login, comprobar la presencia de:
+   - Logotipo oficial de Farmacia Caryvil (`/caryvil_erp/static/src/img/caryvil_logo_full.png`) centrado con proporción máxima de 75px.
+   - Título de marca institucional en tipografía negrita y color azul marino corporativo: `ERP FARMACIA` (`#002B49`).
+   - Subtítulo descriptivo en gris: `Farmacia Caryvil • Soyapango`.
+4. **Validación del pie de página de la tarjeta:** En la parte inferior de la tarjeta, verificar el pie delimitado con fondo claro y el texto de derechos reservados: `© 2026 Farmacia Caryvil • Todos los derechos reservados`.
+
+#### Fase B: Interacción, Foco de Campos y Autenticación Exitosa (Escenario 2)
+
+5. **Efecto de foco en campos de entrada:** Hacer clic sobre el campo **Correo electrónico / Usuario** y posteriormente sobre **Contraseña**. Debes observar que el campo activo resalta su borde en color cian eléctrico (`#38B6FF`) con un resplandor o sombra tenue (`rgba(56, 182, 255, 0.25)`).
+6. **Estilo del botón de inicio de sesión:** Verificar que el botón principal **Iniciar sesión** (o **Acceder**) muestra:
+   - Fondo verde institucional (`#1E7A3A` / `#28A745`) con texto blanco en negrita (`#FFFFFF`).
+   - Bordes redondeados (`8px`) y ancho completo del formulario (`width: 100%`).
+   - Efecto hover: al colocar el cursor sobre el botón, el fondo se oscurece suavemente (`#166130` / `#218838`) y se eleva sutilmente.
+7. **Autenticación y preservación del token CSRF:** Ingresar las credenciales autorizadas del Administrador (`admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`) y presionar el botón de inicio de sesión. Comprobar que el formulario envía el token CSRF nativo sin errores y redirige inmediatamente al dashboard o vista principal de Odoo.
+
+#### Fase C: Notificación de Error ante Credenciales Incorrectas (Escenario 3)
+
+8. **Manejo visual de errores:** Cerrar sesión y regresar a [http://localhost:8069/web/login](http://localhost:8069/web/login). Digitar un usuario o contraseña errónea (ej. `usuario_invalido@caryvil.com` / `clave_erronea`) y presionar **Iniciar sesión**. Debes verificar que:
+   - Odoo procesa la petición y muestra el mensaje de error de autenticación dentro de un contenedor alert estilizado (`alert-danger`) con fondo rojo suave (`#FEE2E2`), borde `#FECACA` y texto rojo oscuro (`#B91C1C`).
+   - La tarjeta mantiene su estructura centrada, bordes redondeados y alineación sin deformaciones visuales.
+
+#### Fase D: Responsividad y Accesibilidad WCAG AA
+
+9. **Verificación en dispositivos móviles:** En las DevTools del navegador (`F12`), activar el modo responsive y simular una pantalla de dispositivo móvil (ej. ancho 375px - 414px). Comprobar que la tarjeta de inicio de sesión se adapta de forma fluida manteniendo márgenes laterales limpios, el logotipo escala proporcionalmente y los campos de entrada conservan total legibilidad y ergonomía táctil.
+10. **Cumplimiento de contraste:** Ejecutar el análisis de accesibilidad Lighthouse en la página `/web/login`, verificando que todos los textos (títulos, subtítulos, etiquetas y botón primario) cumplen el ratio de contraste mínimo de 4.5:1 (WCAG AA).
+
 
 
