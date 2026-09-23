@@ -1,0 +1,347 @@
+// ==============================================================================
+// Farmacia Caryvil ERP - Custom Authentication Screen Styles (SPEC-3.1.2)
+// UI/UX Design System & Brand Identity for Login Screen
+// ==============================================================================
+
+:root {
+    --caryvil-sidebar-bg: #002B49;
+    --caryvil-topbar-bg: #5C6F84;
+    --caryvil-primary-green: #1E7A3A;
+    --caryvil-primary-green-hover: #166130;
+    --caryvil-accent-blue: #0369A1;
+    --caryvil-sidebar-active: #38B6FF;
+    --caryvil-navy: #002B49;
+    --caryvil-navy-light: #0A3D62;
+    --caryvil-cyan: #38B6FF;
+    --caryvil-cyan-hover: #0284C7;
+    --caryvil-green: #1E7A3A;
+    --caryvil-green-bright: #22C55E;
+    --caryvil-green-hover: #166130;
+    --caryvil-text-heading: #0F172A;
+    --caryvil-text-body: #334155;
+    --caryvil-text-muted: #64748B;
+    --caryvil-border-color: #E2E8F0;
+    --caryvil-input-bg: #F8FAFC;
+    --caryvil-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --caryvil-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+// ------------------------------------------------------------------------------
+// 1. Contenedor Global y Lienzo
+// ------------------------------------------------------------------------------
+html, body {
+    font-family: var(--caryvil-font) !important;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body.o_home_menu_background,
+body:has(.oe_login_form),
+body:has(.caryvil-login-wrapper),
+.oe_website_login_container,
+.o_login_layout {
+    background: radial-gradient(circle at 50% 20%, #F1F6FA 0%, #D8E4EE 50%, #C4D5E4 100%) !important;
+    min-height: 100vh;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 24px 16px !important;
+    box-sizing: border-box;
+}
+
+.caryvil-login-wrapper {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    padding: 12px;
+}
+
+// ------------------------------------------------------------------------------
+// 2. Tarjeta Principal de Login (Single Elevated Card)
+// ------------------------------------------------------------------------------
+.caryvil-login-card {
+    background-color: #FFFFFF;
+    border: 1px solid var(--caryvil-border-color);
+    border-radius: 16px;
+    box-shadow: 0 20px 45px -12px rgba(0, 43, 73, 0.16), 0 0 0 1px rgba(0, 43, 73, 0.04);
+    width: 100%;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+        box-shadow: 0 24px 50px -10px rgba(0, 43, 73, 0.2), 0 0 0 1px rgba(0, 43, 73, 0.06);
+    }
+}
+
+// Desactivar contenedores internos anidados de Odoo
+.caryvil-login-body {
+    padding: 24px 32px 32px 32px;
+
+    .card,
+    .oe_login_form,
+    .o_database_list {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .card-body {
+        padding: 0 !important;
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 3. Encabezado Corporativo (Brand Header)
+// ------------------------------------------------------------------------------
+.caryvil-login-header {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    border-bottom: 1px solid var(--caryvil-border-color);
+    padding: 32px 24px 20px 24px;
+    text-align: center;
+
+    .caryvil-logo-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 16px;
+        box-shadow: 0 6px 16px -4px rgba(0, 43, 73, 0.08);
+        margin-bottom: 14px;
+        transition: transform 0.2s ease;
+
+        &:hover {
+            transform: scale(1.03);
+        }
+    }
+
+    .caryvil-login-logo {
+        max-height: 64px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .caryvil-brand-title {
+        color: var(--caryvil-navy);
+        font-weight: 700;
+        font-size: 1.45rem;
+        letter-spacing: 0.75px;
+        line-height: 1.2;
+        margin: 0 0 4px 0;
+    }
+
+    .caryvil-brand-subtitle {
+        color: var(--caryvil-text-muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin: 0;
+        letter-spacing: 0.2px;
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 4. Campos de Formulario (Inputs Ergonomicos)
+// ------------------------------------------------------------------------------
+.oe_login_form {
+    .mb-3, .form-group {
+        margin-bottom: 1.25rem !important;
+
+        .form-label, label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--caryvil-text-heading);
+            margin-bottom: 6px;
+        }
+    }
+
+    .form-control,
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        height: 46px;
+        border: 1.5px solid #CBD5E1 !important;
+        border-radius: 10px !important;
+        padding: 10px 14px !important;
+        font-size: 0.9375rem !important;
+        color: var(--caryvil-text-heading) !important;
+        background-color: var(--caryvil-input-bg) !important;
+        box-sizing: border-box;
+        transition: all 0.2s ease-in-out;
+
+        &::placeholder {
+            color: #94A3B8 !important;
+            font-size: 0.875rem;
+        }
+
+        &:hover {
+            border-color: #94A3B8 !important;
+            background-color: #FFFFFF !important;
+        }
+
+        &:focus {
+            border-color: var(--caryvil-cyan) !important;
+            background-color: #FFFFFF !important;
+            box-shadow: 0 0 0 4px rgba(56, 182, 255, 0.20) !important;
+            outline: none !important;
+        }
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 5. Boton de Acceso Primario (Call to Action)
+// ------------------------------------------------------------------------------
+.oe_login_buttons {
+    margin-top: 1.5rem !important;
+
+    .btn-primary,
+    button[type="submit"] {
+        width: 100% !important;
+        height: 48px !important;
+        background: linear-gradient(180deg, #22C55E 0%, #16A34A 100%) !important;
+        border: 1px solid #16A34A !important;
+        color: #FFFFFF !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        border-radius: 10px !important;
+        letter-spacing: 0.3px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35) !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover, &:focus {
+            background: linear-gradient(180deg, #16A34A 0%, #15803D 100%) !important;
+            border-color: #15803D !important;
+            color: #FFFFFF !important;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(34, 197, 94, 0.45) !important;
+        }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(34, 197, 94, 0.25) !important;
+        }
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 6. Enlaces Secundarios y Navegacion
+// ------------------------------------------------------------------------------
+.oe_login_form {
+    .justify-content-between,
+    .d-flex,
+    .o_login_auth {
+        margin-top: 14px;
+    }
+
+    a {
+        color: var(--caryvil-cyan-hover) !important;
+        font-size: 0.875rem !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        transition: color 0.15s ease;
+
+        &:hover {
+            color: #0369A1 !important;
+            text-decoration: underline !important;
+        }
+    }
+}
+
+// ------------------------------------------------------------------------------
+// 7. Alertas y Estados del Sistema
+// ------------------------------------------------------------------------------
+.alert-danger {
+    background-color: #FEF2F2 !important;
+    border: 1px solid #FECACA !important;
+    color: #991B1B !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    margin-bottom: 1.25rem !important;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.08);
+}
+
+.alert-success {
+    background-color: #F0FDF4 !important;
+    border: 1px solid #BBF7D0 !important;
+    color: #166534 !important;
+    border-radius: 10px !important;
+    padding: 12px 16px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    margin-bottom: 1.25rem !important;
+}
+
+// ------------------------------------------------------------------------------
+// 8. Pie de Pagina Institucional (Card Footer)
+// ------------------------------------------------------------------------------
+.caryvil-login-footer {
+    background-color: #F8FAFC;
+    border-top: 1px solid var(--caryvil-border-color);
+    padding: 14px 24px;
+    color: var(--caryvil-text-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 0 0 16px 16px;
+}
+
+// ------------------------------------------------------------------------------
+// 9. Responsividad y Optimizacion para Pantallas Moviles
+// ------------------------------------------------------------------------------
+@media (max-width: 576px) {
+    .caryvil-login-wrapper {
+        padding: 8px;
+    }
+
+    .caryvil-login-card {
+        border-radius: 12px;
+    }
+
+    .caryvil-login-header {
+        padding: 24px 16px 16px 16px;
+
+        .caryvil-logo-badge {
+            padding: 8px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .caryvil-login-logo {
+            max-height: 52px;
+        }
+
+        .caryvil-brand-title {
+            font-size: 1.25rem;
+        }
+
+        .caryvil-brand-subtitle {
+            font-size: 0.8125rem;
+        }
+    }
+
+    .caryvil-login-body {
+        padding: 20px 20px 24px 20px;
+    }
+
+    .caryvil-login-footer {
+        padding: 12px 16px;
+        font-size: 0.75rem;
+        border-radius: 0 0 12px 12px;
+    }
+}

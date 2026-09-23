@@ -15,33 +15,38 @@
         <menuitem id="menu_caryvil_dashboard"
                   name="Dashboard"
                   parent="menu_caryvil_root"
-                  sequence="10"/>
+                  sequence="10"
+                  groups="caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_ventas"
                   name="Ventas y Caja"
                   parent="menu_caryvil_root"
-                  sequence="20"/>
+                  sequence="20"
+                  groups="caryvil_erp.group_caryvil_cashier"/>
 
         <menuitem id="menu_caryvil_inventario"
                   name="Medicamentos e Inventario"
                   parent="menu_caryvil_root"
-                  sequence="30"/>
+                  sequence="30"
+                  groups="caryvil_erp.group_caryvil_cashier"/>
 
         <menuitem id="menu_caryvil_compras"
                   name="Compras y Proveedores"
                   parent="menu_caryvil_root"
-                  sequence="40"/>
+                  sequence="40"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
 
         <menuitem id="menu_caryvil_clientes"
                   name="Clientes"
                   parent="menu_caryvil_root"
-                  sequence="50"/>
+                  sequence="50"
+                  groups="caryvil_erp.group_caryvil_cashier"/>
 
         <menuitem id="menu_caryvil_configuracion"
                   name="Configuración"
                   parent="menu_caryvil_root"
                   sequence="100"
-                  groups="caryvil_erp.group_caryvil_admin"/>
+                  groups="caryvil_erp.group_caryvil_manager"/>
 
         <!-- ================================================================ -->
         <!-- Acciones de Ventana y Submenús de Medicamentos e Inventario      -->
