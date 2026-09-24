@@ -42,3 +42,6 @@ ENV/
 *.log
 filestore/
 sessions/
+
+# Temp
+/temp

@@ -3,7 +3,7 @@
     <data noupdate="1">
 
         <!-- 1. Amoxicilina 500mg -->
-        <record id="med_amoxicilina_500" model="product.template">
+        <record id="med_amoxicilina_500" model="product.product">
             <field name="name">Amoxicilina Vijosa 500mg (Caja x 50 Cápsulas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -18,7 +18,7 @@
         </record>
 
         <!-- 2. Ibuprofeno 400mg -->
-        <record id="med_ibuprofeno_400" model="product.template">
+        <record id="med_ibuprofeno_400" model="product.product">
             <field name="name">Ibuprofeno López 400mg (Caja x 100 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -33,7 +33,7 @@
         </record>
 
         <!-- 3. Paracetamol 500mg -->
-        <record id="med_paracetamol_500" model="product.template">
+        <record id="med_paracetamol_500" model="product.product">
             <field name="name">Paracetamol Vijosa 500mg (Caja x 100 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -48,7 +48,7 @@
         </record>
 
         <!-- 4. Loratadina 10mg -->
-        <record id="med_loratadina_10" model="product.template">
+        <record id="med_loratadina_10" model="product.product">
             <field name="name">Loratadina Santa Lucía 10mg (Caja x 20 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -63,7 +63,7 @@
         </record>
 
         <!-- 5. Enalapril 20mg -->
-        <record id="med_enalapril_20" model="product.template">
+        <record id="med_enalapril_20" model="product.product">
             <field name="name">Enalapril Americana 20mg (Caja x 30 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -78,7 +78,7 @@
         </record>
 
         <!-- 6. Metformina 850mg -->
-        <record id="med_metformina_850" model="product.template">
+        <record id="med_metformina_850" model="product.product">
             <field name="name">Metformina Vijosa 850mg (Caja x 30 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -93,7 +93,7 @@
         </record>
 
         <!-- 7. Omeprazol 20mg -->
-        <record id="med_omeprazol_20" model="product.template">
+        <record id="med_omeprazol_20" model="product.product">
             <field name="name">Omeprazol López 20mg (Caja x 30 Cápsulas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -108,7 +108,7 @@
         </record>
 
         <!-- 8. Salbutamol Inhalador 100mcg -->
-        <record id="med_salbutamol_inhalador" model="product.template">
+        <record id="med_salbutamol_inhalador" model="product.product">
             <field name="name">Salbutamol Inhalador 100mcg (Frasco 200 dosis)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -123,7 +123,7 @@
         </record>
 
         <!-- 9. Complejo B Inyectable -->
-        <record id="med_complejo_b_inj" model="product.template">
+        <record id="med_complejo_b_inj" model="product.product">
             <field name="name">Complejo B Vijosa (Caja x 5 Ampollas 2ml)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -138,7 +138,7 @@
         </record>
 
         <!-- 10. Ácido Acetilsalicílico 100mg -->
-        <record id="med_aspirina_100" model="product.template">
+        <record id="med_aspirina_100" model="product.product">
             <field name="name">Aspirina Cardio 100mg (Caja x 30 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -153,7 +153,7 @@
         </record>
 
         <!-- 11. Azitromicina 500mg -->
-        <record id="med_azitromicina_500" model="product.template">
+        <record id="med_azitromicina_500" model="product.product">
             <field name="name">Azitromicina López 500mg (Caja x 3 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -168,7 +168,7 @@
         </record>
 
         <!-- 12. Cetirizina 10mg -->
-        <record id="med_cetirizina_10" model="product.template">
+        <record id="med_cetirizina_10" model="product.product">
             <field name="name">Cetirizina Santa Lucía 10mg (Caja x 10 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -183,7 +183,7 @@
         </record>
 
         <!-- 13. Losartán 50mg -->
-        <record id="med_losartan_50" model="product.template">
+        <record id="med_losartan_50" model="product.product">
             <field name="name">Losartán Potásico Vijosa 50mg (Caja x 30 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -198,7 +198,7 @@
         </record>
 
         <!-- 14. Ranitidina 150mg -->
-        <record id="med_ranitidina_150" model="product.template">
+        <record id="med_ranitidina_150" model="product.product">
             <field name="name">Ranitidina López 150mg (Caja x 20 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -213,7 +213,7 @@
         </record>
 
         <!-- 15. Vitamina C 500mg -->
-        <record id="med_vitamina_c_500" model="product.template">
+        <record id="med_vitamina_c_500" model="product.product">
             <field name="name">Vitamina C Masticable 500mg (Caja x 100 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -228,7 +228,7 @@
         </record>
 
         <!-- 16. Hidrocortisona Crema 1% -->
-        <record id="med_hidrocortisona_crema" model="product.template">
+        <record id="med_hidrocortisona_crema" model="product.product">
             <field name="name">Hidrocortisona Crema 1% (Tubo 15g)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -243,7 +243,7 @@
         </record>
 
         <!-- 17. Clotrimazol Crema 1% -->
-        <record id="med_clotrimazol_crema" model="product.template">
+        <record id="med_clotrimazol_crema" model="product.product">
             <field name="name">Clotrimazol Crema Tópica 1% (Tubo 20g)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -258,7 +258,7 @@
         </record>
 
         <!-- 18. Tobramicina Gotas Oftálmicas 0.3% -->
-        <record id="med_tobramicina_gotas" model="product.template">
+        <record id="med_tobramicina_gotas" model="product.product">
             <field name="name">Tobramicina Gotas Oftálmicas 0.3% (Frasco 5ml)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -273,7 +273,7 @@
         </record>
 
         <!-- 19. Ambroxol Jarabe 15mg/5ml -->
-        <record id="med_ambroxol_jarabe" model="product.template">
+        <record id="med_ambroxol_jarabe" model="product.product">
             <field name="name">Ambroxol Jarabe Infantil 15mg/5ml (Frasco 120ml)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -288,7 +288,7 @@
         </record>
 
         <!-- 20. Diclofenac Sódico 50mg -->
-        <record id="med_diclofenac_50" model="product.template">
+        <record id="med_diclofenac_50" model="product.product">
             <field name="name">Diclofenac Sódico 50mg (Caja x 20 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -303,7 +303,7 @@
         </record>
 
         <!-- 21. Ciprofloxacino 500mg -->
-        <record id="med_ciprofloxacino_500" model="product.template">
+        <record id="med_ciprofloxacino_500" model="product.product">
             <field name="name">Ciprofloxacino 500mg (Caja x 10 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -318,7 +318,7 @@
         </record>
 
         <!-- 22. Glibenclamida 5mg -->
-        <record id="med_glibenclamida_5" model="product.template">
+        <record id="med_glibenclamida_5" model="product.product">
             <field name="name">Glibenclamida 5mg (Caja x 100 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -333,7 +333,7 @@
         </record>
 
         <!-- 23. Electrolitos Orales Suero -->
-        <record id="med_suero_oral" model="product.template">
+        <record id="med_suero_oral" model="product.product">
             <field name="name">Suero Oral Rehidratante Manzana (Frasco 500ml)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -348,7 +348,7 @@
         </record>
 
         <!-- 24. Multivitamínico con Minerales -->
-        <record id="med_multivitaminico" model="product.template">
+        <record id="med_multivitaminico" model="product.product">
             <field name="name">Multivitamínico Adulto con Minerales (Caja x 30 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
@@ -362,7 +362,7 @@
         </record>
 
         <!-- 25. Naproxeno 550mg -->
-        <record id="med_naproxeno_550" model="product.template">
+        <record id="med_naproxeno_550" model="product.product">
             <field name="name">Naproxeno Sódico 550mg (Caja x 10 Tabletas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>

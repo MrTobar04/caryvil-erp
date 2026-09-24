@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Farmacia Caryvil ERP",
-    "version": "17.0.1.0.0",
+    "version": "17.0.1.0.1",
     "category": "Pharmacy/ERP",
     "summary": "Sistema integral de gestión farmacéutica: Inventario, Ventas, Compras y Clientes",
     "description": """
@@ -21,6 +21,7 @@
         "base",
         "contacts",
         "stock",
+        "product_expiry",
         "purchase",
         "purchase_stock",
         "sale_management",
@@ -30,10 +31,12 @@
     "data": [
         "security/caryvil_security.xml",
         "security/ir.model.access.csv",
+        "security/caryvil_security_rules.xml",
         "data/company_data.xml",
         "data/tax_data.xml",
         "data/pharmacy_categories_data.xml",
         "data/active_ingredients_data.xml",
+        "data/pharmacy_uom_data.xml",
         "data/users_roles_data.xml",
         "data/res_partner_vendor_sequence.xml",
         "data/purchase_order_sequence.xml",
@@ -45,10 +48,9 @@
         "views/purchase_order_views.xml",
         "views/stock_picking_views.xml",
         "views/product_medicine_views.xml",
+        "views/web_login_templates.xml",
         "reports/report_purchase_order.xml",
         "reports/purchase_order_report_action.xml",
-        "data/pharmacy_uom_data.xml",
-
     ],
     "demo": [
         "demo/demo_vendors_data.xml",
@@ -63,8 +65,12 @@
             "caryvil_erp/static/src/js/purchase_live_totals.js",
             "caryvil_erp/static/src/xml/purchase_live_totals.xml",
         ],
+        "web.assets_frontend": [
+            "caryvil_erp/static/src/scss/custom_login.scss",
+        ],
     },
     "installable": True,
     "application": True,
     "auto_install": False,
+    "post_init_hook": "post_init_hook",
 }
