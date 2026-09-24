@@ -104,8 +104,8 @@ Parametrizar y estructurar las categorías y unidades de medida (UoM) específic
 * Inclusión del archivo en la sección `data` de `__manifest__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Categorías y unidades de medida farmacéuticas creadas en Odoo.
-* [ ] Ratios de conversión de cajas y blísteres comprobados.
-* [ ] Conversión automática en compras y ventas validada.
-* [ ] Pruebas unitarias aprobadas al 100%.
+* [x] Categorías y unidades de medida farmacéuticas creadas en Odoo (sólidos, líquidos y semisólidos).
+* [x] Ratios de conversión de cajas y blísteres comprobados.
+* [x] Conversión automática en compras y ventas validada.
+* [x] Pruebas unitarias aprobadas al 100% (13/13 tests en TestPharmacyUom).
 * [ ] Aprobación por la administración de Farmacia Caryvil.

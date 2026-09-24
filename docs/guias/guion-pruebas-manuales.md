@@ -20,6 +20,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)](#flujo-71-catálogo-y-categorización-de-medicamentos-spec-711)
+  - [Flujo 7.2: Gestión de Unidades de Medida Farmacéuticas (SPEC-7.1.2)](#flujo-72-gestión-de-unidades-de-medida-farmacéuticas-spec-712)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
   - [Flujo 8.2: Recepción de Mercadería y Captura Obligatoria de Lotes (SPEC-8.2.1)](#flujo-82-recepción-de-mercadería-y-captura-obligatoria-de-lotes-spec-821)
   - [Flujo 8.3: Actualización Automática de Stock y Cierre de Compras (SPEC-8.2.2)](#flujo-83-actualización-automática-de-stock-y-cierre-de-compras-spec-822)
@@ -582,6 +583,77 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 2. **Acceso de solo lectura para el rol de Cajero / Dependiente:** Cerrar sesión e ingresar al sistema con las credenciales de Cajero (`cajero@caryvil.com` / `cajero123`), navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**:
    - Abrir cualquier producto médico; debes observar que los botones **Guardar**, **Descartar** y la edición de campos están bloqueados o invisibles (modo solo lectura).
    - Navegar a **Categorías Terapéuticas** o **Principios Activos**; debes poder consultar y buscar todos los registros del catálogo médico, pero el botón **Nuevo** no debe estar disponible o cualquier intento de mutación debe ser rechazado por las reglas de acceso del sistema.
+
+---
+
+### Flujo 7.2: Gestión de Unidades de Medida Farmacéuticas (SPEC-7.1.2)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado, base de datos `caryvil_dev` inicializada con datos semilla y modo desarrollador activo para consultas técnicas.
+
+#### Fase A: Verificación de Parámetros y Categorías de UdM en Base de Datos (DoD 1)
+
+1. **Inspección de la categoría de sólidos farmacéuticos:** Iniciar sesión con el usuario Administrador (`admin` / `admin`). Navegar a **Ajustes** → **Técnico** → **Categorías de Unidades de Medida**. Localizar el registro **Presentaciones Farmacéuticas** (`caryvil_erp.uom_category_pharmacy_units`). Verificar que contiene las siguientes unidades de medida:
+   - **Unidad / Pastilla** (`uom_unit_pill`): Tipo *Unidad de Referencia de esta categoría*, Factor = `1.0`, Precisión de redondeo = `1.00000`.
+   - **Blíster x 4 unidades** (`uom_blister_4`): Tipo *Mayor que la unidad de medida de referencia*, Ratio = `4.0`, Precisión = `0.01000`.
+   - **Blíster x 10 unidades** (`uom_blister_10`): Tipo *Mayor*, Ratio = `10.0`, Precisión = `0.01000`.
+   - **Caja x 20 unidades** (`uom_box_20`): Tipo *Mayor*, Ratio = `20.0`, Precisión = `0.01000`.
+   - **Caja x 50 unidades** (`uom_box_50`): Tipo *Mayor*, Ratio = `50.0`, Precisión = `0.01000`.
+   - **Caja x 100 unidades** (`uom_box_100`): Tipo *Mayor*, Ratio = `100.0`, Precisión = `0.01000`.
+2. **Inspección de la categoría de envases y líquidos/semisólidos:** En la misma vista técnica, localizar la categoría **Envases y Presentaciones Farmacéuticas** (`caryvil_erp.uom_category_pharmacy_packaging`). Verificar que contiene:
+   - **Unidad / Envase** (`uom_unit_container`): Tipo *Unidad de Referencia*, Factor = `1.0`.
+   - **Frasco 60ml** (`uom_bottle_60ml`): Ratio = `1.0`.
+   - **Frasco 120ml** (`uom_bottle_120ml`): Ratio = `1.0`.
+   - **Tubo / Pomada** (`uom_tube_ointment`): Ratio = `1.0`.
+   - **Ampolla / Vial** (`uom_ampoule_vial`): Ratio = `1.0`.
+   - **Caja x 5 Ampollas** (`uom_box_5_ampoules`): Ratio = `5.0`.
+   - **Caja x 12 Frascos** (`uom_box_12_bottles`): Ratio = `12.0`.
+
+#### Fase B: Configuración de Fármaco con Selección Dual de UdM (Escenario 1)
+
+3. **Creación de producto farmacéutico:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos** y hacer clic en **Nuevo**.
+4. **Configuración de unidades:** Ingresar:
+   - Nombre: `Acetaminofén Caryvil 500mg (Prueba UdM Dual)`
+   - Pestaña **Información Farmacéutica**:
+     - Principio Activo: `Paracetamol`
+     - Forma Farmacéutica: `Tableta`
+     - Concentración: `500 mg`
+     - **Unidad de Medida (Venta/Inventario):** Seleccionar `Unidad / Pastilla`.
+     - **Unidad de Medida de Compra:** Seleccionar `Caja x 100 unidades`.
+     - Precio de Venta: `$0.10`.
+5. **Guardado y validación de compatibilidad:** Hacer clic en **Guardar**. Comprobar que ambas unidades pertenecen a la categoría *Presentaciones Farmacéuticas* y que el formulario se almacena sin inconsistencias.
+
+#### Fase C: Compra en Cajas y Conversión Automática en Recepción Física (Escenario 2)
+
+6. **Emisión de Orden de Compra en Cajas:** Iniciar sesión con `compras@caryvil.com`. Navegar a **Compras y Proveedores** → **Órdenes de Compra** y presionar **Nuevo**.
+   - Proveedor: `Laboratorios Vijosa S.A. de C.V.`
+   - Agregar línea de producto: `Acetaminofén Caryvil 500mg (Prueba UdM Dual)`.
+   - Comprobar que en la columna **UdM** se asigna automáticamente `Caja x 100 unidades`.
+   - Cantidad: `2.0`.
+   - Precio Unitario: `$8.00`.
+   - Presionar **Confirmar Orden**.
+7. **Validación de Albarán de Recepción y Lote Obligatorio:** En la orden confirmada, ingresar a la **Recepción** (icono de camión en la barra superior).
+   - En las líneas de movimiento, comprobar que la cantidad a recibir se muestra convertida matemáticamente a **200 Unidades / Pastillas** (o 2 Cajas con demanda de 200 pastillas en el movimiento interno de stock).
+   - Asignar cantidad realizada: `200.0`.
+   - Registrar Lote: `LOT-ACT-UOM-2028`.
+   - Registrar Fecha de Vencimiento: fecha futura válida (ej. `31/12/2028`).
+   - Hacer clic en **Validar**.
+8. **Verificación de existencias en mostrador:** Navegar a la ficha del medicamento; verificar en el botón inteligente **A mano** que el stock físico se incrementó en exactamente **200 Unidades / Pastillas**.
+
+#### Fase D: Venta al Menudeo y Deducción de Stock por Blíster (Escenario 3)
+
+9. **Creación del pedido de venta por blíster:** Iniciar sesión con `cajero@caryvil.com`. Navegar a **Farmacia Caryvil** → **Ventas y Caja** → **Presupuestos / Pedidos** y hacer clic en **Nuevo**.
+   - Seleccionar un cliente.
+   - Agregar el producto `Acetaminofén Caryvil 500mg (Prueba UdM Dual)`.
+   - En la columna **Unidad de Medida**, cambiar la unidad a `Blíster x 10 unidades`.
+   - Cantidad: `1.0`.
+   - Precio Unitario: `$1.50`.
+   - Hacer clic en **Confirmar**.
+10. **Entrega física y comprobación de balance de inventario:** Validar el albarán de entrega saliente correspondiente. Regresar a la ficha del medicamento con usuario administrador o compras y verificar que el stock disponible restante es de exactamente **190 Unidades / Pastillas** (200 iniciales menos 10 deducidas por el blíster).
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Intento de modificación de factores de conversión por rol no autorizado (Sección 8):** Iniciar sesión con `cajero@caryvil.com`. Intentar modificar cualquier registro en `uom.uom` mediante la interfaz o API. Verificar que el sistema responde con una excepción `AccessError` (Acceso Denegado), impidiendo que personal operativo altere las equivalencias contables de inventario.
+2. **Restricción de fraccionamiento menor a 1 pastilla (Sección 3):** Al registrar una venta con `uom_unit_pill`, verificar que la precisión de redondeo (`rounding=1.0`) impide fraccionar medias pastillas (0.5), preservando la integridad de unidades enteras no divisibles.
 
 
 
