@@ -19,6 +19,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 3.2: Personalización de Pantalla de Autenticación (SPEC-3.1.2)](#flujo-32-personalización-de-pantalla-de-autenticación-spec-312)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
+  - [Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)](#flujo-71-catálogo-y-categorización-de-medicamentos-spec-711)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
   - [Flujo 8.2: Recepción de Mercadería y Captura Obligatoria de Lotes (SPEC-8.2.1)](#flujo-82-recepción-de-mercadería-y-captura-obligatoria-de-lotes-spec-821)
   - [Flujo 8.3: Actualización Automática de Stock y Cierre de Compras (SPEC-8.2.2)](#flujo-83-actualización-automática-de-stock-y-cierre-de-compras-spec-822)
@@ -534,6 +535,54 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 
 9. **Verificación en dispositivos móviles:** En las DevTools del navegador (`F12`), activar el modo responsive y simular una pantalla de dispositivo móvil (ej. ancho 375px - 414px). Comprobar que la tarjeta de inicio de sesión se adapta de forma fluida manteniendo márgenes laterales limpios, el logotipo escala proporcionalmente y los campos de entrada conservan total legibilidad y ergonomía táctil.
 10. **Cumplimiento de contraste:** Ejecutar el análisis de accesibilidad Lighthouse en la página `/web/login`, verificando que todos los textos (títulos, subtítulos, etiquetas y botón primario) cumplen el ratio de contraste mínimo de 4.5:1 (WCAG AA).
+
+---
+
+### Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)
+
+#### Fase A: Gestión y Verificación de Maestros Farmacológicos
+
+1. **Acceso y verificación del catálogo de Categorías Terapéuticas:** Iniciar sesión con la cuenta de Administradora (`admin` / `admin`) o Encargado de Compras e Inventario (`compras@caryvil.com` / `compras123`), hacer clic en el menú superior **Farmacia Caryvil** → **Medicamentos e Inventario** → **Categorías Terapéuticas** (o en **Configuración** → **Catálogo Farmacológico** → **Categorías Terapéuticas**), debes observar la vista de lista con las columnas `Código ATC / Clave`, `Categoría` y `Descripción / Uso Terapéutico`, conteniendo registros iniciales como `Analgésicos y Antipiréticos`, `Antibióticos` y `Antihistamínicos`.
+2. **Creación de nueva categoría terapéutica:** En la misma vista de Categorías Terapéuticas, presionar el botón **Nuevo**, ingresar en el título `Antiinflamatorios No Esteroides`, en el campo Código ATC escribir `M01A` y en el campo de texto de descripción escribir `Fármacos analgésicos, antipiréticos y antiinflamatorios indicados en inflamación y dolor agudo`, presionar el icono de nube/guardar, debes observar que el registro se guarda correctamente y la miga de pan superior muestra el nuevo nombre.
+3. **Acceso y verificación del catálogo de Principios Activos:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Principios Activos**, debes observar la vista de lista con las columnas `Nombre del Principio Activo` y `Acción Farmacológica`, conteniendo fármacos estándar como `Paracetamol`, `Amoxicilina`, `Ibuprofeno` y `Loratadina`.
+4. **Registro de un nuevo principio activo:** Presionar el botón **Nuevo**, en el campo Nombre escribir `Diclofenaco Sódico` y en Acción Farmacológica escribir `Inhibidor de la síntesis de prostaglandinas por inhibición de la ciclooxigenasa`, presionar **Guardar**, debes verificar que el principio activo queda almacenado y listo para ser referenciado por productos farmacéuticos.
+
+#### Fase B: Creación Completa de Medicamento con Atributos Médicos
+
+5. **Apertura de la ficha técnica de producto:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos** y hacer clic en **Nuevo**, debes observar el formulario de producto de Odoo con el campo de título principal y la pestaña adicional **Información Farmacéutica** ubicada inmediatamente después de *Información General*.
+6. **Ingreso de datos comerciales y médicos requeridos:** En el campo nombre de producto escribir `Amoxicilina Vijosa 500mg`, conmutar a la pestaña **Información Farmacéutica** y completar los siguientes valores:
+   - **Principio Activo:** Seleccionar `Amoxicilina` desde el menú desplegable.
+   - **Concentración:** Digitar `500 mg`.
+   - **Forma Farmacéutica:** Seleccionar `Cápsula` en la lista de opciones.
+   - **Categoría Terapéutica:** Seleccionar `Antibióticos`.
+   - **Requiere Receta Médica:** Activar el interruptor (toggle) dejándolo encendido (`True`).
+   - **Código de Barras:** Digitar el código EAN-13 `7412345678901`.
+   - **Precio de Venta:** Ingresar `$0.25`.
+7. **Guardado y validación de valores por defecto automáticos:** Presionar el botón **Guardar** (o icono de nube en la barra superior), debes comprobar que:
+   - En la pestaña **Información General**, el campo **Tipo de Producto** está configurado de forma predeterminada como **Almacenable** (`product`).
+   - En la pestaña **Inventario**, la sección de **Trazabilidad** tiene activada automáticamente la opción **Por Lotes Únicos** (`lot`).
+   - En la pestaña **Información Farmacéutica**, todos los datos médicos registrados permanecen consistentes y guardados.
+
+#### Fase C: Búsqueda Multicriterio por Principio Activo y Filtros
+
+8. **Búsqueda rápida por Principio Activo desde el catálogo:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**, situar el cursor en la barra de búsqueda superior, escribir `Amoxicilina` y presionar Enter, debes observar en los resultados de la vista Kanban o Lista el producto `Amoxicilina Vijosa 500mg`, demostrando que la búsqueda indexa dinámicamente el principio activo independientemente del nombre comercial.
+9. **Búsqueda por sustancia activa común (Paracetamol):** En la misma barra de búsqueda, limpiar el filtro y escribir `Paracetamol`, debes ver listadas todas las marcas comerciales que comparten este componente (ej. `Panadol 500mg`, `Acetaminofén MK`, `Winasorb`).
+10. **Filtrado por medicamentos bajo receta y venta libre:** Hacer clic en el desplegable de **Filtros** en la barra de búsqueda y seleccionar **Requiere Receta Médica**, debes ver únicamente los fármacos que exigen prescripción; posteriormente desmarcar ese filtro y seleccionar **Venta Libre**, debes ver únicamente los productos de dispensación abierta sin receta médica.
+11. **Agrupación por Categoría Terapéutica y Forma Farmacéutica:** En la barra de búsqueda, hacer clic en **Agrupar por** y seleccionar **Categoría Terapéutica**, debes observar los productos organizados en acordeones por familias farmacológicas (Analgésicos, Antibióticos, etc.); alternar con el agrupador **Principio Activo**, comprobando la visualización jerárquica por fármaco base.
+
+#### Fase D: Alerta Visual Inmediata y Distintivos de Medicamentos Bajo Receta
+
+12. **Alerta visual prominente en la ficha del producto:** Abrir el medicamento `Amoxicilina Vijosa 500mg` (el cual tiene `prescription_required = True`), debes verificar inmediatamente que en la parte superior del formulario, por encima del nombre comercial y visible sin importar en qué pestaña esté situado el usuario, se despliega un banner de advertencia destacado con fondo rojo suave, borde rojo oscuro e icono de advertencia indicando: `⚠ MEDICAMENTO BAJO RECETA MÉDICA OBLIGATORIA — Exigir y verificar la prescripción médica original antes de autorizar la dispensación en mostrador o venta.`
+13. **Distintivo contextual en la vista de lista / árbol:** Cambiar la visualización del catálogo a modo **Lista** (icono de lista en el extremo superior derecho), debes observar que en la tabla aparecen las columnas `Principio Activo`, `Concentración`, `Forma Farmacéutica` y la columna `Receta` exhibe una píldora o badge en color rojo para los medicamentos controlados y un badge verde tenue para los medicamentos de venta libre.
+14. **Insignia visual en la vista Kanban:** Cambiar a la vista **Kanban** (icono de tarjetas), debes observar que las tarjetas de los medicamentos controlados exhiben una insignia roja redondeada con el texto `⚠ Requiere Receta` en la esquina o pie de la tarjeta, permitiendo al cajero o dependiente identificar la restricción regulatoria de inmediato en mostrador.
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Intento de registro con Código de Barras duplicado:** En **Farmacia Caryvil** → **Medicamentos**, crear un nuevo producto con nombre `Amoxicilina Genérica 500mg`, ir a la pestaña **Información Farmacéutica** e ingresar en el campo Código de Barras el mismo código asignado previamente (`7412345678901`), presionar **Guardar**, debes verificar que el sistema detiene la transacción y despliega un cuadro de diálogo modal de error indicando: *"El código de barras debe ser único por producto."*, impidiendo duplicidades en el lector óptico de caja.
+2. **Acceso de solo lectura para el rol de Cajero / Dependiente:** Cerrar sesión e ingresar al sistema con las credenciales de Cajero (`cajero@caryvil.com` / `cajero123`), navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**:
+   - Abrir cualquier producto médico; debes observar que los botones **Guardar**, **Descartar** y la edición de campos están bloqueados o invisibles (modo solo lectura).
+   - Navegar a **Categorías Terapéuticas** o **Principios Activos**; debes poder consultar y buscar todos los registros del catálogo médico, pero el botón **Nuevo** no debe estar disponible o cualquier intento de mutación debe ser rechazado por las reglas de acceso del sistema.
+
 
 
 
