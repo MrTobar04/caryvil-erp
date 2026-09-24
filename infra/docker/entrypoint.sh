@@ -34,6 +34,11 @@ if [ -f /etc/odoo/odoo.conf ]; then
     sed -i "s|^db_password = .*|db_password = ${PASSWORD}|g; s|\$DB_PASSWORD|${PASSWORD}|g; s|\$PASSWORD|${PASSWORD}|g" /etc/odoo/odoo.conf
     sed -i "s|^db_name = .*|db_name = ${DB_NAME}|g; s|\$DB_NAME|${DB_NAME}|g" /etc/odoo/odoo.conf
     sed -i "s|^admin_passwd = .*|admin_passwd = ${ADMIN_PASSWORD}|g; s|\$ADMIN_PASSWORD|${ADMIN_PASSWORD}|g" /etc/odoo/odoo.conf
+    if grep -q "^dbfilter" /etc/odoo/odoo.conf; then
+        sed -i "s|^dbfilter = .*|dbfilter = ^${DB_NAME}\$|g" /etc/odoo/odoo.conf
+    else
+        echo "dbfilter = ^${DB_NAME}\$" >> /etc/odoo/odoo.conf
+    fi
 fi
 
 # Verificar si la base de datos ya está inicializada con las tablas del sistema Odoo
@@ -44,7 +49,22 @@ if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
         echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' no inicializada. Ejecutando inicialización automática (-i base,caryvil_erp) ==="
         INIT_FLAGS=(-i "base,caryvil_erp")
     else
-        echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' ya inicializada. Ejecutando actualizacion de esquema (-u caryvil_erp)... ==="
+        echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' ya inicializada. Sincronizando configuracion y assets... ==="
+        # -----------------------------------------------------------------------
+        # ALMACENAMIENTO DE ASSETS EN BASE DE DATOS (RENDER EPHEMERAL FIX)
+        # En entornos efímeros (como Render Free), el filestore en disco se destruye al reiniciar.
+        # Guardar adjuntos y assets compilados en BD (ir_attachment.location='db') evita
+        # el error 500 (FileNotFoundError) en web.assets_frontend.min.css y JS bundles.
+        # Además se eliminan registros viejos de assets para forzar regeneración limpia en BD.
+        # -----------------------------------------------------------------------
+        PGPASSWORD="${PASSWORD}" psql -h "${HOST}" -p "${DB_PORT}" -U "${USER}" -d "${DB_NAME}" -q -c "
+            INSERT INTO ir_config_parameter (key, value)
+            VALUES ('ir_attachment.location', 'db')
+            ON CONFLICT (key) DO UPDATE SET value = 'db';
+            DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';
+        " 2>/dev/null || true
+
+        echo "=== [Caryvil ERP] Ejecutando actualizacion de esquema (-u caryvil_erp)... ==="
         # -----------------------------------------------------------------------
         # FASE DE ACTUALIZACIÓN DE MÓDULOS — siempre se ejecuta en redespliegues.
         # Odoo -u es idempotente: si no hay columnas/vistas nuevas, termina sin cambios.
