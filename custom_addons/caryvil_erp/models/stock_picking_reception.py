@@ -48,6 +48,19 @@ class StockPickingReception(models.Model):
                                 )
                                 % (line.expiration_date, line.lot_name)
                             )
+            # Bloquea la dispensación de lotes vencidos.
+            if picking.picking_type_code == "outgoing":
+                for line in picking.move_line_ids:
+                    if line.quantity > 0 and line.lot_id and line.lot_id.is_expired:
+                        raise ValidationError(
+                            _(
+                                "No es posible dispensar el lote %s "
+                                "porque se encuentra vencido."
+                            )
+                            % line.lot_id.name
+                        )
+
+        
         result = super().button_validate()
         self._caryvil_notify_discrepancy()
         self._caryvil_lock_fully_received_purchase_orders()
