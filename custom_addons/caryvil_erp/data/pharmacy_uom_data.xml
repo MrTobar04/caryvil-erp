@@ -61,5 +61,75 @@
             <field name="rounding" eval="0.01"/>
         </record>
 
+        <!-- ================================================================ -->
+        <!-- Categoría de Presentaciones Líquidas y Semisólidas (Envases)     -->
+        <!-- ================================================================ -->
+        <record id="uom_category_pharmacy_packaging" model="uom.category">
+            <field name="name">Envases y Presentaciones Farmacéuticas</field>
+        </record>
+
+        <!-- Unidad base de envase -->
+        <record id="uom_unit_container" model="uom.uom">
+            <field name="name">Unidad / Envase</field>
+            <field name="category_id" ref="uom_category_pharmacy_packaging"/>
+            <field name="uom_type">reference</field>
+            <field name="factor_inv" eval="1.0"/>
+            <field name="rounding" eval="1.0"/>
+        </record>
+
+        <!-- Frasco 60ml -->
+        <record id="uom_bottle_60ml" model="uom.uom">
+            <field name="name">Frasco 60ml</field>
+            <field name="category_id" ref="uom_category_pharmacy_packaging"/>
+            <field name="uom_type">bigger</field>
+            <field name="factor_inv" eval="1.0"/>
+            <field name="rounding" eval="1.0"/>
+        </record>
+
+        <!-- Frasco 120ml -->
+        <record id="uom_bottle_120ml" model="uom.uom">
+            <field name="name">Frasco 120ml</field>
+            <field name="category_id" ref="uom_category_pharmacy_packaging"/>
+            <field name="uom_type">bigger</field>
+            <field name="factor_inv" eval="1.0"/>
+            <field name="rounding" eval="1.0"/>
+        </record>
+
+        <!-- Tubo / Pomada -->
+        <record id="uom_tube_ointment" model="uom.uom">
+            <field name="name">Tubo / Pomada</field>
+            <field name="category_id" ref="uom_category_pharmacy_packaging"/>
+            <field name="uom_type">bigger</field>
+            <field name="factor_inv" eval="1.0"/>
+            <field name="rounding" eval="1.0"/>
+        </record>
+
+        <!-- Ampolla / Vial -->
+        <record id="uom_ampoule_vial" model="uom.uom">
+            <field name="name">Ampolla / Vial</field>
+            <field name="category_id" ref="uom_category_pharmacy_packaging"/>
+            <field name="uom_type">bigger</field>
+            <field name="factor_inv" eval="1.0"/>
+            <field name="rounding" eval="1.0"/>
+        </record>
+
+        <!-- Caja x 5 Ampollas -->
+        <record id="uom_box_5_ampoules" model="uom.uom">
+            <field name="name">Caja x 5 Ampollas</field>
+            <field name="category_id" ref="uom_category_pharmacy_packaging"/>
+            <field name="uom_type">bigger</field>
+            <field name="factor_inv" eval="5.0"/>
+            <field name="rounding" eval="0.01"/>
+        </record>
+
+        <!-- Caja x 12 Frascos -->
+        <record id="uom_box_12_bottles" model="uom.uom">
+            <field name="name">Caja x 12 Frascos</field>
+            <field name="category_id" ref="uom_category_pharmacy_packaging"/>
+            <field name="uom_type">bigger</field>
+            <field name="factor_inv" eval="12.0"/>
+            <field name="rounding" eval="0.01"/>
+        </record>
+
     </data>
 </odoo>

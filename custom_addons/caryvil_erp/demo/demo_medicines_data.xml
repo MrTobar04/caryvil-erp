@@ -15,6 +15,8 @@
             <field name="barcode">7410001000012</field>
             <field name="standard_price">4.50</field>
             <field name="list_price">6.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_50"/>
         </record>
 
         <!-- 2. Ibuprofeno 400mg -->
@@ -30,6 +32,8 @@
             <field name="barcode">7410001000029</field>
             <field name="standard_price">5.00</field>
             <field name="list_price">7.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_100"/>
         </record>
 
         <!-- 3. Paracetamol 500mg -->
@@ -45,6 +49,8 @@
             <field name="barcode">7410001000036</field>
             <field name="standard_price">3.20</field>
             <field name="list_price">5.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_100"/>
         </record>
 
         <!-- 4. Loratadina 10mg -->
@@ -60,6 +66,8 @@
             <field name="barcode">7410001000043</field>
             <field name="standard_price">2.50</field>
             <field name="list_price">4.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 5. Enalapril 20mg -->
@@ -135,6 +143,8 @@
             <field name="barcode">7410001000098</field>
             <field name="standard_price">5.50</field>
             <field name="list_price">8.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_ampoule_vial"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_5_ampoules"/>
         </record>
 
         <!-- 10. Ácido Acetilsalicílico 100mg -->
@@ -225,6 +235,8 @@
             <field name="barcode">7410001000159</field>
             <field name="standard_price">3.00</field>
             <field name="list_price">4.90</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_100"/>
         </record>
 
         <!-- 16. Hidrocortisona Crema 1% -->
@@ -240,6 +252,8 @@
             <field name="barcode">7410001000166</field>
             <field name="standard_price">2.50</field>
             <field name="list_price">4.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_tube_ointment"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_tube_ointment"/>
         </record>
 
         <!-- 17. Clotrimazol Crema 1% -->
@@ -255,6 +269,8 @@
             <field name="barcode">7410001000173</field>
             <field name="standard_price">2.20</field>
             <field name="list_price">3.75</field>
+            <field name="uom_id" ref="caryvil_erp.uom_tube_ointment"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_tube_ointment"/>
         </record>
 
         <!-- 18. Tobramicina Gotas Oftálmicas 0.3% -->
@@ -285,6 +301,8 @@
             <field name="barcode">7410001000197</field>
             <field name="standard_price">3.20</field>
             <field name="list_price">5.20</field>
+            <field name="uom_id" ref="caryvil_erp.uom_bottle_120ml"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_12_bottles"/>
         </record>
 
         <!-- 20. Diclofenac Sódico 50mg -->
@@ -300,6 +318,8 @@
             <field name="barcode">7410001000203</field>
             <field name="standard_price">2.90</field>
             <field name="list_price">4.60</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 21. Ciprofloxacino 500mg -->
