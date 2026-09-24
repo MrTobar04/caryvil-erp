@@ -64,28 +64,35 @@ if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
             DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';
         " 2>/dev/null || true
 
-        echo "=== [Caryvil ERP] Ejecutando actualizacion de esquema (-u caryvil_erp)... ==="
-        # -----------------------------------------------------------------------
-        # FASE DE ACTUALIZACIÓN DE MÓDULOS — siempre se ejecuta en redespliegues.
-        # Odoo -u es idempotente: si no hay columnas/vistas nuevas, termina sin cambios.
-        # Esto garantiza que cualquier ALTER TABLE (nuevos campos en res.company,
-        # res.partner, etc.) se aplique ANTES de que el servidor HTTP arranque,
-        # evitando el crash "UndefinedColumn" en el primer request post-despliegue.
-        #
-        # Se usa ODOO_UPDATE_MODULES si está definida (permite ampliar la lista de
-        # módulos a actualizar desde IaC/Render), o bien "caryvil_erp" por defecto.
-        # -----------------------------------------------------------------------
         MODULES_TO_UPDATE="${ODOO_UPDATE_MODULES:-caryvil_erp}"
-        odoo -c /etc/odoo/odoo.conf \
-            --db_host="${HOST}" \
-            --db_port="${DB_PORT}" \
-            --db_user="${USER}" \
-            --db_password="${PASSWORD}" \
-            -d "${DB_NAME}" \
-            -u "${MODULES_TO_UPDATE}" \
-            --stop-after-init \
-            --no-http
-        echo "=== [Caryvil ERP] Actualizacion de esquema completada (modulos: ${MODULES_TO_UPDATE}). Iniciando servidor... ==="
+        # Verificar si el módulo caryvil_erp está realmente instalado en la base de datos
+        CARYVIL_STATUS=$(PGPASSWORD="${PASSWORD}" psql -h "${HOST}" -p "${DB_PORT}" -U "${USER}" -d "${DB_NAME}" -tAc "SELECT state FROM ir_module_module WHERE name = 'caryvil_erp';" 2>/dev/null || true)
+
+        if [ "$CARYVIL_STATUS" != "installed" ]; then
+            echo "=== [Caryvil ERP] Módulo 'caryvil_erp' no instalado (estado: '${CARYVIL_STATUS:-no registrado}'). Instalando (-i ${MODULES_TO_UPDATE})... ==="
+            odoo -c /etc/odoo/odoo.conf \
+                --db_host="${HOST}" \
+                --db_port="${DB_PORT}" \
+                --db_user="${USER}" \
+                --db_password="${PASSWORD}" \
+                -d "${DB_NAME}" \
+                -i "${MODULES_TO_UPDATE}" \
+                --stop-after-init \
+                --no-http
+            echo "=== [Caryvil ERP] Instalación de módulos completada (${MODULES_TO_UPDATE}). Iniciando servidor... ==="
+        else
+            echo "=== [Caryvil ERP] Módulo 'caryvil_erp' ya instalado. Ejecutando actualización de esquema (-u ${MODULES_TO_UPDATE})... ==="
+            odoo -c /etc/odoo/odoo.conf \
+                --db_host="${HOST}" \
+                --db_port="${DB_PORT}" \
+                --db_user="${USER}" \
+                --db_password="${PASSWORD}" \
+                -d "${DB_NAME}" \
+                -u "${MODULES_TO_UPDATE}" \
+                --stop-after-init \
+                --no-http
+            echo "=== [Caryvil ERP] Actualizacion de esquema completada (modulos: ${MODULES_TO_UPDATE}). Iniciando servidor... ==="
+        fi
     fi
 fi
 
