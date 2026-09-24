@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo.tests.common import TransactionCase
-from odoo.exceptions import ValidationError
 from psycopg2 import IntegrityError
+
 
 class TestMedicineCatalog(TransactionCase):
 
@@ -82,49 +82,49 @@ class TestMedicineCatalog(TransactionCase):
 
         self.assertTrue(product.prescription_required)
 
-def test_06_barcode_unique(self):
-    """SPEC-7.1.1: Verificar unicidad del código de barras."""
+    def test_06_barcode_unique(self):
+        """SPEC-7.1.1: Verificar unicidad del código de barras."""
 
-    # Crear dos productos sin código de barras
-    product_1 = self.env['product.template'].create({
-        'name': 'Medicamento Barcode 1',
-    })
+        # Crear dos productos sin código de barras
+        product_1 = self.env['product.template'].create({
+            'name': 'Medicamento Barcode 1',
+        })
 
-    product_2 = self.env['product.template'].create({
-        'name': 'Medicamento Barcode 2',
-    })
+        product_2 = self.env['product.template'].create({
+            'name': 'Medicamento Barcode 2',
+        })
 
-    # Generar un código EAN-13 único para la prueba
-    base = f"20000000{product_1.id:04d}"[:12]
+        # Generar un código EAN-13 único para la prueba
+        base = f"20000000{product_1.id:04d}"[:12]
 
-    def calculate_ean13(base12):
-        total = 0
+        def calculate_ean13(base12):
+            total = 0
 
-        for i, digit in enumerate(base12):
-            value = int(digit)
-            total += value if i % 2 == 0 else value * 3
+            for i, digit in enumerate(base12):
+                value = int(digit)
+                total += value if i % 2 == 0 else value * 3
 
-        check_digit = (10 - (total % 10)) % 10
+            check_digit = (10 - (total % 10)) % 10
 
-        return base12 + str(check_digit)
+            return base12 + str(check_digit)
 
-    barcode = calculate_ean13(base)
-
-    # Buscar un código que no exista actualmente
-    while self.env['product.product'].search_count([
-        ('barcode', '=', barcode)
-    ]):
-        base = str(int(base) + 1).zfill(12)
         barcode = calculate_ean13(base)
 
-    # Asignar el código al primer producto
-    product_1.product_variant_id.write({
-        'barcode': barcode
-    })
+        # Buscar un código que no exista actualmente
+        while self.env['product.product'].search_count([
+            ('barcode', '=', barcode)
+        ]):
+            base = str(int(base) + 1).zfill(12)
+            barcode = calculate_ean13(base)
 
-    # El segundo producto no puede utilizar el mismo código
-    with self.assertRaises(IntegrityError):
-        with self.env.cr.savepoint():
-            product_2.product_variant_id.write({
-                'barcode': barcode
-            })
+        # Asignar el código al primer producto
+        product_1.product_variant_id.write({
+            'barcode': barcode
+        })
+
+        # El segundo producto no puede utilizar el mismo código
+        with self.assertRaises(IntegrityError):
+            with self.env.cr.savepoint():
+                product_2.product_variant_id.write({
+                    'barcode': barcode
+                })
