@@ -1,18 +1,18 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 {
     "name": "Farmacia Caryvil ERP",
-    "version": "17.0.1.0.0",
+    "version": "17.0.1.0.1",
     "category": "Pharmacy/ERP",
-    "summary": "Sistema integral de gestión farmacéutica: Inventario, Ventas, Compras y Clientes",
+    "summary": "Sistema integral de gestiÃ³n farmacÃ©utica: Inventario, Ventas, Compras y Clientes",
     "description": """
-        Personalización y extensión de Odoo ERP para Farmacia Caryvil.
-        Características:
+        PersonalizaciÃ³n y extensiÃ³n de Odoo ERP para Farmacia Caryvil.
+        CaracterÃ­sticas:
         - Control estricto de lotes y fechas de vencimiento con estrategia FEFO.
-        - Gestión de unidades de medida farmacéuticas (Cajas, Blísteres, Unidades).
-        - Venta ágil de mostrador con emisión de ticket térmico de 80mm.
-        - Registro de clientes con validación sintáctica de DUI/NIT salvadoreño.
-        - Gestión de compras y abastecimiento con actualización automática de stock.
-        - Dashboard ejecutivo de KPIs y monitoreo de stock crítico.
+        - GestiÃ³n de unidades de medida farmacÃ©uticas (Cajas, BlÃ­steres, Unidades).
+        - Venta Ã¡gil de mostrador con emisiÃ³n de ticket tÃ©rmico de 80mm.
+        - Registro de clientes con validaciÃ³n sintÃ¡ctica de DUI/NIT salvadoreÃ±o.
+        - GestiÃ³n de compras y abastecimiento con actualizaciÃ³n automÃ¡tica de stock.
+        - Dashboard ejecutivo de KPIs y monitoreo de stock crÃ­tico.
     """,
     "author": "Equipo de Desarrollo Caryvil - UDB",
     "website": "https://github.com/MelissaFloresA/Odoo_ERP_Farmacia",
@@ -21,6 +21,7 @@
         "base",
         "contacts",
         "stock",
+        "product_expiry",
         "purchase",
         "purchase_stock",
         "sale_management",
@@ -28,8 +29,10 @@
         "uom",
     ],
     "data": [
+
         "security/caryvil_security.xml",
         "security/ir.model.access.csv",
+        "security/caryvil_security_rules.xml",
         "data/company_data.xml",
         "data/tax_data.xml",
         "data/pharmacy_categories_data.xml",
@@ -45,8 +48,10 @@
         "views/purchase_order_views.xml",
         "views/stock_picking_views.xml",
         "views/product_medicine_views.xml",
+        "views/web_login_templates.xml",
         "reports/report_purchase_order.xml",
         "reports/purchase_order_report_action.xml",
+
     ],
     "demo": [
         "demo/demo_vendors_data.xml",
@@ -60,6 +65,9 @@
             "caryvil_erp/static/src/js/masked_char_field.js",
             "caryvil_erp/static/src/js/purchase_live_totals.js",
             "caryvil_erp/static/src/xml/purchase_live_totals.xml",
+        ],
+        "web.assets_frontend": [
+            "caryvil_erp/static/src/scss/custom_login.scss",
         ],
     },
     "installable": True,

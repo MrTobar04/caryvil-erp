@@ -14,6 +14,9 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 1.3: Aprovisionamiento de Infraestructura en Render con Terraform (SPEC-1.2.1)](#flujo-13-aprovisionamiento-de-infraestructura-en-render-con-terraform-spec-121)
   - [Flujo 1.4: Verificación de Variables de Entorno y Bloqueo de Secretos (SPEC-1.2.2)](#flujo-14-verificación-de-variables-de-entorno-y-bloqueo-de-secretos-spec-122)
   - [Flujo 1.5: Pipeline CI/CD con GitHub Actions y Despliegue Automático (SPEC-1.3.1)](#flujo-15-pipeline-cicd-con-github-actions-y-despliegue-automático-spec-131)
+  - [Flujo 2.1: Definición de Roles, Grupos de Seguridad y Herencia de Privilegios (SPEC-2.2.1)](#flujo-21-definición-de-roles-grupos-de-seguridad-y-herencia-de-privilegios-spec-221)
+  - [Flujo 3.1: Personalización de Marca y Tema Visual (SPEC-3.1.1)](#flujo-31-personalización-de-marca-y-tema-visual-spec-311)
+  - [Flujo 3.2: Personalización de Pantalla de Autenticación (SPEC-3.1.2)](#flujo-32-personalización-de-pantalla-de-autenticación-spec-312)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
@@ -78,14 +81,13 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 | **Puerto PostgreSQL** | `5432` |
 | **Contraseña Maestra de Odoo** | `admin_caryvil_secret_2026` |
 
-#### Matriz de Usuarios y Roles de Prueba:
+#### Matriz de Usuarios y Roles de Prueba (SPEC-2.2.1):
 
-| Rol de Usuario | Login / Correo | Contraseña | Alcance Operativo |
-|---|---|---|---|
-| **Administrador General** | `admin` | `admin` | Control total, instalación de addons y ajustes globales |
-| **Cajero / Mostrador** | `cajero@caryvil.com` | `cajero123` | Búsqueda rápida de clientes, venta en mostrador y facturación |
-| **Farmacéutico / Dispensador** | `farmaceutico@caryvil.com` | `farma123` | Consulta de existencias, dispensación FEFO y mermas |
-| **Encargado de Compras/Bodega** | `compras@caryvil.com` | `compras123` | Solicitudes de cotización, órdenes de compra y recepción de lotes |
+| Rol de Usuario | Grupo Técnico | Login / Correo | Contraseña | Alcance Operativo |
+|---|---|---|---|---|
+| **Administrador General / Propietaria** | `group_caryvil_manager` | `admin` o `admin_caryvil@caryvil.com` | `admin` o `admin123` | Control total, dashboard gerencial, anulación de transacciones y configuración |
+| **Encargado de Compras e Inventario** | `group_caryvil_inventory_purchases` | `compras@caryvil.com` | `compras123` | Órdenes de compra a laboratorios, recepción con lotes/vencimiento, catálogo y ajustes de existencias |
+| **Cajero / Dependiente de Mostrador** | `group_caryvil_cashier` | `cajero@caryvil.com` | `cajero123` | Punto de venta en mostrador, consulta de existencias/precios, registro de clientes y factura simple |
 
 ### 2.4. Instalación y Verificación del Módulo `caryvil_erp`
 1. Ingresar a [http://localhost:8069](http://localhost:8069) con el usuario `admin`.
@@ -281,6 +283,54 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 
 ---
 
+### Flujo 2.1: Definición de Roles, Grupos de Seguridad y Herencia de Privilegios (SPEC-2.2.1)
+
+1. **Inspección de la Categoría y Grupos en el Gestor de Usuarios (UI):** Iniciar sesión con la cuenta de Administrador General (`admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`), activar el modo desarrollador (`?debug=1`), navegar a **Ajustes** -> **Usuarios y Compañías** -> **Grupos** (o filtrar por aplicación), buscar `Farmacia Caryvil`, debes ver la categoría de módulo `Farmacia Caryvil` (secuencia 10) conteniendo exactamente los tres roles definidos:
+   - `Cajero / Dependiente de Mostrador` (`group_caryvil_cashier`)
+   - `Encargado de Compras e Inventario` (`group_caryvil_inventory_purchases`)
+   - `Administrador / Propietario` (`group_caryvil_manager`)
+2. **Verificación del Rol Cajero / Dependiente de Mostrador (Escenario 1):** Cerrar sesión e ingresar con las credenciales del cajero (`cajero@caryvil.com` / `cajero123`):
+   - Acceder al menú principal **Farmacia Caryvil**: verificar que los menús disponibles son **Ventas y Caja**, **Medicamentos e Inventario** (solo consulta y venta) y **Clientes**.
+   - Comprobar que los menús **Compras y Proveedores**, **Configuración** y el **Dashboard** gerencial se encuentran totalmente ocultos e inaccesibles.
+   - Navegar a **Farmacia Caryvil** -> **Clientes**, presionar **Nuevo**, registrar un cliente de prueba con DUI y teléfono, debes comprobar que el guardado es exitoso (`perm_create = 1`, `perm_write = 1`), pero no se dispone de permisos para eliminar registros históricos de clientes.
+3. **Protección de Confidencialidad de Costos ante el Rol Cajero:** Con la sesión de cajero activa, abrir el catálogo de medicamentos y acceder a la ficha técnica de cualquier producto:
+   - Verificar que no se visualizan los costos de compra a laboratorios, precios de adquisición de proveedores ni los márgenes de ganancia.
+4. **Verificación del Rol Encargado de Compras e Inventario (Escenario 2):** Cerrar sesión e ingresar con las credenciales de compras e inventario (`compras@caryvil.com` / `compras123`):
+   - Acceder a **Farmacia Caryvil**: debes observar habilitados los menús **Compras y Proveedores**, **Medicamentos e Inventario** y **Clientes**, así como la herencia operativa del rol de mostrador/cajero.
+   - Navegar a **Compras y Proveedores** -> **Órdenes de Compra**, hacer clic en **Nuevo** y verificar la visibilidad de los campos de costos, descuentos comerciales y precios de proveedor.
+   - Acceder al albarán de recepción de mercadería y validar la captura de lotes y fechas de vencimiento.
+   - Verificar que no se tiene acceso al menú **Configuración** de la empresa ni a la eliminación o administración de cuentas de usuario en el ERP.
+5. **Verificación de Control Total del Rol Administrador / Propietaria (Escenario 3):** Cerrar sesión e iniciar sesión como Administrador General / Propietaria (`admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`):
+   - Verificar acceso integral irrestricto a todos los módulos: **Dashboard**, **Ventas y Caja**, **Medicamentos e Inventario**, **Compras y Proveedores**, **Clientes** y **Configuración**.
+   - Acceder a **Ajustes** -> **Usuarios y Compañías** -> **Usuarios**, abrir cualquier usuario y comprobar que la sección de permisos muestra el campo desplegable/selección para la categoría *Farmacia Caryvil* permitiendo promover o reasignar cualquiera de los 3 niveles funcionales.
+
+#### Casos Límite / Rutas de Excepción:
+1. **Comprobación de Herencia Transitiva en Cascada (*Implied Groups*):** En el formulario de edición de usuarios de Odoo (**Ajustes** -> **Usuarios y Compañías** -> **Usuarios**), crear un usuario temporal y asignarle el rol `Administrador / Propietario`. Al inspeccionar los grupos técnicos asignados, verificar que el usuario hereda automáticamente los grupos `group_caryvil_inventory_purchases`, `group_caryvil_cashier`, `stock.group_stock_manager`, `purchase.group_purchase_manager` y `sales_team.group_sale_manager` sin requerir marcación manual individual.
+2. **Bloqueo de Acceso Directo por URL a Vistas Restringidas:** Con la sesión iniciada como `cajero@caryvil.com`, intentar ingresar manualmente por URL a una acción de compras o configuración (ej. `http://localhost:8069/web#action=purchase.purchase_rfq`), debes ver que Odoo bloquea la carga de la vista y muestra una advertencia de permisos denegados (*AccessError*).
+
+---
+
+### Flujo 2.2: Reglas de Acceso Granular y Seguridad de Modelos (SPEC-2.2.2)
+
+1. **Intento de Eliminación de Medicamento por Rol Cajero (Escenario 1):** Iniciar sesión con la cuenta de Cajero (`cajero@caryvil.com` / `cajero123`), navegar a **Farmacia Caryvil** -> **Inventario y Medicamentos** -> **Medicamentos**:
+   - Abrir cualquier ficha técnica de medicamento (ej. `Paracetamol 500mg`).
+   - Hacer clic en el menú **Acción** (ícono de engranaje) en la parte superior del formulario.
+   - Comprobar que la opción **Suprimir / Eliminar** no se encuentra disponible, o al intentar eliminar un registro el sistema arroja una alerta bloqueante de permisos de acceso (*AccessError*).
+   - Iniciar sesión como Administrador (`admin` / `admin`) y verificar que la acción de eliminación sí está permitida para la gerencia.
+2. **Creación y Edición de Clientes en Mostrador vs Bloqueo de Eliminación (Escenario 2):** Con la sesión iniciada como `cajero@caryvil.com`:
+   - Navegar a **Farmacia Caryvil** -> **Clientes**, presionar el botón **Nuevo**.
+   - Registrar un paciente con nombres, apellidos, DUI válido (ej. `04589632-1`) y teléfono, presionar **Guardar**: debes verificar que el cliente se almacena correctamente (`perm_create = 1`).
+   - Modificar el número telefónico del cliente y presionar **Guardar**: debes comprobar que la edición se realiza sin restricciones (`perm_write = 1`).
+   - En la ficha del cliente, desplegar el menú **Acción**: debes verificar que la opción **Suprimir** se encuentra bloqueada impidiendo la eliminación del historial del cliente (`perm_unlink = 0`).
+3. **Inmutabilidad y Protección de Facturas Emitidas (Escenario 3):** Con la sesión de Administrador, emitir y validar/publicar una factura a consumidor final (`out_invoice` en estado `posted`).
+   - Iniciar sesión con el usuario de Cajero (`cajero@caryvil.com`).
+   - Abrir la factura emitida: verificar que los campos, líneas de detalle, cantidades y precios se encuentran bloqueados en modo solo lectura.
+   - Comprobar que el cajero puede consultar y reimprimir el ticket/factura, pero cualquier intento de alteración o anulación es rechazado por la regla de registro activa (`rule_caryvil_posted_invoices_readonly` / `rule_caryvil_invoices_cashier_write_draft`).
+4. **Protección de Órdenes de Venta Confirmadas y Albaranes Validados:**
+   - Como usuario de compras o cajero, intentar eliminar una orden de venta en estado `sale` (confirmada) o un albarán de recepción en estado `done` (validado): debes comprobar que el sistema bloquea la acción mediante la regla de registro de integridad histórica.
+
+---
+
 ### Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)
 
 1. **Acceso al Catálogo de Proveedores:** Iniciar sesión con la cuenta de Encargado de Compras e Inventario (`compras@caryvil.com` / `compras123`) o Administrador General (`admin` / `admin`), acceder al menú principal **Farmacia Caryvil**, hacer clic en el submenú **Compras y Proveedores** y seleccionar **Proveedores y Laboratorios**, debes ver la vista de lista con las columnas *Código*, *Nombre*, *Proveedor* y *Teléfono*, junto con el botón **Nuevo** en la barra superior.
@@ -387,5 +437,103 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 #### Casos Límite / Rutas de Excepción:
 1. **Ausencia de Falsos Positivos en Recepción Conforme:** En una recepción donde se recibe físicamente la totalidad de las unidades solicitadas (ej. demanda 15 = recibido 15), verificar que el campo `has_discrepancy` permanece en falso, el banner amarillo de advertencia en la pestaña *Discrepancias* se mantiene oculto y no se emite ninguna notificación en el chatter.
 2. **Trazabilidad y Filtro de Entregas Pendientes:** Navegar a **Inventario** -> **Operaciones** -> **Albaranes**, hacer clic en la barra de búsqueda y seleccionar el filtro predeterminado **Entregas Pendientes / Retrasadas**, debes verificar que todos los backorders generados aparecen agrupados y visibles para el seguimiento periódico con los laboratorios.
+---
+
+### Flujo 3.1: Personalización de Marca y Tema Visual (SPEC-3.1.1)
+
+> **Prerrequisito:** El módulo `caryvil_erp` debe estar instalado y los contenedores deben estar corriendo. Activar el **Modo Desarrollador** (`?debug=1` en la URL).
+
+#### Fase A: Verificación de Barra Lateral (Sidebar) y Barra Superior (Topbar) — Escenario 1
+
+1. **Inspección del color de fondo del Sidebar:** Iniciar sesión como Administrador (`admin` / `admin`), navegar a cualquier sección del módulo Farmacia Caryvil. En el navegador, abrir las **Herramientas de Desarrollador** (`F12`), seleccionar la pestaña **Inspector de Elementos** (o *Elements*), y hacer clic sobre la barra de navegación principal izquierda. Verificar que el `background-color` computado del elemento `.o_main_navbar` o equivalente sea **`#1e7a3a`** *(nota: el sidebar usa el azul marino corporativo `#002B49` definido en `--caryvil-sidebar-bg`)*. Debes confirmar en **Estilos Computados** que `background-color: rgb(0, 43, 73)` corresponde exactamente al token `#002B49`.
+2. **Verificación del título de marca "ERP FARMACIA":** En el navbar superior o sidebar, debes observar el texto `ERP FARMACIA` (o `Farmacia Caryvil`) en tipografía blanca (`#FFFFFF`), negrita (`font-weight: 700`) y en mayúsculas con `letter-spacing` visible. El texto debe ser legible y no aparecer cortado en ninguna resolución.
+3. **Inspección del color de fondo del Topbar:** Localizar la barra de control superior (donde aparecen las migas de pan, los botones de Guardar/Cancelar y el nombre de sección). Verificar en las Herramientas de Desarrollador que el elemento `.o_control_panel` o `.o_control_panel_top` tiene `background-color: rgb(92, 111, 132)`, correspondiente al token `--caryvil-topbar-bg: #5C6F84`.
+4. **Verificación de migas de pan (Breadcrumbs) en blanco:** Navegar a **Farmacia Caryvil** → **Compras y Proveedores** → **Nueva Orden de Compra**. Debes observar la miga de pan `Órdenes de Compra > Nueva Orden de Compra` (o similar) en texto **blanco** (`#FFFFFF`) sobre el fondo gris-azul del topbar. Comprobar en los estilos computados que `color: rgb(255, 255, 255)`.
+5. **Verificación del elemento de menú activo con indicador lateral:** Hacer clic en diferentes secciones del menú lateral (Inicio, Inventario, Ventas, etc.). La sección activa debe mostrarse con texto en color cian eléctrico (`#38B6FF`, `rgb(56, 182, 255)`) y debe ser visible una **barra indicadora vertical de 4px en el extremo derecho** del ítem activo. Comprobar en los estilos del pseudo-elemento `::after` que `width: 4px`, `background-color: #38B6FF` y `border-radius: 2px 0 0 2px`.
+
+#### Fase B: Verificación de Botones de Acción — Escenario 2
+
+6. **Botón de confirmación en verde salud:** Navegar a **Farmacia Caryvil** → **Clientes**, presionar **Nuevo** para abrir el formulario de creación de cliente. En la barra de control superior, debes observar el botón **Guardar** (o **Crear**) con:
+   - Fondo verde oscuro (`#1E7A3A` — valor WCAG-AA corregido, `rgb(30, 122, 58)`).
+   - Texto blanco (`#FFFFFF`).
+   - Bordes redondeados (`border-radius: 8px`).
+   - Efecto de hover que oscurece el verde al pasar el cursor (`#166130`).
+7. **Botón Cancelar con contorno gris y fondo blanco:** En el mismo formulario, debes observar el botón **Cancelar** con:
+   - Fondo blanco (`#FFFFFF`).
+   - Borde gris (`border: 1px solid #CED4DA`).
+   - Texto en gris oscuro (`#495057`).
+   - Sin color rojo (no destructivo por convención de diseño Caryvil).
+8. **Verificación en múltiples módulos:** Repetir la inspección de botones al abrir un formulario de **Nueva Orden de Compra** (`Compras y Proveedores` → `Nueva Compra`) y un formulario de **Nuevo Proveedor**. Los botones primarios y secundarios deben ser consistentes en todos los módulos.
+
+#### Fase C: Verificación de Badges de Estado Contextual — Escenario 3
+
+9. **Badge "Bajo stock":** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**. Localizar en la lista un medicamento con el estado **Bajo stock**. Verificar que el badge sea una **píldora redondeada** (`border-radius: 50rem`) con:
+   - Fondo amarillo suave `#FEF3C7` (`rgb(254, 243, 199)`).
+   - Texto ámbar oscuro `#B45309` (`rgb(180, 83, 9)`).
+   - Borde `#FDE68A`.
+10. **Badge "Por vencer":** En la misma lista o en una vista de Lotes, localizar un medicamento con estado **Por vencer** (próximo a expirar en 60-90 días). El badge debe mostrar:
+    - Fondo rosa suave `#FEE2E2` (`rgb(254, 226, 226)`).
+    - Texto rojo oscuro WCAG-AA `#B91C1C` (`rgb(185, 28, 28)`).
+    - Borde `#FECACA`.
+11. **Badge "OK" / "Pagado" / "Recibida":** Localizar un lote vigente o una orden de compra en estado **Recibida/Pagado**. Verificar:
+    - Fondo verde menta suave `#DCFCE7` (`rgb(220, 252, 231)`).
+    - Texto verde oscuro `#15803D` (`rgb(21, 128, 61)`).
+    - Borde `#BBF7D0`.
+12. **Badge "Dañado" / "Descartado":** Localizar un registro con estado de daño o descarte. Verificar:
+    - Fondo gris neutro `#E2E3E5` (`rgb(226, 227, 229)`).
+    - Texto gris oscuro `#383D41` (`rgb(56, 61, 65)`).
+    - Borde `#D6D8DB`.
+
+#### Fase D: Verificación de Tipografía y Contraste WCAG AA — Escenario 4
+
+13. **Verificación de la fuente Inter:** En las Herramientas de Desarrollador, inspeccionar cualquier párrafo o etiqueta de campo del formulario. El estilo computado debe mostrar `font-family` con `Inter` como primera fuente en la pila tipográfica.
+14. **Prueba de contraste con Lighthouse:** En Google Chrome, abrir las DevTools (`F12`), ir a la pestaña **Lighthouse**, seleccionar la categoría **Accessibility** y ejecutar el análisis. El reporte de accesibilidad no debe reportar ninguna falla de contraste de color en los elementos de la interfaz principal de Caryvil ERP. El ratio mínimo aceptado es **4.5:1 (WCAG AA)** para texto normal.
+15. **Verificación de Responsividad en 1366×768:** Usando las DevTools en Chrome (o Firefox), activar la simulación de dispositivo y ajustar la resolución a **1366×768 píxeles** (resolución POS estándar). Verificar que:
+    - El sidebar no desborda ni oculta contenido.
+    - Los botones de acción son plenamente visibles y clicables.
+    - Los badges de estado son legibles sin truncamiento.
+    - Los formularios se adaptan correctamente sin scroll horizontal.
+
+#### Casos Límite / Rutas de Excepción:
+1. **Verificación de que los colores de Odoo por defecto no se filtran:** Con el Modo Desarrollador activo, navegar a cualquier sección del ERP nativa de Odoo (no de Caryvil) como **Ajustes** o **Discusión**. Verificar que los colores de la marca Caryvil no sobreescriben incorrectamente elementos de otras aplicaciones de Odoo que estén fuera del módulo `caryvil_erp`. El tema debe aplicarse globalmente al backend (color de navbar y botones) pero sin romper la usabilidad de módulos base de Odoo.
+2. **Ausencia de errores de consola JavaScript:** Al cargar cualquier vista del módulo, abrir la consola del navegador (`F12` → **Console**) y verificar que no existen errores JavaScript relacionados con la carga de assets del módulo `caryvil_erp` ni advertencias de `Content-Security-Policy` bloqueando recursos de `fonts.googleapis.com`.
+3. **Verificación del badge FEFO heredado:** Si existen registros de lotes con seguimiento FEFO en el sistema, verificar que la clase `.caryvil_badge_fefo` muestra correctamente el estado de vencimiento con el estilo de píldora roja/rosada (`#FEE2E2` / `#B91C1C`) sin romper la apariencia de las vistas de inventario existentes.
+
+---
+
+### Flujo 3.2: Personalización de Pantalla de Autenticación (SPEC-3.1.2)
+
+> **Prerrequisito:** El módulo `caryvil_erp` debe estar instalado y los servicios web y base de datos activos en Docker o entorno local.
+
+#### Fase A: Renderizado y Jerarquía Visual de la Pantalla de Login (Escenario 1)
+
+1. **Acceso inicial y renderizado del contenedor:** En el navegador web, navegar a la ruta de autenticación [http://localhost:8069/web/login](http://localhost:8069/web/login) (cerrar sesión previamente si hay una sesión activa). Debes observar que la página carga con un fondo degradado suave institucional en tonos gris-azul (`#F0F4F8` a `#D9E4EC`) y el formulario centrado vertical y horizontalmente en pantalla.
+2. **Inspección de la tarjeta de inicio de sesión:** Verificar que el formulario de acceso se aloja dentro de una tarjeta blanca (`#FFFFFF`) con bordes redondeados (`border-radius: 12px`), contorno gris sutil (`#E5E7EB`) y sombra de elevación (`0 12px 30px rgba(0, 43, 73, 0.1)`).
+3. **Validación del encabezado corporativo:** En la parte superior de la tarjeta de login, comprobar la presencia de:
+   - Logotipo oficial de Farmacia Caryvil (`/caryvil_erp/static/src/img/caryvil_logo_full.png`) centrado con proporción máxima de 75px.
+   - Título de marca institucional en tipografía negrita y color azul marino corporativo: `ERP FARMACIA` (`#002B49`).
+   - Subtítulo descriptivo en gris: `Farmacia Caryvil • Soyapango`.
+4. **Validación del pie de página de la tarjeta:** En la parte inferior de la tarjeta, verificar el pie delimitado con fondo claro y el texto de derechos reservados: `© 2026 Farmacia Caryvil • Todos los derechos reservados`.
+
+#### Fase B: Interacción, Foco de Campos y Autenticación Exitosa (Escenario 2)
+
+5. **Efecto de foco en campos de entrada:** Hacer clic sobre el campo **Correo electrónico / Usuario** y posteriormente sobre **Contraseña**. Debes observar que el campo activo resalta su borde en color cian eléctrico (`#38B6FF`) con un resplandor o sombra tenue (`rgba(56, 182, 255, 0.25)`).
+6. **Estilo del botón de inicio de sesión:** Verificar que el botón principal **Iniciar sesión** (o **Acceder**) muestra:
+   - Fondo verde institucional (`#1E7A3A` / `#28A745`) con texto blanco en negrita (`#FFFFFF`).
+   - Bordes redondeados (`8px`) y ancho completo del formulario (`width: 100%`).
+   - Efecto hover: al colocar el cursor sobre el botón, el fondo se oscurece suavemente (`#166130` / `#218838`) y se eleva sutilmente.
+7. **Autenticación y preservación del token CSRF:** Ingresar las credenciales autorizadas del Administrador (`admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`) y presionar el botón de inicio de sesión. Comprobar que el formulario envía el token CSRF nativo sin errores y redirige inmediatamente al dashboard o vista principal de Odoo.
+
+#### Fase C: Notificación de Error ante Credenciales Incorrectas (Escenario 3)
+
+8. **Manejo visual de errores:** Cerrar sesión y regresar a [http://localhost:8069/web/login](http://localhost:8069/web/login). Digitar un usuario o contraseña errónea (ej. `usuario_invalido@caryvil.com` / `clave_erronea`) y presionar **Iniciar sesión**. Debes verificar que:
+   - Odoo procesa la petición y muestra el mensaje de error de autenticación dentro de un contenedor alert estilizado (`alert-danger`) con fondo rojo suave (`#FEE2E2`), borde `#FECACA` y texto rojo oscuro (`#B91C1C`).
+   - La tarjeta mantiene su estructura centrada, bordes redondeados y alineación sin deformaciones visuales.
+
+#### Fase D: Responsividad y Accesibilidad WCAG AA
+
+9. **Verificación en dispositivos móviles:** En las DevTools del navegador (`F12`), activar el modo responsive y simular una pantalla de dispositivo móvil (ej. ancho 375px - 414px). Comprobar que la tarjeta de inicio de sesión se adapta de forma fluida manteniendo márgenes laterales limpios, el logotipo escala proporcionalmente y los campos de entrada conservan total legibilidad y ergonomía táctil.
+10. **Cumplimiento de contraste:** Ejecutar el análisis de accesibilidad Lighthouse en la página `/web/login`, verificando que todos los textos (títulos, subtítulos, etiquetas y botón primario) cumplen el ratio de contraste mínimo de 4.5:1 (WCAG AA).
+
 
 

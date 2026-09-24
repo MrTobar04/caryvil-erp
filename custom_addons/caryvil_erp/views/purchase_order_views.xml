@@ -193,7 +193,7 @@
                   name="Órdenes de Compra"
                   parent="menu_caryvil_compras"
                   action="action_purchase_order_caryvil"
-                  groups="caryvil_erp.group_caryvil_compras_inventario"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"
                   sequence="5"/>
 
     </data>

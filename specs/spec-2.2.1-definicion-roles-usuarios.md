@@ -102,7 +102,7 @@ Modelar, categorizar e implementar la jerarquía de grupos de seguridad y perfil
 * Registro del archivo en la sección `data` del manifiesto `__manifest__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Archivo `caryvil_security.xml` implementado con los 3 roles y jerarquías.
-* [ ] Roles visibles y seleccionables en el formulario de usuarios de Odoo (`Ajustes > Usuarios`).
-* [ ] Herencia de permisos comprobada con usuarios de prueba para cada rol.
-* [ ] Revisión de código aprobada e integrada a la rama principal.
+* [x] Archivo `caryvil_security.xml` implementado con los 3 roles y jerarquías.
+* [x] Roles visibles y seleccionables en el formulario de usuarios de Odoo (`Ajustes > Usuarios`).
+* [x] Herencia de permisos comprobada con usuarios de prueba para cada rol.
+* [x] Revisión de código aprobada e integrada a la rama principal.
