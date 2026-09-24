@@ -140,14 +140,19 @@ class TestMedicineCatalog(TransactionCase):
             }
         )
         # Búsqueda usando el dominio inyectado en product_medicine_views.xml
-        found = self.env["product.template"].search([
-            "|", "|", "|", "|",
-            ("default_code", "ilike", "Principio Activo de Prueba"),
-            ("product_variant_ids.default_code", "ilike", "Principio Activo de Prueba"),
-            ("name", "ilike", "Principio Activo de Prueba"),
-            ("barcode", "ilike", "Principio Activo de Prueba"),
-            ("active_ingredient_id.name", "ilike", "Principio Activo de Prueba"),
-        ])
+        found = self.env["product.template"].search(
+            [
+                "|",
+                "|",
+                "|",
+                "|",
+                ("default_code", "ilike", "Principio Activo de Prueba"),
+                ("product_variant_ids.default_code", "ilike", "Principio Activo de Prueba"),
+                ("name", "ilike", "Principio Activo de Prueba"),
+                ("barcode", "ilike", "Principio Activo de Prueba"),
+                ("active_ingredient_id.name", "ilike", "Principio Activo de Prueba"),
+            ]
+        )
         self.assertIn(product, found)
 
     def test_08_actions_and_menus_exist(self):
@@ -181,8 +186,8 @@ class TestMedicineCatalog(TransactionCase):
 
         # Cajero no puede crear categoría
         from odoo.exceptions import AccessError
+
         with self.assertRaises(AccessError):
             self.env["caryvil.therapeutic.category"].with_user(cashier_user).create(
                 {"name": "Categoría Prohibida Cajero"}
             )
-
