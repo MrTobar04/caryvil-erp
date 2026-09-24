@@ -127,3 +127,62 @@ class TestMedicineCatalog(TransactionCase):
         with self.assertRaises(IntegrityError):
             with self.env.cr.savepoint():
                 product_2.product_variant_id.write({"barcode": barcode})
+
+    def test_07_search_by_active_ingredient(self):
+        """SPEC-7.1.1: Verificar búsqueda de productos por principio activo (Escenario 2)."""
+        product = self.env["product.template"].create(
+            {
+                "name": "Panadol Extra 500mg",
+                "active_ingredient_id": self.ingredient.id,
+                "therapeutic_category_id": self.category.id,
+                "dosage_form": "tableta",
+                "concentration": "500 mg",
+            }
+        )
+        # Búsqueda usando el dominio inyectado en product_medicine_views.xml
+        found = self.env["product.template"].search([
+            "|", "|", "|", "|",
+            ("default_code", "ilike", "Principio Activo de Prueba"),
+            ("product_variant_ids.default_code", "ilike", "Principio Activo de Prueba"),
+            ("name", "ilike", "Principio Activo de Prueba"),
+            ("barcode", "ilike", "Principio Activo de Prueba"),
+            ("active_ingredient_id.name", "ilike", "Principio Activo de Prueba"),
+        ])
+        self.assertIn(product, found)
+
+    def test_08_actions_and_menus_exist(self):
+        """SPEC-7.1.1: Verificar existencia de acciones de ventana y menús."""
+        action_cat = self.env.ref("caryvil_erp.action_caryvil_therapeutic_category")
+        self.assertEqual(action_cat.res_model, "caryvil.therapeutic.category")
+
+        action_act = self.env.ref("caryvil_erp.action_caryvil_active_ingredient")
+        self.assertEqual(action_act.res_model, "caryvil.active.ingredient")
+
+        menu_act = self.env.ref("caryvil_erp.menu_caryvil_principios_activos")
+        self.assertTrue(menu_act.exists())
+
+        menu_cat = self.env.ref("caryvil_erp.menu_caryvil_categorias_terapeuticas")
+        self.assertTrue(menu_cat.exists())
+
+    def test_09_cashier_read_only_access(self):
+        """SPEC-7.1.1: Verificar que rol cajero solo tiene lectura en catálogos."""
+        group_cashier = self.env.ref("caryvil_erp.group_caryvil_cashier")
+        cashier_user = self.env["res.users"].create(
+            {
+                "name": "Cajero Test",
+                "login": "cajero_test@caryvil.com",
+                "email": "cajero_test@caryvil.com",
+                "groups_id": [(6, 0, [group_cashier.id])],
+            }
+        )
+        # Cajero puede leer
+        cats = self.env["caryvil.therapeutic.category"].with_user(cashier_user).search([])
+        self.assertTrue(len(cats) >= 1)
+
+        # Cajero no puede crear categoría
+        from odoo.exceptions import AccessError
+        with self.assertRaises(AccessError):
+            self.env["caryvil.therapeutic.category"].with_user(cashier_user).create(
+                {"name": "Categoría Prohibida Cajero"}
+            )
+
