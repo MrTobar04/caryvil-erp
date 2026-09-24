@@ -62,6 +62,7 @@ if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
             VALUES ('ir_attachment.location', 'db')
             ON CONFLICT (key) DO UPDATE SET value = 'db';
             DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';
+            DELETE FROM ir_attachment WHERE db_datas IS NULL AND store_fname IS NOT NULL;
         " 2>/dev/null || true
 
         MODULES_TO_UPDATE="${ODOO_UPDATE_MODULES:-caryvil_erp}"
