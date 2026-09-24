@@ -12,11 +12,5 @@
             <field name="email">contacto@farmaciacaryvil.com</field>
             <field name="economic_activity">Venta al por menor de productos farmacéuticos y medicinales</field>
         </record>
-
-        <!-- Persistencia de assets y adjuntos en PostgreSQL para entornos efímeros (Render) -->
-        <record id="param_ir_attachment_location" model="ir.config_parameter">
-            <field name="key">ir_attachment.location</field>
-            <field name="value">db</field>
-        </record>
     </data>
 </odoo>
