@@ -94,6 +94,51 @@ if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
                 --no-http
             echo "=== [Caryvil ERP] Actualizacion de esquema completada (modulos: ${MODULES_TO_UPDATE}). Iniciando servidor... ==="
         fi
+
+        # -----------------------------------------------------------------------
+        # GARANTIZAR VISIBILIDAD DEL MENÚ 'Farmacia Caryvil' EN EL MENÚ PRINCIPAL
+        # Los menús raíz se ocultan cuando el usuario no pertenece a ningún grupo
+        # de sus sub-ítems. En entornos efímeros (Render), la asignación de grupos
+        # al usuario admin puede fallar silenciosamente durante -u (update).
+        # Este bloque SQL garantiza que admin y odoobot tengan group_caryvil_manager
+        # para que el menú raíz 'Farmacia Caryvil' siempre sea visible.
+        # -----------------------------------------------------------------------
+        echo "=== [Caryvil ERP] Verificando asignación de grupo 'group_caryvil_manager' al usuario admin... ==="
+        PGPASSWORD="${PASSWORD}" psql -h "${HOST}" -p "${DB_PORT}" -U "${USER}" -d "${DB_NAME}" -q -c "
+            -- Obtener el ID del grupo group_caryvil_manager por su xml_id externo
+            DO \$\$
+            DECLARE
+                v_group_id    INTEGER;
+                v_admin_id    INTEGER;
+            BEGIN
+                -- Buscar el grupo por su referencia xml_id
+                SELECT rg.id INTO v_group_id
+                FROM res_groups rg
+                JOIN ir_model_data imd ON imd.res_id = rg.id
+                    AND imd.model = 'res.groups'
+                    AND imd.module = 'caryvil_erp'
+                    AND imd.name = 'group_caryvil_manager';
+
+                -- Obtener el id del usuario admin (login='admin')
+                SELECT id INTO v_admin_id
+                FROM res_users
+                WHERE login = 'admin'
+                LIMIT 1;
+
+                IF v_group_id IS NOT NULL AND v_admin_id IS NOT NULL THEN
+                    -- Insertar la relación en la tabla puente res_groups_users_rel si no existe
+                    INSERT INTO res_groups_users_rel (gid, uid)
+                    VALUES (v_group_id, v_admin_id)
+                    ON CONFLICT DO NOTHING;
+
+                    RAISE NOTICE 'Grupo caryvil_manager asignado al usuario admin (uid=%)', v_admin_id;
+                ELSE
+                    RAISE WARNING 'No se pudo asignar grupo: group_id=%, admin_id=%', v_group_id, v_admin_id;
+                END IF;
+            END;
+            \$\$;
+        " 2>/dev/null || true
+        echo "=== [Caryvil ERP] Verificación de grupo completada. ==="
     fi
 fi
 
