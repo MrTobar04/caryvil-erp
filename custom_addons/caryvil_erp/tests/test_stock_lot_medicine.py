@@ -11,26 +11,32 @@ class TestStockLotMedicine(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.product = cls.env["product.product"].create({
-            "name": "Medicamento Test SPEC-7.2.1",
-            "type": "product",
-            "tracking": "lot",
-        })
+        cls.product = cls.env["product.product"].create(
+            {
+                "name": "Medicamento Test SPEC-7.2.1",
+                "type": "product",
+                "tracking": "lot",
+            }
+        )
 
-        cls.customer = cls.env["res.partner"].create({
-            "name": "Cliente Test SPEC-7.2.1",
-        })
+        cls.customer = cls.env["res.partner"].create(
+            {
+                "name": "Cliente Test SPEC-7.2.1",
+            }
+        )
 
         cls.stock_location = cls.env.ref("stock.stock_location_stock")
         cls.customer_location = cls.env.ref("stock.stock_location_customers")
 
     def _create_lot(self, expiration_date):
-        return self.env["stock.lot"].create({
-            "name": "LOT-TEST-%s" % expiration_date,
-            "product_id": self.product.id,
-            "company_id": self.env.company.id,
-            "expiration_date": expiration_date,
-        })
+        return self.env["stock.lot"].create(
+            {
+                "name": "LOT-TEST-%s" % expiration_date,
+                "product_id": self.product.id,
+                "company_id": self.env.company.id,
+                "expiration_date": expiration_date,
+            }
+        )
 
     def _add_stock(self, lot, quantity=10):
         self.env["stock.quant"]._update_available_quantity(
@@ -41,34 +47,39 @@ class TestStockLotMedicine(TransactionCase):
         )
 
     def _create_delivery(self, lot, quantity=1):
-        picking_type = self.env["stock.picking.type"].search([
-            ("code", "=", "outgoing"),
-            ("warehouse_id.company_id", "=", self.env.company.id),
-        ], limit=1)
+        picking_type = self.env["stock.picking.type"].search(
+            [
+                ("code", "=", "outgoing"),
+                ("warehouse_id.company_id", "=", self.env.company.id),
+            ],
+            limit=1,
+        )
 
-        picking = self.env["stock.picking"].create({
-            "picking_type_id": picking_type.id,
-            "location_id": self.stock_location.id,
-            "location_dest_id": self.customer_location.id,
-            "partner_id": self.customer.id,
-        })
+        picking = self.env["stock.picking"].create(
+            {
+                "picking_type_id": picking_type.id,
+                "location_id": self.stock_location.id,
+                "location_dest_id": self.customer_location.id,
+                "partner_id": self.customer.id,
+            }
+        )
 
-        self.env["stock.move"].create({
-            "name": self.product.name,
-            "product_id": self.product.id,
-            "product_uom_qty": quantity,
-            "product_uom": self.product.uom_id.id,
-            "picking_id": picking.id,
-            "location_id": self.stock_location.id,
-            "location_dest_id": self.customer_location.id,
-        })
+        self.env["stock.move"].create(
+            {
+                "name": self.product.name,
+                "product_id": self.product.id,
+                "product_uom_qty": quantity,
+                "product_uom": self.product.uom_id.id,
+                "picking_id": picking.id,
+                "location_id": self.stock_location.id,
+                "location_dest_id": self.customer_location.id,
+            }
+        )
 
         picking.action_confirm()
         picking.action_assign()
 
-        move_line = picking.move_line_ids.filtered(
-            lambda line: line.product_id == self.product
-        )[:1]
+        move_line = picking.move_line_ids.filtered(lambda line: line.product_id == self.product)[:1]
 
         move_line.quantity = quantity
         move_line.lot_id = lot

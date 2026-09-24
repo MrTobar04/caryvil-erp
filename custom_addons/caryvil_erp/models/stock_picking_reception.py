@@ -30,11 +30,7 @@ class StockPickingReception(models.Model):
         for line in picking.move_line_ids:
             if line.quantity > 0 and line.lot_id and line.lot_id.is_expired:
                 raise ValidationError(
-                    _(
-                        "No es posible dispensar el lote %s "
-                        "porque se encuentra vencido."
-                    )
-                    % line.lot_id.name
+                    _("No es posible dispensar el lote %s " "porque se encuentra vencido.") % line.lot_id.name
                 )
 
     def button_validate(self):
@@ -46,24 +42,15 @@ class StockPickingReception(models.Model):
                     if product.tracking == "lot" and line.quantity > 0:
                         if not line.lot_id and not line.lot_name:
                             raise ValidationError(
-                                _(
-                                    "Debe asignar el Número de Lote "
-                                    "para el medicamento %s en la recepción."
-                                )
+                                _("Debe asignar el Número de Lote " "para el medicamento %s en la recepción.")
                                 % product.name
                             )
                         if line.lot_name and not line.expiration_date:
                             raise ValidationError(
-                                _(
-                                    "Debe especificar la Fecha de Vencimiento "
-                                    "para el lote %s del producto %s."
-                                )
+                                _("Debe especificar la Fecha de Vencimiento " "para el lote %s del producto %s.")
                                 % (line.lot_name, product.name)
                             )
-                        if (
-                            line.expiration_date
-                            and line.expiration_date < today
-                        ):
+                        if line.expiration_date and line.expiration_date < today:
                             raise ValidationError(
                                 _(
                                     "La fecha de vencimiento (%s) del lote %s "
