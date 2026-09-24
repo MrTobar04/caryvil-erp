@@ -47,6 +47,8 @@
         "views/product_medicine_views.xml",
         "reports/report_purchase_order.xml",
         "reports/purchase_order_report_action.xml",
+        "data/pharmacy_uom_data.xml",
+
     ],
     "demo": [
         "demo/demo_vendors_data.xml",
