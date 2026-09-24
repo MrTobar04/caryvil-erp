@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
+
         <!-- 1. Amoxicilina 500mg -->
         <record id="med_amoxicilina_500" model="product.product">
             <field name="name">Amoxicilina Vijosa 500mg (Caja x 50 Cápsulas)</field>
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antibioticos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_amoxicilina"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antibioticos"/>
+            <field name="dosage_form">capsula</field>
+            <field name="concentration">500 mg</field>
             <field name="barcode">7410001000012</field>
             <field name="standard_price">4.50</field>
             <field name="list_price">6.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_50"/>
         </record>
 
         <!-- 2. Ibuprofeno 400mg -->
@@ -18,9 +25,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_analgesicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_ibuprofeno"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_analgesicos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">400 mg</field>
             <field name="barcode">7410001000029</field>
             <field name="standard_price">5.00</field>
             <field name="list_price">7.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_100"/>
         </record>
 
         <!-- 3. Paracetamol 500mg -->
@@ -29,9 +42,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_analgesicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_paracetamol"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_analgesicos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">500 mg</field>
             <field name="barcode">7410001000036</field>
             <field name="standard_price">3.20</field>
             <field name="list_price">5.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_100"/>
         </record>
 
         <!-- 4. Loratadina 10mg -->
@@ -40,9 +59,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antihistaminicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_loratadina"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antihistaminicos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">10 mg</field>
             <field name="barcode">7410001000043</field>
             <field name="standard_price">2.50</field>
             <field name="list_price">4.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 5. Enalapril 20mg -->
@@ -51,6 +76,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antihipertensivos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_enalapril"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antihipertensivos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">20 mg</field>
             <field name="barcode">7410001000050</field>
             <field name="standard_price">3.80</field>
             <field name="list_price">6.00</field>
@@ -62,6 +91,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antidiabeticos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_metformina"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antidiabeticos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">850 mg</field>
             <field name="barcode">7410001000067</field>
             <field name="standard_price">4.00</field>
             <field name="list_price">6.25</field>
@@ -73,6 +106,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_gastrointestinales"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_omeprazol"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_gastrointestinales"/>
+            <field name="dosage_form">capsula</field>
+            <field name="concentration">20 mg</field>
             <field name="barcode">7410001000074</field>
             <field name="standard_price">3.50</field>
             <field name="list_price">5.50</field>
@@ -84,6 +121,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_respiratorios"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_salbutamol"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_respiratorios"/>
+            <field name="dosage_form">otro</field>
+            <field name="concentration">100 mcg</field>
             <field name="barcode">7410001000081</field>
             <field name="standard_price">6.00</field>
             <field name="list_price">9.50</field>
@@ -95,9 +136,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_vitaminas"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_complejo_b"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_vitaminas"/>
+            <field name="dosage_form">inyectable</field>
+            <field name="concentration">2 ml</field>
             <field name="barcode">7410001000098</field>
             <field name="standard_price">5.50</field>
             <field name="list_price">8.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_ampoule_vial"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_5_ampoules"/>
         </record>
 
         <!-- 10. Ácido Acetilsalicílico 100mg -->
@@ -106,6 +153,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antihipertensivos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_aspirina"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antihipertensivos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">100 mg</field>
             <field name="barcode">7410001000104</field>
             <field name="standard_price">2.20</field>
             <field name="list_price">3.50</field>
@@ -117,6 +168,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antibioticos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_azitromicina"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antibioticos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">500 mg</field>
             <field name="barcode">7410001000111</field>
             <field name="standard_price">4.80</field>
             <field name="list_price">7.20</field>
@@ -128,6 +183,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antihistaminicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_cetirizina"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antihistaminicos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">10 mg</field>
             <field name="barcode">7410001000128</field>
             <field name="standard_price">2.00</field>
             <field name="list_price">3.25</field>
@@ -139,6 +198,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antihipertensivos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_losartan"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antihipertensivos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">50 mg</field>
             <field name="barcode">7410001000135</field>
             <field name="standard_price">4.20</field>
             <field name="list_price">6.50</field>
@@ -150,6 +213,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_gastrointestinales"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_ranitidina"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_gastrointestinales"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">150 mg</field>
             <field name="barcode">7410001000142</field>
             <field name="standard_price">2.80</field>
             <field name="list_price">4.50</field>
@@ -161,9 +228,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_vitaminas"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_vitamina_c"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_vitaminas"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">500 mg</field>
             <field name="barcode">7410001000159</field>
             <field name="standard_price">3.00</field>
             <field name="list_price">4.90</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_100"/>
         </record>
 
         <!-- 16. Hidrocortisona Crema 1% -->
@@ -172,9 +245,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_dermatologicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_hidrocortisona"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_dermatologicos"/>
+            <field name="dosage_form">crema_unguento</field>
+            <field name="concentration">1%</field>
             <field name="barcode">7410001000166</field>
             <field name="standard_price">2.50</field>
             <field name="list_price">4.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_tube_ointment"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_tube_ointment"/>
         </record>
 
         <!-- 17. Clotrimazol Crema 1% -->
@@ -183,9 +262,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_dermatologicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_clotrimazol"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_dermatologicos"/>
+            <field name="dosage_form">crema_unguento</field>
+            <field name="concentration">1%</field>
             <field name="barcode">7410001000173</field>
             <field name="standard_price">2.20</field>
             <field name="list_price">3.75</field>
+            <field name="uom_id" ref="caryvil_erp.uom_tube_ointment"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_tube_ointment"/>
         </record>
 
         <!-- 18. Tobramicina Gotas Oftálmicas 0.3% -->
@@ -194,6 +279,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_oftalmicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_tobramicina"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_oftalmicos"/>
+            <field name="dosage_form">gotas_oftalmicas</field>
+            <field name="concentration">0.3%</field>
             <field name="barcode">7410001000180</field>
             <field name="standard_price">4.00</field>
             <field name="list_price">6.50</field>
@@ -205,9 +294,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_respiratorios"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_ambroxol"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_respiratorios"/>
+            <field name="dosage_form">jarabe</field>
+            <field name="concentration">15mg/5ml</field>
             <field name="barcode">7410001000197</field>
             <field name="standard_price">3.20</field>
             <field name="list_price">5.20</field>
+            <field name="uom_id" ref="caryvil_erp.uom_bottle_120ml"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_12_bottles"/>
         </record>
 
         <!-- 20. Diclofenac Sódico 50mg -->
@@ -216,9 +311,15 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_analgesicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_diclofenac"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_analgesicos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">50 mg</field>
             <field name="barcode">7410001000203</field>
             <field name="standard_price">2.90</field>
             <field name="list_price">4.60</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 21. Ciprofloxacino 500mg -->
@@ -227,6 +328,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antibioticos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_ciprofloxacino"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antibioticos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">500 mg</field>
             <field name="barcode">7410001000210</field>
             <field name="standard_price">3.80</field>
             <field name="list_price">6.00</field>
@@ -238,6 +343,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_antidiabeticos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_glibenclamida"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_antidiabeticos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">5 mg</field>
             <field name="barcode">7410001000227</field>
             <field name="standard_price">3.50</field>
             <field name="list_price">5.80</field>
@@ -249,6 +358,10 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_gastrointestinales"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_electrolitos_orales"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_gastrointestinales"/>
+            <field name="dosage_form">suspension</field>
+            <field name="concentration">500 ml</field>
             <field name="barcode">7410001000234</field>
             <field name="standard_price">1.50</field>
             <field name="list_price">2.50</field>
@@ -260,6 +373,9 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_vitaminas"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_multivitaminico"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_vitaminas"/>
+            <field name="dosage_form">tableta</field>
             <field name="barcode">7410001000241</field>
             <field name="standard_price">6.50</field>
             <field name="list_price">10.00</field>
@@ -271,9 +387,14 @@
             <field name="detailed_type">product</field>
             <field name="tracking">lot</field>
             <field name="categ_id" ref="caryvil_erp.cat_analgesicos"/>
+            <field name="active_ingredient_id" ref="caryvil_erp.caryvil_active_naproxeno"/>
+            <field name="therapeutic_category_id" ref="caryvil_erp.therapeutic_analgesicos"/>
+            <field name="dosage_form">tableta</field>
+            <field name="concentration">550 mg</field>
             <field name="barcode">7410001000258</field>
             <field name="standard_price">3.00</field>
             <field name="list_price">4.80</field>
         </record>
+
     </data>
 </odoo>
