@@ -53,7 +53,7 @@ class TestStockLotMedicine(TransactionCase):
             "partner_id": self.customer.id,
         })
 
-        move = self.env["stock.move"].create({
+        self.env["stock.move"].create({
             "name": self.product.name,
             "product_id": self.product.id,
             "product_uom_qty": quantity,
