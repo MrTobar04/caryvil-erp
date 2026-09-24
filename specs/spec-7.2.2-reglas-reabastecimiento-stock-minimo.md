@@ -93,7 +93,7 @@ Parametrizar y automatizar las reglas de inventario de seguridad y puntos de reo
 * Extensión de vistas en `views/product_template_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Reglas de reorden y cálculo de sugeridos implementadas.
-* [ ] Agrupación por proveedor en borradores de compra validada.
-* [ ] Pruebas unitarias aprobadas al 100%.
-* [ ] Aprobación de los parámetros de stock mínimo por la propietaria de Caryvil.
+* [x] Reglas de reorden y cálculo de sugeridos implementadas.
+* [x] Agrupación por proveedor en borradores de compra validada.
+* [x] Pruebas unitarias aprobadas al 100%.
+* [x] Aprobación de los parámetros de stock mínimo por la propietaria de Caryvil.

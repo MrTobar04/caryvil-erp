@@ -53,6 +53,7 @@
         "reports/report_purchase_order.xml",
         "reports/purchase_order_report_action.xml",
         "views/stock_lot_medicine_views.xml",
+        "views/stock_reordering_rules_views.xml",
     ],
     "demo": [
         "demo/demo_vendors_data.xml",

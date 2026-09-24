@@ -13,3 +13,4 @@ from . import test_scaffolding  # noqa: F401
 from . import test_medicine_catalog  # noqa: F401
 from . import test_pharmacy_uom  # noqa: F401
 from . import test_stock_lot_medicine  # noqa: F401
+from . import test_stock_reordering_rules  # noqa: F401
