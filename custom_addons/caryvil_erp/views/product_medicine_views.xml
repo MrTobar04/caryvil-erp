@@ -44,6 +44,8 @@
                             <field name="prescription_required"/>
                             <field name="barcode"/>
                             <field name="list_price"/>
+                            <field name="uom_id"/>
+                            <field name="uom_po_id"/>
                         </group>
 
                         <div class="alert alert-warning"
