@@ -50,6 +50,7 @@
         "views/purchase_order_views.xml",
         "views/stock_picking_views.xml",
         "views/product_medicine_views.xml",
+        "views/product_template_views.xml",
         "views/web_login_templates.xml",
         "reports/report_purchase_order.xml",
         "reports/purchase_order_report_action.xml",
