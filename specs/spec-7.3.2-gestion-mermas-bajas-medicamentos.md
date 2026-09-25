@@ -104,8 +104,8 @@ Diseñar, implementar y controlar el proceso formal de descarte, desincorporaci�
 * Extensión de vista en `views/stock_scrap_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Modelo `stock.scrap` extendido con causas farmacéuticas y cálculo de costo.
-* [ ] Obligatoriedad de asignación de lote validada.
-* [ ] Ubicación virtual de desecho configurada.
-* [ ] Pruebas unitarias aprobadas al 100%.
-* [ ] Aprobación del procedimiento de bajas por la administración de Farmacia Caryvil.
+* [x] Modelo `stock.scrap` extendido con causas farmacéuticas y cálculo de costo.
+* [x] Obligatoriedad de asignación de lote validada.
+* [x] Ubicación virtual de desecho configurada.
+* [x] Pruebas unitarias aprobadas al 100%.
+* [x] Aprobación del procedimiento de bajas por la administración de Farmacia Caryvil.
