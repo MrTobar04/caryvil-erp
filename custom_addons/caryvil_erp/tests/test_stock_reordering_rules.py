@@ -158,7 +158,7 @@ class TestStockReorderingRules(TransactionCase):
         )
 
     def test_calculate_reorder_grouped_by_vendor(self):
-        """Escenario 2 Criterios de Aceptación: 3 medicamentos de Vijosa bajo el mínimo generan un único RFQ agrupado."""
+        """Escenario 2 Criterios: 3 medicamentos de Vijosa bajo el mínimo generan RFQ agrupado."""
         med1 = self.product_loratadina
         med2 = self.env["product.product"].create(
             {
@@ -201,9 +201,9 @@ class TestStockReorderingRules(TransactionCase):
         self.assertEqual(len(po), 1, "Debe generarse una única Solicitud de Presupuesto agrupada para Vijosa.")
         self.assertEqual(len(po.order_line), 3, "El RFQ debe contener exactamente 3 líneas de medicamentos.")
 
-        line_med1 = po.order_line.filtered(lambda l: l.product_id == med1)
-        line_med2 = po.order_line.filtered(lambda l: l.product_id == med2)
-        line_med3 = po.order_line.filtered(lambda l: l.product_id == med3)
+        line_med1 = po.order_line.filtered(lambda line: line.product_id == med1)
+        line_med2 = po.order_line.filtered(lambda line: line.product_id == med2)
+        line_med3 = po.order_line.filtered(lambda line: line.product_id == med3)
 
         self.assertEqual(line_med1.product_qty, 25.0, "MED1 debe tener cantidad sugerida de 25 cajas.")
         self.assertEqual(line_med2.product_qty, 18.0, "MED2 debe tener cantidad sugerida de 18 cajas.")
@@ -256,7 +256,7 @@ class TestStockReorderingRules(TransactionCase):
             order="id desc",
             limit=1,
         )
-        line = po.order_line.filtered(lambda l: l.product_id == product_with_po_uom)
+        line = po.order_line.filtered(lambda line: line.product_id == product_with_po_uom)
         self.assertEqual(line.product_qty, 4.0, "40 unidades de stock deben convertirse a 4 cajas de compra.")
         self.assertEqual(line.product_uom, uom_box_10, "La UoM de la línea debe ser la de compra (uom_po_id).")
 
@@ -332,4 +332,8 @@ class TestStockReorderingRules(TransactionCase):
         )
 
         template = self.product_loratadina.product_tmpl_id
-        self.assertIn(op, template.orderpoint_ids, "La regla de reorden debe sincronizarse en la plantilla del medicamento.")
+        self.assertIn(
+            op,
+            template.orderpoint_ids,
+            "La regla de reorden debe sincronizarse en la plantilla del medicamento.",
+        )

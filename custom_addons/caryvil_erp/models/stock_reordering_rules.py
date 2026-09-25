@@ -56,7 +56,8 @@ class StockWarehouseOrderpointMedicine(models.Model):
             if rule.product_max_qty < rule.product_min_qty:
                 raise ValidationError(
                     _(
-                        "El nivel máximo objetivo (%(max).2f) no puede ser inferior al stock mínimo de seguridad (%(min).2f)."
+                        "El nivel máximo objetivo (%(max).2f) no puede "
+                        "ser inferior al stock mínimo de seguridad (%(min).2f)."
                     )
                     % {"max": rule.product_max_qty, "min": rule.product_min_qty}
                 )
@@ -66,7 +67,10 @@ class StockWarehouseOrderpointMedicine(models.Model):
         for rule in self:
             if rule.qty_multiple <= 0:
                 raise ValidationError(
-                    _("El múltiplo de compra / empaque debe ser un valor positivo estrictamente superior a 0.")
+                    _(
+                        "El múltiplo de compra / empaque debe ser "
+                        "un valor positivo estrictamente superior a 0."
+                    )
                 )
 
     def _check_reordering_security(self):
@@ -99,6 +103,64 @@ class StockWarehouseOrderpointMedicine(models.Model):
         self._check_reordering_security()
         return super().unlink()
 
+    def _get_vendor_for_rule(self, rule):
+        product = rule.product_id
+        vendor = rule.supplier_id
+        seller = False
+        if not vendor and product.seller_ids:
+            seller = product.seller_ids[0]
+            vendor = seller.partner_id
+
+        if not vendor:
+            return None, None
+
+        if not (
+            vendor.is_pharmacy_vendor
+            or vendor.commercial_partner_id.is_pharmacy_vendor
+        ):
+            return None, None
+
+        return vendor, seller
+
+    def _get_unit_price_for_vendor(self, product, vendor, seller):
+        price_unit = 0.0
+        if seller:
+            price_unit = seller.price or seller.gross_price
+        elif product.seller_ids:
+            matching_sellers = product.seller_ids.filtered(
+                lambda line: line.partner_id == vendor
+            )
+            if matching_sellers:
+                price_unit = (
+                    matching_sellers[0].price
+                    or matching_sellers[0].gross_price
+                )
+        if not price_unit:
+            price_unit = product.standard_price
+        return price_unit
+
+    def _get_or_create_draft_po(self, orders_by_vendor, vendor, company_id):
+        if vendor.id not in orders_by_vendor:
+            existing_po = self.env["purchase.order"].search(
+                [
+                    ("partner_id", "=", vendor.id),
+                    ("state", "=", "draft"),
+                    ("origin", "=", "Reabastecimiento Caryvil"),
+                ],
+                limit=1,
+            )
+
+            if not existing_po:
+                existing_po = self.env["purchase.order"].create(
+                    {
+                        "partner_id": vendor.id,
+                        "origin": "Reabastecimiento Caryvil",
+                        "company_id": company_id or self.env.company.id,
+                    }
+                )
+            orders_by_vendor[vendor.id] = existing_po
+        return orders_by_vendor[vendor.id]
+
     def action_calculate_replenishment_caryvil(self):
         """
         Calcula el reorden de compras para medicamentos que están por debajo del mínimo,
@@ -128,45 +190,13 @@ class StockWarehouseOrderpointMedicine(models.Model):
 
         for rule in rules_to_reorder:
             product = rule.product_id
-            # Determinar el proveedor asignado (en regla o en catálogo de proveedores)
-            vendor = rule.supplier_id
-            seller = False
-            if not vendor and product.seller_ids:
-                seller = product.seller_ids[0]
-                vendor = seller.partner_id
-
+            vendor, seller = self._get_vendor_for_rule(rule)
             if not vendor:
                 continue
 
-            # El proveedor debe ser válido para compras farmacéuticas
-            if not (
-                vendor.is_pharmacy_vendor
-                or vendor.commercial_partner_id.is_pharmacy_vendor
-            ):
-                continue
-
-            if vendor.id not in orders_by_vendor:
-                existing_po = self.env["purchase.order"].search(
-                    [
-                        ("partner_id", "=", vendor.id),
-                        ("state", "=", "draft"),
-                        ("origin", "=", "Reabastecimiento Caryvil"),
-                    ],
-                    limit=1,
-                )
-
-                if not existing_po:
-                    existing_po = self.env["purchase.order"].create(
-                        {
-                            "partner_id": vendor.id,
-                            "origin": "Reabastecimiento Caryvil",
-                            "company_id": rule.company_id.id
-                            or self.env.company.id,
-                        }
-                    )
-                orders_by_vendor[vendor.id] = existing_po
-
-            po = orders_by_vendor[vendor.id]
+            po = self._get_or_create_draft_po(
+                orders_by_vendor, vendor, rule.company_id.id
+            )
 
             # Calcular cantidad en la unidad de medida de compra (uom_po_id)
             qty_stock = rule.suggested_replenishment_qty
@@ -178,23 +208,10 @@ class StockWarehouseOrderpointMedicine(models.Model):
             else:
                 qty_to_order = qty_stock
 
-            price_unit = 0.0
-            if seller:
-                price_unit = seller.price or seller.gross_price
-            elif product.seller_ids:
-                matching_sellers = product.seller_ids.filtered(
-                    lambda s: s.partner_id == vendor
-                )
-                if matching_sellers:
-                    price_unit = (
-                        matching_sellers[0].price
-                        or matching_sellers[0].gross_price
-                    )
-            if not price_unit:
-                price_unit = product.standard_price
+            price_unit = self._get_unit_price_for_vendor(product, vendor, seller)
 
             existing_line = po.order_line.filtered(
-                lambda l: l.product_id == product
+                lambda line: line.product_id == product
             )
             if existing_line:
                 existing_line.write({"product_qty": qty_to_order})
@@ -248,7 +265,8 @@ class StockWarehouseOrderpointMedicine(models.Model):
                 "params": {
                     "title": _("Reabastecimiento Caryvil"),
                     "message": _(
-                        "No se generaron solicitudes de presupuesto (verifique que los medicamentos tengan proveedores farmacéuticos configurados)."
+                        "No se generaron solicitudes de presupuesto "
+                        "(verifique que los medicamentos tengan proveedores farmacéuticos configurados)."
                     ),
                     "type": "warning",
                     "sticky": False,
