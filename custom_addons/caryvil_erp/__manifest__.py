@@ -57,6 +57,10 @@
         "views/stock_lot_medicine_views.xml",
         "views/stock_reordering_rules_views.xml",
         "views/stock_quant_views.xml",
+        "data/stock_scrap_location.xml",
+        "views/stock_scrap_views.xml",
+        "reports/stock_scrap_report.xml",
+        "reports/stock_scrap_report_action.xml",
     ],
     "demo": [
         "demo/demo_vendors_data.xml",
