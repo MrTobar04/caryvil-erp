@@ -12,8 +12,11 @@
         <record id="group_caryvil_cashier" model="res.groups">
             <field name="name">Cajero / Dependiente de Mostrador</field>
             <field name="category_id" ref="module_category_caryvil_erp"/>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="comment">Acceso a ventas en mostrador, clientes y consulta de disponibilidad.</field>
+            <field name="implied_ids" eval="[
+                (4, ref('base.group_user')),
+                (4, ref('sales_team.group_sale_salesman'))
+            ]"/>
+            <field name="comment">Acceso a ventas de mostrador, clientes y consulta de disponibilidad.</field>
         </record>
 
         <!-- Rol 2: Encargado de Compras e Inventario -->
