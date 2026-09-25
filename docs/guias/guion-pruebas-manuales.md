@@ -21,6 +21,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)](#flujo-71-catálogo-y-categorización-de-medicamentos-spec-711)
   - [Flujo 7.2: Gestión de Unidades de Medida Farmacéuticas (SPEC-7.1.2)](#flujo-72-gestión-de-unidades-de-medida-farmacéuticas-spec-712)
+  - [Flujo 7.3: Control de Stock, Lotes y Vencimientos (SPEC-7.2.1)](#flujo-73-control-de-stock-lotes-y-vencimientos-spec-721)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
   - [Flujo 8.2: Recepción de Mercadería y Captura Obligatoria de Lotes (SPEC-8.2.1)](#flujo-82-recepción-de-mercadería-y-captura-obligatoria-de-lotes-spec-821)
   - [Flujo 8.3: Actualización Automática de Stock y Cierre de Compras (SPEC-8.2.2)](#flujo-83-actualización-automática-de-stock-y-cierre-de-compras-spec-822)
@@ -655,6 +656,187 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 1. **Intento de modificación de factores de conversión por rol no autorizado (Sección 8):** Iniciar sesión con `cajero@caryvil.com`. Intentar modificar cualquier registro en `uom.uom` mediante la interfaz o API. Verificar que el sistema responde con una excepción `AccessError` (Acceso Denegado), impidiendo que personal operativo altere las equivalencias contables de inventario.
 2. **Restricción de fraccionamiento menor a 1 pastilla (Sección 3):** Al registrar una venta con `uom_unit_pill`, verificar que la precisión de redondeo (`rounding=1.0`) impide fraccionar medias pastillas (0.5), preservando la integridad de unidades enteras no divisibles.
 
+---
 
+### Flujo 7.3: Control de Stock, Lotes y Vencimientos (SPEC-7.2.1)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado, producto farmacéutico con trazabilidad por lote configurado (`tracking = 'lot'`), y usuarios con roles `caryvil_erp.group_caryvil_cashier`, `caryvil_erp.group_caryvil_inventory_purchases` y `caryvil_erp.group_caryvil_manager`.
+
+#### Fase A: Alta de Lote y Cálculo Automático de Alertas Preventivas (Escenario 1)
+
+1. **Creación de Lote en Inventario:** Iniciar sesión con la cuenta de Encargado de Compras e Inventario (`compras@caryvil.com` / `compras123`).
+2. **Acceso al Menú de Lotes:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Lotes y Caducidades** (o mediante Inventario → Productos → Lotes / Números de Serie).
+3. **Registro de Lote con Vencimiento Futuro:** Hacer clic en **Nuevo**.
+   - Producto: Seleccionar `Amoxicilina 500mg`.
+   - Lote / Número de Serie: `LOT-AMX-2027-VIGENTE`.
+   - Fecha de Vencimiento: Digitar una fecha a 1 año en el futuro (ej. `31/12/2027 00:00:00`).
+4. **Verificación de Alertas de Vida Útil Autocalculadas (Sección 2.1):**
+   - Comprobar que en la sección **Control Farmacéutico y Fechas Críticas**, el campo **Fecha de Alerta** (`alert_date`) se completó automáticamente exactamente 60 días antes de la caducidad (`01/11/2027 00:00:00`).
+   - Comprobar que el campo **Fecha de Retiro** (`removal_date`) se completó automáticamente 15 días antes de la caducidad (`16/12/2027 00:00:00`).
+   - Verificar que el indicador **Lote Vencido** (`is_expired`) permanece desmarcado (`False`) y en modo solo lectura.
+5. **Guardar Registro:** Presionar **Guardar**; el registro se almacena de forma conforme.
+
+#### Fase B: Consulta de Existencias y Semáforo Visual en Lista (Escenarios 1 y UI)
+
+6. **Desglose de Existencias por Lote:** Mediante un Ajuste de Inventario o recepción de compra, asignar 50 unidades de stock a `LOT-AMX-2027-VIGENTE` en `WH/Stock`. Navegar a **Medicamentos**, abrir `Amoxicilina 500mg` y hacer clic en el botón inteligente **A Mano**.
+   - Comprobar que Odoo desglosa la existencia indicando que las 50 unidades corresponden exactamente al lote `LOT-AMX-2027-VIGENTE`.
+7. **Filtro Predeterminado de Lotes Vigentes (Sección 5):** Regresar a **Lotes y Caducidades**.
+   - Comprobar que la vista de búsqueda tiene activo por defecto el filtro **Lotes Vigentes** (`search_default_vigentes = 1`), ocultando cualquier lote caducado.
+8. **Semáforo Visual de Lotes Vencidos:** Desactivar temporalmente el filtro predeterminado en la barra de búsqueda para mostrar la totalidad de lotes.
+   - Verificar que las filas de lotes caducados (`is_expired = True`) se muestran automáticamente resaltadas en **rojo negrita** (`decoration-danger` y `decoration-bf`), mientras que los lotes vigentes mantienen tipografía normal.
+
+#### Fase C: Bloqueo Estricto de Venta y Dispensación de Lote Caducado (Escenario 2)
+
+9. **Intento de Dispensación en Albarán de Salida:** Iniciar sesión como Cajero (`cajero@caryvil.com` / `cajero123`).
+10. **Selección de Lote Caducado:** En una entrega saliente al cliente (albarán de salida `outgoing`), en la línea de operaciones detalladas de `Amoxicilina 500mg`, intentar asignar un lote cuya fecha de caducidad esté vencida (`LOT-AMX-EXP`).
+11. **Validación Bloqueante:** Hacer clic en el botón **Validar** del albarán.
+    - Debes verificar que el sistema interrumpe la operación y muestra una alerta bloqueante de validación (`ValidationError`):
+      > *"No es posible dispensar el lote LOT-AMX-EXP porque se encuentra vencido."*
+    - Comprobar que el albarán NO cambia a estado `Hecho` (`done`), impidiendo la entrega de fármacos caducados.
+
+#### Fase D: Seguridad RBAC y Auditoría en Chatter (Sección 8)
+
+12. **Bloqueo de Modificación de Fecha por Cajero o Bodeguero:** Con la sesión de `cajero@caryvil.com` o `compras@caryvil.com`, abrir cualquier lote existente, intentar modificar la fecha de vencimiento y presionar **Guardar**.
+    - Comprobar que el sistema rechaza la edición con el mensaje:
+      > *"Solo un Administrador de Farmacia Caryvil puede modificar la fecha de vencimiento de un lote."*
+13. **Modificación Legítima y Trazabilidad por Administrador / Propietaria:** Iniciar sesión con la cuenta de Administrador / Propietaria (`admin_caryvil@caryvil.com` o `admin`).
+    - Abrir el lote `LOT-AMX-2027-VIGENTE`.
+    - Modificar la fecha de vencimiento. Presionar **Guardar**.
+    - Desplazarse al **Chatter** (panel inferior de mensajes). Comprobar que el sistema publicó automáticamente una nota de auditoría:
+      > *"Fecha de vencimiento modificada: 2027-12-31 00:00:00 → [nueva fecha]."*
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Rechazo de Fecha Retroactiva en Creación (Sección 3):** Como Encargado de Inventario o Administrador, intentar crear un lote con fecha de caducidad de ayer (`hoy - 1 día`). Al presionar **Guardar**, el sistema debe disparar la excepción `ValidationError`: *"La fecha de vencimiento del lote (...) no puede ser anterior a su fecha de creación/recepción."*
+2. **Rechazo de Rango Ilógico Superior a 10 Años (Sección 9):** Intentar ingresar un lote con fecha de caducidad a 15 años en el futuro. El sistema debe bloquear el guardado indicando que no puede exceder el rango lógico de 10 años.
+3. **Sincronización Automática Diaria por Cron:** Verificar en **Ajustes** → **Técnico** → **Acciones Planificadas** la existencia de `Caryvil ERP: Actualizar Estado de Lotes Vencidos` (`ir_cron_update_expired_lots`), la cual corre a diario para asegurar que ningún lote quede estancado en estado vigente tras transcurrir su fecha límite.
+
+---
+
+### Flujo 7.4: Reglas de Reabastecimiento, Stock Mínimo y Generación de Borradores de Compra (SPEC-7.2.2)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado y actualizado. Usuarios con credenciales:
+> - Encargado de Compras e Inventario: `compras@caryvil.com` / `compras123`
+> - Cajero: `cajero@caryvil.com` / `cajero123`
+> - Administrador: `admin_caryvil@caryvil.com` o `admin`
+> Proveedor farmacéutico registrado: `Laboratorios Vijosa S.A. de C.V.`
+
+#### Fase A: Configuración en Pestaña "Niveles de Stock y Reorden" (Sección 2.1 y Escenario 1)
+
+1. **Acceso al Catálogo de Medicamentos:** Iniciar sesión con `compras@caryvil.com`. Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**.
+2. **Apertura de Medicamento de Demostración:** Abrir la ficha de `Loratadina 10mg` (o medicamento similar de alta rotación).
+3. **Localización de la Pestaña Especializada:** Comprobar que en el formulario del medicamento se encuentra disponible la pestaña **Niveles de Stock y Reorden** (inmediatamente después de *Información Farmacéutica*).
+4. **Configuración de Umbrales y Múltiplos:** En la tabla de reglas de reorden de la pestaña, hacer clic en **Agregar una línea**:
+   - Ubicación: Seleccionar la ubicación interna principal (ej. `WH/Stock`).
+   - Stock Mínimo (`product_min_qty`): `10.00`
+   - Stock Máximo (`product_max_qty`): `30.00`
+   - Múltiplo Compra (`qty_multiple`): `5.00`
+   - Disparo (`trigger`): `Automático`
+5. **Comprobación de Existencias y Cantidad Sugerida:**
+   - Si las existencias actuales son de 6 cajas, verificar que la columna **Cant. Sugerida** (`suggested_replenishment_qty`) se calcula y muestra automáticamente en **25.00 cajas** (déficit de 24 redondeado al siguiente múltiplo de 5).
+   - Presionar **Guardar**.
+
+#### Fase B: No Sugerencia ante Stock Adecuado (Escenario 3)
+
+6. **Medicamento con Existencias Suficientes:** Abrir la ficha de un medicamento con existencias holgadas (ej. Stock actual = 22 unidades).
+7. **Configuración de Umbrales:** En la pestaña **Niveles de Stock y Reorden**, establecer Stock Mínimo = `15.00` y Stock Máximo = `30.00`.
+8. **Verificación de Cero Sugerencias:**
+   - Comprobar que la columna **Cant. Sugerida** permanece en **0.00**.
+   - Guardar el registro.
+
+#### Fase C: Generación de Solicitud de Presupuesto (RFQ) Agrupada por Proveedor (Escenario 2)
+
+9. **Acceso a la Vista General de Reglas:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Reglas de Reabastecimiento** (o **Compras y Proveedores** → **Planificador de Reabastecimiento**).
+10. **Comprobación Visual de Reglas en Déficit:** Verificar que las reglas con `suggested_replenishment_qty > 0` aparecen resaltadas visualmente con color ámbar / alerta (`decoration-warning`).
+11. **Ejecución de la Acción Centralizada:** Hacer clic en el botón superior **Calcular Reorden de Compras** (o mediante el menú desplegable **Acción** → **Calcular Reorden de Compras**).
+12. **Verificación de Borrador Generado en Compras:**
+    - Navegar a **Farmacia Caryvil** → **Compras y Proveedores** → **Órdenes de Compra**.
+    - Localizar la Solicitud de Presupuesto generada con origen `Reabastecimiento Caryvil`.
+    - Comprobar que:
+      1. Se encuentra en estado **Solicitud de Cotización** (`draft`), cumpliendo la restricción de NO generar compras definitivas sin validación humana.
+      2. El proveedor asignado es `Laboratorios Vijosa S.A. de C.V.`.
+      3. Contiene agrupadas las líneas de todos los medicamentos bajo el mínimo asociados a este proveedor, con sus cantidades sugeridas redondeadas y precios unitarios de catálogo.
+
+#### Fase D: Seguridad RBAC y Protección contra Modificaciones de Cajero (Sección 8)
+
+13. **Intento de Creación / Modificación por Cajero:**
+    - Cerrar sesión e iniciar sesión como `cajero@caryvil.com`.
+    - Navegar a **Medicamentos**, abrir cualquier medicamento e intentar editar o agregar líneas en la pestaña **Niveles de Stock y Reorden**.
+    - Intentar guardar los cambios o ejecutar una llamada RPC sobre `stock.warehouse.orderpoint`.
+    - Comprobar que el sistema rechaza la operación con una excepción `AccessError`:
+      > *"Solo los usuarios con rol 'Encargado de Compras e Inventario' o 'Administrador' pueden configurar reglas de reabastecimiento."*
+    - Comprobar que el menú de Reglas de Reabastecimiento no es visible para el cajero.
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Rechazo de Máximo Inferior a Mínimo:** Con el usuario de compras, intentar configurar en una regla *Stock Mínimo: 30.00* y *Stock Máximo: 10.00*. Al guardar, el sistema debe disparar la excepción `ValidationError`: *"El nivel máximo objetivo (10.00) no puede ser inferior al stock mínimo de seguridad (30.00)."*
+2. **Rechazo de Múltiplo Inválido ($\le 0$):** Intentar ingresar un múltiplo de compra igual a `0.00` o `-2.00`. El sistema debe rechazar el guardado indicando: *"El múltiplo de compra / empaque debe ser un valor positivo estrictamente mayor a 0."*
+3. **Respeto de Unidad de Medida de Compra (`uom_po_id`):** En un producto configurado con UoM de inventario en *Unidades* y UoM de compra en *Cajas x 10*, verificar que al generar el borrador de compra la cantidad sugerida de 40 unidades se convierte automáticamente a 4 cajas de compra.
+
+---
+
+### Flujo 7.5: Conteo Físico, Conciliación y Ajustes de Inventario (SPEC-7.3.1)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado y actualizado. Usuarios con credenciales:
+> - Encargado de Compras e Inventario: `compras@caryvil.com` / `compras123`
+> - Cajero: `cajero@caryvil.com` / `cajero123`
+> - Administrador / Propietaria: `admin_caryvil@caryvil.com` o `admin`
+> Medicamentos de prueba configurados en `WH/Stock` (uno sin seguimiento y otro rastreado por lotes con existencias activas).
+
+#### Fase A: Conteo Físico Coincidente (Escenario 1)
+
+1. **Acceso a Ajustes de Inventario:** Iniciar sesión como Encargado de Compras e Inventario (`compras@caryvil.com`).
+2. **Navegación al Menú de Ajustes:** Dirigirse a **Inventario** → **Operaciones** → **Ajustes de Inventario** (o mediante la vista de quants en modo inventario).
+3. **Registro de Conteo Exacto:** Localizar un medicamento con stock teórico de 10 unidades en `WH/Stock`. En la columna **Contado** (`inventory_quantity`), ingresar `10.00`.
+4. **Verificación de Diferencia Nula y Campos Ocultos:**
+   - Comprobar que la columna **Diferencia** (`inventory_diff_quantity`) marca `0.00`.
+   - Comprobar que las columnas **Motivo del Ajuste** y **Observaciones** permanecen ocultas en la fila (`invisible="inventory_diff_quantity == 0"`).
+   - Comprobar que en la fila se asigna automáticamente al usuario en la columna **Contado por** (`counted_by_user_id`).
+   - Comprobar que el botón **Aplicar Ajuste** no es visible ni está habilitado para el encargado de inventario.
+
+#### Fase B: Registro de Discrepancia Física (Sobrante/Faltante) por Personal de Inventario (Escenario 2)
+
+5. **Registro de Sobrante:** En la misma vista de ajustes, localizar un producto con stock a mano de 10 unidades. En la columna **Contado**, digitar `14.00`.
+6. **Despliegue Dinámico de Campos Justificativos:**
+   - Comprobar que la columna **Diferencia** pasa inmediatamente a `+4.00` en tipografía verde/negrita (`decoration-success` y `decoration-bf`).
+   - Verificar que los campos **Motivo del Ajuste** (`adjustment_reason`) y **Observaciones** (`adjustment_notes`) se muestran de forma obligatoria y visible en la línea.
+   - En el selector **Motivo del Ajuste**, seleccionar `Conteo Cíclico Periódico`.
+   - En el campo **Observaciones / Justificación**, escribir: `Sobrante verificado en estantería B-02 durante auditoría periódica`.
+7. **Captura Automática de Operador Responsable:**
+   - Guardar el registro presionando Enter o el icono de guardar de la fila.
+   - Verificar que la columna **Contado por** (`counted_by_user_id`) registra automáticamente a `compras@caryvil.com`.
+   - Verificar que la columna **Validado por** (`validated_by_user_id`) permanece vacía (`False`), en espera de autorización gerencial.
+
+#### Fase C: Aprobación y Aplicación por Administrador / Propietaria (Sección 2.1 y 8)
+
+8. **Revisión Gerencial de Ajustes Pendientes:** Cerrar sesión e iniciar sesión como Administrador / Propietaria (`admin_caryvil@caryvil.com` o `admin`).
+9. **Visualización y Autorización:**
+   - Navegar a **Inventario** → **Operaciones** → **Ajustes de Inventario**.
+   - Localizar la línea con la discrepancia registrada por el operador.
+   - Comprobar que el botón **Aplicar Ajuste** (`action_apply_inventory`) se encuentra visible y activo exclusivamente para el Administrador.
+10. **Aplicación del Ajuste:**
+    - Hacer clic en el botón **Aplicar Ajuste**.
+    - Comprobar que el ajuste se procesa satisfactoriamente.
+    - Verificar que el stock a mano del producto se actualiza inmediatamente a `14.00` unidades.
+    - Verificar que la columna **Validado por** registra al Administrador actual.
+11. **Auditoría Permanente en Movimiento de Stock (Kardex):**
+    - Navegar a **Inventario** → **Informes** → **Movimientos de Existencias** (o abrir el botón inteligente de movimientos del producto).
+    - Localizar el último movimiento generado con ubicación de origen `Virtual Locations/Inventory adjustment` y destino `WH/Stock`.
+    - Comprobar que el campo **Origen** (`origin`) indica: `Ajuste de Inventario: Conteo Cíclico Periódico`.
+    - Comprobar que el campo **Descripción** (`description_picking`) preserva la justificación completa: `Motivo: Conteo Cíclico Periódico | Notas: Sobrante verificado en estantería B-02 durante auditoría periódica | Contado por: Compras e Inventario`.
+
+#### Fase D: Conciliación de Medicamento Rastreado por Lote
+
+12. **Ajuste de Lote Específico:** En un medicamento configurado con seguimiento por lote (`tracking = 'lot'`), registrar un conteo físico sobre el lote `LOT-AMX-2027-VIGENTE`.
+13. **Aplicación Exitosa:** Ingresar motivo `Error de Conteo Previo` y presionar **Aplicar Ajuste** como Administrador.
+    - Comprobar que el balance de stock del lote exacto se actualiza y la trazabilidad por lote se mantiene intacta.
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Rechazo de Cantidad Contada Negativa (Límite Físico):** Con cualquier usuario, intentar ingresar un conteo de `-3.00` en la columna **Contado**. Al guardar o presionar aplicar, el sistema debe disparar la excepción `ValidationError`: *"La cantidad física contada no puede ser negativa (-3.0) para el producto (...)."*
+2. **Bloqueo de Ajuste sin Motivo Seleccionado (Escenario 3):** En una línea con diferencia numérica distinta de cero, intentar aplicar el ajuste dejando el campo **Motivo del Ajuste** en blanco (nulo). El sistema debe bloquear la transacción con `ValidationError`: *"Debe especificar el Motivo del Ajuste para el producto (...)."*
+3. **Bloqueo de Fármaco Rastreado sin Lote:** En una línea de ajuste para un medicamento con seguimiento por lotes o número de serie, dejar la columna **Lote / Número de Serie** vacía. Al intentar aplicar el ajuste, el sistema debe bloquear con `ValidationError`: *"Debe especificar el lote para el producto con seguimiento: (...)."*
+4. **Bloqueo RBAC a Encargado de Inventario:** Iniciar sesión como `compras@caryvil.com`. Aunque pueda registrar cantidades contadas y motivos, si intenta forzar la ejecución de `action_apply_inventory` (vía RPC o atajo), el servidor rechaza con `UserError`: *"Solo el Administrador / Propietario puede aplicar ajustes de inventario."*
+5. **Bloqueo Total a Personal de Mostrador / Cajero:** Con la cuenta de `cajero@caryvil.com`, intentar modificar o registrar cualquier conteo en `stock.quant`. El sistema bloquea inmediatamente la operación con `AccessError`, impidiendo cualquier manipulación de existencias físicas por el personal de venta.
 
 

@@ -69,6 +69,13 @@
                   action="action_caryvil_medicamentos"
                   sequence="10"/>
 
+        <menuitem id="menu_caryvil_lotes_medicamentos"
+                  name="Lotes y Caducidades"
+                  parent="menu_caryvil_inventario"
+                  action="stock.action_production_lot_form"
+                  sequence="15"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
+
         <menuitem id="menu_caryvil_principios_activos"
                   name="Principios Activos"
                   parent="menu_caryvil_inventario"
@@ -82,6 +89,20 @@
                   action="action_caryvil_therapeutic_category"
                   sequence="30"
                   groups="caryvil_erp.group_caryvil_cashier"/>
+
+        <menuitem id="menu_caryvil_reordering_rules"
+                  name="Reglas de Reabastecimiento"
+                  parent="menu_caryvil_inventario"
+                  action="stock.action_orderpoint"
+                  sequence="18"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
+
+        <menuitem id="menu_caryvil_compras_reabastecimiento"
+                  name="Planificador de Reabastecimiento"
+                  parent="menu_caryvil_compras"
+                  action="stock.action_orderpoint_replenish"
+                  sequence="15"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
 
         <!-- Submenús de Configuración Farmacológica -->
         <menuitem id="menu_caryvil_config_farmacologia"

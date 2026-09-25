@@ -61,15 +61,16 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
-        <!-- SPEC-7.2.2: Solo Compras e Inventario puede modificar reglas de reabastecimiento -->
+        <!-- SPEC-7.2.2: Visibilidad y gestión de reglas de reabastecimiento -->
         <record id="rule_caryvil_stock_warehouse_orderpoint_write" model="ir.rule">
             <field name="name">Reglas de Reabastecimiento: Compras e Inventario</field>
             <field name="model_id" ref="stock.model_stock_warehouse_orderpoint"/>
-            <field name="groups" eval="[(4, ref('caryvil_erp.group_caryvil_inventory_purchases'))]"/>
+            <field name="groups" eval="[(4, ref('caryvil_erp.group_caryvil_inventory_purchases')), (4, ref('caryvil_erp.group_caryvil_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="False"/>
+            <field name="perm_unlink" eval="True"/>
         </record>
     </data>
 </odoo>
