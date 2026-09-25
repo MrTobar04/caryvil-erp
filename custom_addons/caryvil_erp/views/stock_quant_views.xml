@@ -13,9 +13,11 @@
                 <field name="adjustment_notes"
                        invisible="inventory_diff_quantity == 0"/>
                 <field name="counted_by_user_id"
-                       readonly="1"/>
+                       readonly="1"
+                       optional="show"/>
                 <field name="validated_by_user_id"
-                       readonly="1"/>
+                       readonly="1"
+                       optional="show"/>
             </xpath>
 
             <xpath expr="//button[@name='action_apply_inventory']" position="attributes">
