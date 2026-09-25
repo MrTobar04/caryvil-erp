@@ -710,3 +710,66 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 1. **Rechazo de Fecha Retroactiva en Creación (Sección 3):** Como Encargado de Inventario o Administrador, intentar crear un lote con fecha de caducidad de ayer (`hoy - 1 día`). Al presionar **Guardar**, el sistema debe disparar la excepción `ValidationError`: *"La fecha de vencimiento del lote (...) no puede ser anterior a su fecha de creación/recepción."*
 2. **Rechazo de Rango Ilógico Superior a 10 Años (Sección 9):** Intentar ingresar un lote con fecha de caducidad a 15 años en el futuro. El sistema debe bloquear el guardado indicando que no puede exceder el rango lógico de 10 años.
 3. **Sincronización Automática Diaria por Cron:** Verificar en **Ajustes** → **Técnico** → **Acciones Planificadas** la existencia de `Caryvil ERP: Actualizar Estado de Lotes Vencidos` (`ir_cron_update_expired_lots`), la cual corre a diario para asegurar que ningún lote quede estancado en estado vigente tras transcurrir su fecha límite.
+
+---
+
+### Flujo 7.4: Reglas de Reabastecimiento, Stock Mínimo y Generación de Borradores de Compra (SPEC-7.2.2)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado y actualizado. Usuarios con credenciales:
+> - Encargado de Compras e Inventario: `compras@caryvil.com` / `compras123`
+> - Cajero: `cajero@caryvil.com` / `cajero123`
+> - Administrador: `admin_caryvil@caryvil.com` o `admin`
+> Proveedor farmacéutico registrado: `Laboratorios Vijosa S.A. de C.V.`
+
+#### Fase A: Configuración en Pestaña "Niveles de Stock y Reorden" (Sección 2.1 y Escenario 1)
+
+1. **Acceso al Catálogo de Medicamentos:** Iniciar sesión con `compras@caryvil.com`. Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**.
+2. **Apertura de Medicamento de Demostración:** Abrir la ficha de `Loratadina 10mg` (o medicamento similar de alta rotación).
+3. **Localización de la Pestaña Especializada:** Comprobar que en el formulario del medicamento se encuentra disponible la pestaña **Niveles de Stock y Reorden** (inmediatamente después de *Información Farmacéutica*).
+4. **Configuración de Umbrales y Múltiplos:** En la tabla de reglas de reorden de la pestaña, hacer clic en **Agregar una línea**:
+   - Ubicación: Seleccionar la ubicación interna principal (ej. `WH/Stock`).
+   - Stock Mínimo (`product_min_qty`): `10.00`
+   - Stock Máximo (`product_max_qty`): `30.00`
+   - Múltiplo Compra (`qty_multiple`): `5.00`
+   - Disparo (`trigger`): `Automático`
+5. **Comprobación de Existencias y Cantidad Sugerida:**
+   - Si las existencias actuales son de 6 cajas, verificar que la columna **Cant. Sugerida** (`suggested_replenishment_qty`) se calcula y muestra automáticamente en **25.00 cajas** (déficit de 24 redondeado al siguiente múltiplo de 5).
+   - Presionar **Guardar**.
+
+#### Fase B: No Sugerencia ante Stock Adecuado (Escenario 3)
+
+6. **Medicamento con Existencias Suficientes:** Abrir la ficha de un medicamento con existencias holgadas (ej. Stock actual = 22 unidades).
+7. **Configuración de Umbrales:** En la pestaña **Niveles de Stock y Reorden**, establecer Stock Mínimo = `15.00` y Stock Máximo = `30.00`.
+8. **Verificación de Cero Sugerencias:**
+   - Comprobar que la columna **Cant. Sugerida** permanece en **0.00**.
+   - Guardar el registro.
+
+#### Fase C: Generación de Solicitud de Presupuesto (RFQ) Agrupada por Proveedor (Escenario 2)
+
+9. **Acceso a la Vista General de Reglas:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Reglas de Reabastecimiento** (o **Compras y Proveedores** → **Planificador de Reabastecimiento**).
+10. **Comprobación Visual de Reglas en Déficit:** Verificar que las reglas con `suggested_replenishment_qty > 0` aparecen resaltadas visualmente con color ámbar / alerta (`decoration-warning`).
+11. **Ejecución de la Acción Centralizada:** Hacer clic en el botón superior **Calcular Reorden de Compras** (o mediante el menú desplegable **Acción** → **Calcular Reorden de Compras**).
+12. **Verificación de Borrador Generado en Compras:**
+    - Navegar a **Farmacia Caryvil** → **Compras y Proveedores** → **Órdenes de Compra**.
+    - Localizar la Solicitud de Presupuesto generada con origen `Reabastecimiento Caryvil`.
+    - Comprobar que:
+      1. Se encuentra en estado **Solicitud de Cotización** (`draft`), cumpliendo la restricción de NO generar compras definitivas sin validación humana.
+      2. El proveedor asignado es `Laboratorios Vijosa S.A. de C.V.`.
+      3. Contiene agrupadas las líneas de todos los medicamentos bajo el mínimo asociados a este proveedor, con sus cantidades sugeridas redondeadas y precios unitarios de catálogo.
+
+#### Fase D: Seguridad RBAC y Protección contra Modificaciones de Cajero (Sección 8)
+
+13. **Intento de Creación / Modificación por Cajero:**
+    - Cerrar sesión e iniciar sesión como `cajero@caryvil.com`.
+    - Navegar a **Medicamentos**, abrir cualquier medicamento e intentar editar o agregar líneas en la pestaña **Niveles de Stock y Reorden**.
+    - Intentar guardar los cambios o ejecutar una llamada RPC sobre `stock.warehouse.orderpoint`.
+    - Comprobar que el sistema rechaza la operación con una excepción `AccessError`:
+      > *"Solo los usuarios con rol 'Encargado de Compras e Inventario' o 'Administrador' pueden configurar reglas de reabastecimiento."*
+    - Comprobar que el menú de Reglas de Reabastecimiento no es visible para el cajero.
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Rechazo de Máximo Inferior a Mínimo:** Con el usuario de compras, intentar configurar en una regla *Stock Mínimo: 30.00* y *Stock Máximo: 10.00*. Al guardar, el sistema debe disparar la excepción `ValidationError`: *"El nivel máximo objetivo (10.00) no puede ser inferior al stock mínimo de seguridad (30.00)."*
+2. **Rechazo de Múltiplo Inválido ($\le 0$):** Intentar ingresar un múltiplo de compra igual a `0.00` o `-2.00`. El sistema debe rechazar el guardado indicando: *"El múltiplo de compra / empaque debe ser un valor positivo estrictamente mayor a 0."*
+3. **Respeto de Unidad de Medida de Compra (`uom_po_id`):** En un producto configurado con UoM de inventario en *Unidades* y UoM de compra en *Cajas x 10*, verificar que al generar el borrador de compra la cantidad sugerida de 40 unidades se convierte automáticamente a 4 cajas de compra.
+
