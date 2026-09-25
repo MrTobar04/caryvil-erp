@@ -49,3 +49,4 @@ access_caryvil_active_ingredient_manager,caryvil.active.ingredient.manager,model
 access_caryvil_cashier_orderpoint,caryvil.cashier.orderpoint,stock.model_stock_warehouse_orderpoint,group_caryvil_cashier,1,0,0,0
 access_caryvil_inventory_orderpoint,caryvil.inventory.orderpoint,stock.model_stock_warehouse_orderpoint,group_caryvil_inventory_purchases,1,1,1,0
 access_caryvil_manager_orderpoint,caryvil.manager.orderpoint,stock.model_stock_warehouse_orderpoint,group_caryvil_manager,1,1,1,1
+access_caryvil_manager_dashboard_sales,caryvil.manager.dashboard.sales,model_caryvil_dashboard_sales,group_caryvil_manager,1,1,1,1
