@@ -17,6 +17,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 2.1: Definición de Roles, Grupos de Seguridad y Herencia de Privilegios (SPEC-2.2.1)](#flujo-21-definición-de-roles-grupos-de-seguridad-y-herencia-de-privilegios-spec-221)
   - [Flujo 3.1: Personalización de Marca y Tema Visual (SPEC-3.1.1)](#flujo-31-personalización-de-marca-y-tema-visual-spec-311)
   - [Flujo 3.2: Personalización de Pantalla de Autenticación (SPEC-3.1.2)](#flujo-32-personalización-de-pantalla-de-autenticación-spec-312)
+  - [Flujo 4.1: Dashboard de KPIs de Ventas y Monitoreo Gerencial (SPEC-4.1.1)](#flujo-41-dashboard-de-kpis-de-ventas-y-monitoreo-gerencial-spec-411)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)](#flujo-71-catálogo-y-categorización-de-medicamentos-spec-711)
@@ -331,6 +332,54 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
    - Comprobar que el cajero puede consultar y reimprimir el ticket/factura, pero cualquier intento de alteración o anulación es rechazado por la regla de registro activa (`rule_caryvil_posted_invoices_readonly` / `rule_caryvil_invoices_cashier_write_draft`).
 4. **Protección de Órdenes de Venta Confirmadas y Albaranes Validados:**
    - Como usuario de compras o cajero, intentar eliminar una orden de venta en estado `sale` (confirmada) o un albarán de recepción en estado `done` (validado): debes comprobar que el sistema bloquea la acción mediante la regla de registro de integridad histórica.
+
+---
+
+### Flujo 4.1: Dashboard de KPIs de Ventas y Monitoreo Gerencial (SPEC-4.1.1)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado y actualizado. Usuarios con credenciales:
+> - Administrador General / Propietaria: `admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`
+> - Cajero / Dependiente de Mostrador: `cajero@caryvil.com` / `cajero123`
+
+#### Fase A: Visualización y Agregación de Ventas del Día (Escenario 1 del spec)
+
+1. **Acceso al Dashboard Ejecutivo:** Iniciar sesión en Odoo como Administrador General (`admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`).
+2. **Navegación al Menú Dashboard:** En la barra superior, hacer clic en el menú principal **Farmacia Caryvil** y seleccionar el primer submenú **Dashboard**.
+3. **Verificación de Tarjetas de KPIs (KPI Cards):**
+   - Comprobar que la vista carga con la interfaz ejecutiva corporativa en tonos Deep Teal (`#005b60`) y Mint Green (`#00a896`).
+   - Con tres facturas emitidas y publicadas hoy por $10.00, $25.50 y $14.50:
+     - Tarjeta **Ventas del Día:** debe mostrar exactamente `$50.00`.
+     - Tarjeta **Transacciones de Hoy:** debe indicar exactamente `3`.
+     - Tarjeta **Ticket Promedio:** debe indicar exactamente `$16.67` ($50.00 / 3).
+     - Tarjeta **Ventas del Mes:** debe reflejar el ingreso acumulado en USD y la insignia de variación porcentual vs mes anterior (`+X%`).
+4. **Verificación del Gráfico Interactivo de Tendencia:**
+   - En el panel inferior izquierdo ("Tendencia de Ventas (Últimos 7 Días)"), verificar la curva continua interactiva con los 7 días consecutivos.
+   - Posicionar el cursor sobre cualquier nodo del gráfico y verificar el tooltip emergente con el monto exacto en `$ USD`.
+5. **Verificación de Tabla Ranking Top 5:**
+   - En el panel derecho ("Top 5 Medicamentos Más Vendidos"), comprobar el listado ordenado por mayor rotación de unidades, mostrando el badge de posición (#1 a #5), nombre, código de referencia, cantidad en unidades e ingresos totales ($).
+
+#### Fase B: Actualización Dinámica en Tiempo Real (Escenario 2 del spec)
+
+6. **Registro de Nueva Venta en Mostrador:** Mantener abierta la pestaña del Dashboard. En otra ventana o pestaña del navegador, emitir y validar una nueva factura por `$20.00` con fecha de hoy.
+7. **Accionamiento del Botón de Actualización Rápida:** Regresar a la pestaña del Dashboard y presionar el botón **Actualizar** (`fa-refresh`) en la esquina superior derecha.
+8. **Validación de Métricas Actualizadas:**
+   - Comprobar que el botón muestra el indicador de carga (*spinner*) brevemente.
+   - Verificar que **Ventas del Día** se actualiza inmediatamente a `$70.00`.
+   - Verificar que **Transacciones de Hoy** se incrementa a `4`.
+   - Verificar que **Ticket Promedio** se recalcula automáticamente a `$17.50` ($70.00 / 4).
+
+#### Fase C: Restricción Estricta RBAC ante Personal No Autorizado (Escenario 3 del spec)
+
+9. **Inicio de Sesión como Cajero:** Cerrar sesión en Odoo e iniciar sesión como Cajero (`cajero@caryvil.com` / `cajero123`).
+10. **Comprobación de Ocultamiento en Menús:** Acceder al menú **Farmacia Caryvil**. Comprobar que el submenú **Dashboard** no es visible ni seleccionable en la barra de navegación.
+11. **Bloqueo ante Intento de Acceso Directo por URL / RPC:**
+    - Intentar forzar la apertura del dashboard mediante la URL directa de la acción (`#action=caryvil_erp.action_caryvil_sales_dashboard`) o invocando el método RPC `get_sales_kpis`.
+    - Comprobar que el servidor deniega la petición disparando una excepción de permisos `AccessError` con el mensaje: *"No tiene permisos para acceder al dashboard de ventas. Se requiere rol de Administrador."*
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Jornada sin Ventas (Día Cero):** Al consultar el dashboard en un día sin transacciones publicadas, comprobar que **Ventas del Día** muestra `$0.00`, **Transacciones de Hoy** marca `0` y **Ticket Promedio** muestra `$0.00` sin errores por división entre cero.
+2. **Exclusión Estricta de Borradores y Cancelados:** Crear una factura en borrador (`draft`) y cancelar otra factura (`cancel`). Verificar que ninguna de ellas afecta los totales del día ni del mes, garantizando la integridad de los datos financieros.
 
 ---
 
