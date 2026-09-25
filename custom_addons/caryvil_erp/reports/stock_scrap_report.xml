@@ -10,6 +10,12 @@
 
                 <div class="page">
 
+                    <t t-if="scrap.state != 'done'">
+                        <div style="background-color: #fff3cd; border: 2px dashed #856404; color: #856404; padding: 12px; text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 20px;">
+                            DOCUMENTO EN BORRADOR — NO VÁLIDO COMO ACTA OFICIAL DE DESTRUCCIÓN
+                        </div>
+                    </t>
+
                     <div style="text-align: center; margin-bottom: 25px;">
                         <h2 style="margin-bottom: 5px;">
                             ACTA DE MERMA Y DESTRUCCIÓN FARMACÉUTICA
@@ -36,7 +42,15 @@
                                     <strong>Fecha de Autorización:</strong>
                                 </td>
                                 <td>
-                                    <span t-field="scrap.date_done"/>
+                                    <t t-if="scrap.authorization_date">
+                                        <span t-field="scrap.authorization_date"/>
+                                    </t>
+                                    <t t-elif="scrap.date_done">
+                                        <span t-field="scrap.date_done"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="text-muted">Pendiente de Autorización</span>
+                                    </t>
                                 </td>
                             </tr>
                         </tbody>
@@ -121,7 +135,12 @@
 
                     <p>
                         <strong>Autorizado por:</strong>
-                        <span t-field="scrap.authorized_by_id"/>
+                        <t t-if="scrap.authorized_by_id">
+                            <span t-field="scrap.authorized_by_id"/>
+                        </t>
+                        <t t-else="">
+                            <span class="text-muted">Pendiente de Autorización</span>
+                        </t>
                     </p>
 
                     <div style="margin-top: 70px;">

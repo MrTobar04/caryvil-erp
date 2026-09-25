@@ -17,11 +17,13 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 2.1: Definición de Roles, Grupos de Seguridad y Herencia de Privilegios (SPEC-2.2.1)](#flujo-21-definición-de-roles-grupos-de-seguridad-y-herencia-de-privilegios-spec-221)
   - [Flujo 3.1: Personalización de Marca y Tema Visual (SPEC-3.1.1)](#flujo-31-personalización-de-marca-y-tema-visual-spec-311)
   - [Flujo 3.2: Personalización de Pantalla de Autenticación (SPEC-3.1.2)](#flujo-32-personalización-de-pantalla-de-autenticación-spec-312)
+  - [Flujo 4.1: Dashboard de KPIs de Ventas y Monitoreo Gerencial (SPEC-4.1.1)](#flujo-41-dashboard-de-kpis-de-ventas-y-monitoreo-gerencial-spec-411)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)](#flujo-71-catálogo-y-categorización-de-medicamentos-spec-711)
-  - [Flujo 7.2: Gestión de Unidades de Medida Farmacéuticas (SPEC-7.1.2)](#flujo-72-gestión-de-unidades-de-medida-farmacéuticas-spec-712)
   - [Flujo 7.3: Control de Stock, Lotes y Vencimientos (SPEC-7.2.1)](#flujo-73-control-de-stock-lotes-y-vencimientos-spec-721)
+  - [Flujo 7.5: Conteo Físico, Conciliación y Ajustes de Inventario (SPEC-7.3.1)](#flujo-75-conteo-físico-conciliación-y-ajustes-de-inventario-spec-731)
+  - [Flujo 7.6: Gestión de Mermas y Bajas de Medicamentos (SPEC-7.3.2)](#flujo-76-gestión-de-mermas-y-bajas-de-medicamentos-spec-732)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
   - [Flujo 8.2: Recepción de Mercadería y Captura Obligatoria de Lotes (SPEC-8.2.1)](#flujo-82-recepción-de-mercadería-y-captura-obligatoria-de-lotes-spec-821)
   - [Flujo 8.3: Actualización Automática de Stock y Cierre de Compras (SPEC-8.2.2)](#flujo-83-actualización-automática-de-stock-y-cierre-de-compras-spec-822)
@@ -331,6 +333,54 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
    - Comprobar que el cajero puede consultar y reimprimir el ticket/factura, pero cualquier intento de alteración o anulación es rechazado por la regla de registro activa (`rule_caryvil_posted_invoices_readonly` / `rule_caryvil_invoices_cashier_write_draft`).
 4. **Protección de Órdenes de Venta Confirmadas y Albaranes Validados:**
    - Como usuario de compras o cajero, intentar eliminar una orden de venta en estado `sale` (confirmada) o un albarán de recepción en estado `done` (validado): debes comprobar que el sistema bloquea la acción mediante la regla de registro de integridad histórica.
+
+---
+
+### Flujo 4.1: Dashboard de KPIs de Ventas y Monitoreo Gerencial (SPEC-4.1.1)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado y actualizado. Usuarios con credenciales:
+> - Administrador General / Propietaria: `admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`
+> - Cajero / Dependiente de Mostrador: `cajero@caryvil.com` / `cajero123`
+
+#### Fase A: Visualización y Agregación de Ventas del Día (Escenario 1 del spec)
+
+1. **Acceso al Dashboard Ejecutivo:** Iniciar sesión en Odoo como Administrador General (`admin` / `admin` o `admin_caryvil@caryvil.com` / `admin123`).
+2. **Navegación al Menú Dashboard:** En la barra superior, hacer clic en el menú principal **Farmacia Caryvil** y seleccionar el primer submenú **Dashboard**.
+3. **Verificación de Tarjetas de KPIs (KPI Cards):**
+   - Comprobar que la vista carga con la interfaz ejecutiva corporativa en tonos Deep Teal (`#005b60`) y Mint Green (`#00a896`).
+   - Con tres facturas emitidas y publicadas hoy por $10.00, $25.50 y $14.50:
+     - Tarjeta **Ventas del Día:** debe mostrar exactamente `$50.00`.
+     - Tarjeta **Transacciones de Hoy:** debe indicar exactamente `3`.
+     - Tarjeta **Ticket Promedio:** debe indicar exactamente `$16.67` ($50.00 / 3).
+     - Tarjeta **Ventas del Mes:** debe reflejar el ingreso acumulado en USD y la insignia de variación porcentual vs mes anterior (`+X%`).
+4. **Verificación del Gráfico Interactivo de Tendencia:**
+   - En el panel inferior izquierdo ("Tendencia de Ventas (Últimos 7 Días)"), verificar la curva continua interactiva con los 7 días consecutivos.
+   - Posicionar el cursor sobre cualquier nodo del gráfico y verificar el tooltip emergente con el monto exacto en `$ USD`.
+5. **Verificación de Tabla Ranking Top 5:**
+   - En el panel derecho ("Top 5 Medicamentos Más Vendidos"), comprobar el listado ordenado por mayor rotación de unidades, mostrando el badge de posición (#1 a #5), nombre, código de referencia, cantidad en unidades e ingresos totales ($).
+
+#### Fase B: Actualización Dinámica en Tiempo Real (Escenario 2 del spec)
+
+6. **Registro de Nueva Venta en Mostrador:** Mantener abierta la pestaña del Dashboard. En otra ventana o pestaña del navegador, emitir y validar una nueva factura por `$20.00` con fecha de hoy.
+7. **Accionamiento del Botón de Actualización Rápida:** Regresar a la pestaña del Dashboard y presionar el botón **Actualizar** (`fa-refresh`) en la esquina superior derecha.
+8. **Validación de Métricas Actualizadas:**
+   - Comprobar que el botón muestra el indicador de carga (*spinner*) brevemente.
+   - Verificar que **Ventas del Día** se actualiza inmediatamente a `$70.00`.
+   - Verificar que **Transacciones de Hoy** se incrementa a `4`.
+   - Verificar que **Ticket Promedio** se recalcula automáticamente a `$17.50` ($70.00 / 4).
+
+#### Fase C: Restricción Estricta RBAC ante Personal No Autorizado (Escenario 3 del spec)
+
+9. **Inicio de Sesión como Cajero:** Cerrar sesión en Odoo e iniciar sesión como Cajero (`cajero@caryvil.com` / `cajero123`).
+10. **Comprobación de Ocultamiento en Menús:** Acceder al menú **Farmacia Caryvil**. Comprobar que el submenú **Dashboard** no es visible ni seleccionable en la barra de navegación.
+11. **Bloqueo ante Intento de Acceso Directo por URL / RPC:**
+    - Intentar forzar la apertura del dashboard mediante la URL directa de la acción (`#action=caryvil_erp.action_caryvil_sales_dashboard`) o invocando el método RPC `get_sales_kpis`.
+    - Comprobar que el servidor deniega la petición disparando una excepción de permisos `AccessError` con el mensaje: *"No tiene permisos para acceder al dashboard de ventas. Se requiere rol de Administrador."*
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Jornada sin Ventas (Día Cero):** Al consultar el dashboard en un día sin transacciones publicadas, comprobar que **Ventas del Día** muestra `$0.00`, **Transacciones de Hoy** marca `0` y **Ticket Promedio** muestra `$0.00` sin errores por división entre cero.
+2. **Exclusión Estricta de Borradores y Cancelados:** Crear una factura en borrador (`draft`) y cancelar otra factura (`cancel`). Verificar que ninguna de ellas afecta los totales del día ni del mes, garantizando la integridad de los datos financieros.
 
 ---
 
@@ -838,5 +888,81 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 3. **Bloqueo de Fármaco Rastreado sin Lote:** En una línea de ajuste para un medicamento con seguimiento por lotes o número de serie, dejar la columna **Lote / Número de Serie** vacía. Al intentar aplicar el ajuste, el sistema debe bloquear con `ValidationError`: *"Debe especificar el lote para el producto con seguimiento: (...)."*
 4. **Bloqueo RBAC a Encargado de Inventario:** Iniciar sesión como `compras@caryvil.com`. Aunque pueda registrar cantidades contadas y motivos, si intenta forzar la ejecución de `action_apply_inventory` (vía RPC o atajo), el servidor rechaza con `UserError`: *"Solo el Administrador / Propietario puede aplicar ajustes de inventario."*
 5. **Bloqueo Total a Personal de Mostrador / Cajero:** Con la cuenta de `cajero@caryvil.com`, intentar modificar o registrar cualquier conteo en `stock.quant`. El sistema bloquea inmediatamente la operación con `AccessError`, impidiendo cualquier manipulación de existencias físicas por el personal de venta.
+
+---
+
+### Flujo 7.6: Gestión de Mermas y Bajas de Medicamentos (SPEC-7.3.2)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado y actualizado. Usuarios con credenciales:
+> - Administrador / Propietaria: `admin_caryvil@caryvil.com` / `admin123`
+> - Encargado de Compras e Inventario: `compras@caryvil.com` / `compras123`
+> - Cajero / Mostrador: `cajero@caryvil.com` / `cajero123`
+> Medicamento de prueba configurado con seguimiento por lote (`tracking='lot'`) con existencia física confirmada de 8 unidades en `WH/Stock` (ej. `Amoxicilina 500mg`, lote `LOT-AMX-202801`, costo $3.50).
+
+#### Fase A: Registro y Autorización Exitosa de Merma por Administrador (Escenario 1)
+
+1. **Acceso al Menú de Desecho:** Iniciar sesión como Administrador (`admin_caryvil@caryvil.com` / `admin123`). Navegar a **Inventario** → **Operaciones** → **Desecho** y hacer clic en **Nuevo**.
+2. **Captura de la Baja Farmacéutica:**
+   - Seleccionar **Medicamento:** `Amoxicilina 500mg`.
+   - Ingresar **Cantidad a desechar:** `2.00` Unidades.
+   - Seleccionar **Lote / Serie:** `LOT-AMX-202801`.
+   - En **Causa de la Merma**, seleccionar `Medicamento Caducado / Vencido`.
+   - En **Justificación / Observaciones**, escribir: `Retiro de producto caducado de estantería de mostrador`.
+3. **Verificación de Cálculos Financieros Automáticos:**
+   - Comprobar que **Costo Unitario ($)** refleja automáticamente `$ 3.50`.
+   - Comprobar que **Pérdida Total ($)** se calcula como `$ 7.00` (`2.00 * 3.50`).
+   - Comprobar que la **Ubicación de Desecho** apunta a `Virtual Locations/Desecho y Cuarentena Caryvil`.
+4. **Autorización Gerencial:**
+   - Hacer clic en el botón superior **Autorizar Baja** (`action_validate`).
+   - Comprobar que el estado pasa a **Hecho** (`done`).
+   - Comprobar que el campo **Autorizado por** registra a `Administrador Caryvil`.
+   - Comprobar que el campo **Fecha de Autorización** registra la fecha y hora de la operación.
+5. **Verificación de Descuento de Stock Físico:**
+   - Navegar a **Inventario** → **Productos** → **Lotes/Números de Serie** y abrir `LOT-AMX-202801`.
+   - Comprobar que la existencia en `WH/Stock` disminuyó de 8.00 a 6.00 unidades.
+   - Comprobar que la ubicación `Desecho y Cuarentena Caryvil` refleja las 2.00 unidades dadas de baja.
+6. **Emisión de Acta de Merma y Destrucción Farmacéutica:**
+   - En el formulario de la merma, hacer clic en **Imprimir** → **Acta de Merma y Destrucción Farmacéutica**.
+   - Comprobar que se descarga el PDF oficial con encabezado de Farmacia Caryvil, fecha de autorización, detalles de producto, lote, causa, costos, justificación y líneas de firma.
+
+#### Fase B: Bloqueo de Baja sin Lote en Fármaco Controlado (Escenario 2)
+
+7. **Intento de Baja sin Lote:**
+   - Crear un nuevo registro de desecho seleccionando `Amoxicilina 500mg`.
+   - Ingresar Cantidad: `1.00`, Causa: `Rotura de Frasco / Ampolla`.
+   - Dejar el campo **Lote / Serie** en blanco.
+   - Hacer clic en **Autorizar Baja**.
+   - Comprobar que el sistema bloquea inmediatamente la transacción con `ValidationError`:
+     > *"Debe especificar el número de lote para dar de baja el medicamento Amoxicilina 500mg."*
+
+#### Fase C: Bloqueo por Existencia Física Insuficiente (Restricción Sección 3)
+
+8. **Intento de Desechar Cantidad Excesiva:**
+   - Con 6.00 unidades disponibles en el lote `LOT-AMX-202801`, crear un desecho para este lote ingresando Cantidad: `50.00`.
+   - Hacer clic en **Autorizar Baja**.
+   - Comprobar que el sistema rechaza la operación con `ValidationError`:
+     > *"No se puede dar de baja una cantidad superior a la existencia física disponible en el lote seleccionado."*
+
+#### Fase D: Seguridad RBAC e Inmutabilidad de Registros
+
+9. **Bloqueo a Encargado de Inventario:**
+   - Iniciar sesión como `compras@caryvil.com`.
+   - Abrir un desecho en borrador y comprobar que el botón **Autorizar Baja** no es visible.
+   - Si se intenta invocar `action_validate` o `do_scrap` por RPC, el servidor rechaza con `UserError`:
+     > *"Solo el Administrador / Propietario puede autorizar la baja del medicamento."*
+10. **Bloqueo Total a Personal de Ventas / Cajero:**
+    - Iniciar sesión como `cajero@caryvil.com`.
+    - Comprobar que no tiene acceso al menú `Desecho` ni permisos de lectura/creación sobre `stock.scrap`.
+11. **Inmutabilidad Post-Autorización:**
+    - Con la cuenta de Administrador, abrir un registro de desecho en estado `Hecho`.
+    - Comprobar que los campos de causa, justificación, lote y cantidades son de solo lectura.
+    - Comprobar que intentar modificar campos protegidos o eliminar el registro arroja `UserError`.
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Conversión de UdM en Costo:** En un producto adquirido por caja o docena, desechar unidades individuales y verificar que el costo unitario y pérdida total se calculan proporcionalmente a la UdM del desecho sin inflar el costo.
+2. **Rechazo de Cantidad Menor o Igual a Cero:** Intentar desechar `0.00` o `-1.00` unidades; el sistema bloquea con `ValidationError`: *"La cantidad a dar de baja debe ser mayor a cero."*
+3. **Impresión de Acta en Borrador:** Al imprimir el reporte sobre un registro en estado borrador, el documento incluye el banner de advertencia: *"DOCUMENTO EN BORRADOR — NO VÁLIDO COMO ACTA OFICIAL DE DESTRUCCIÓN"*.
+
 
 

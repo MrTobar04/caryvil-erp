@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="caryvil_erp.CaryvilSalesDashboard">
+        <div class="o_caryvil_dashboard">
+            <!-- Encabezado Superior y Barra de Herramientas -->
+            <div class="o_caryvil_dashboard_header">
+                <div class="header_title_block">
+                    <span class="dashboard_badge">Analítica Gerencial</span>
+                    <h2>Dashboard de Ventas</h2>
+                    <p>
+                        Monitoreo financiero en tiempo real • <span t-esc="state.kpiData.today_formatted or 'Hoy'"/> • Farmacia Caryvil
+                    </p>
+                </div>
+                <div class="header_actions">
+                    <button class="btn_refresh" t-att-class="{ 'is_loading': state.loading }" t-att-disabled="state.loading" t-on-click="onRefresh" title="Actualizar datos del dashboard">
+                        <i class="fa fa-refresh"/>
+                        <span>Actualizar</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fila Principal de Tarjetas de KPIs -->
+            <div class="kpi_grid">
+                <!-- Tarjeta 1: Ventas del Día -->
+                <div class="kpi_card card_sales_today">
+                    <div class="card_top">
+                        <span class="card_label">Ventas del Día</span>
+                        <div class="card_icon_wrap teal">
+                            <i class="fa fa-dollar"/>
+                        </div>
+                    </div>
+                    <div class="card_value">
+                        <t t-esc="formatMoney(state.kpiData.total_sales_today)"/>
+                    </div>
+                    <div class="card_footer">
+                        <span class="footer_subtext">Total facturado en jornada actual</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 2: Transacciones de Hoy -->
+                <div class="kpi_card card_transactions">
+                    <div class="card_top">
+                        <span class="card_label">Transacciones de Hoy</span>
+                        <div class="card_icon_wrap blue">
+                            <i class="fa fa-receipt"/>
+                        </div>
+                    </div>
+                    <div class="card_value">
+                        <t t-esc="state.kpiData.tx_count_today or 0"/>
+                    </div>
+                    <div class="card_footer">
+                        <span class="footer_subtext">Facturas simples y tickets emitidos</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 3: Ticket Promedio -->
+                <div class="kpi_card card_avg_ticket">
+                    <div class="card_top">
+                        <span class="card_label">Ticket Promedio</span>
+                        <div class="card_icon_wrap indigo">
+                            <i class="fa fa-shopping-basket"/>
+                        </div>
+                    </div>
+                    <div class="card_value">
+                        <t t-esc="formatMoney(state.kpiData.avg_ticket)"/>
+                    </div>
+                    <div class="card_footer">
+                        <span class="footer_subtext">Promedio de compra por cliente</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 4: Ventas del Mes -->
+                <div class="kpi_card card_month_sales">
+                    <div class="card_top">
+                        <span class="card_label">Ventas del Mes</span>
+                        <div class="card_icon_wrap green">
+                            <i class="fa fa-calendar-check-o"/>
+                        </div>
+                    </div>
+                    <div class="card_value">
+                        <t t-esc="formatMoney(state.kpiData.sales_this_month)"/>
+                    </div>
+                    <div class="card_footer">
+                        <t t-if="state.kpiData.growth_rate_month >= 0">
+                            <span class="growth_pill positive">
+                                <i class="fa fa-arrow-up"/> +<t t-esc="state.kpiData.growth_rate_month"/>%
+                            </span>
+                        </t>
+                        <t t-else="">
+                            <span class="growth_pill negative">
+                                <i class="fa fa-arrow-down"/> <t t-esc="state.kpiData.growth_rate_month"/>%
+                            </span>
+                        </t>
+                        <span class="footer_subtext">vs mes anterior</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cuadrícula Inferior: Gráfico de Tendencia + Ranking Top 5 -->
+            <div class="dashboard_content_grid">
+                <!-- Panel Izquierdo: Gráfico Tendencia 7 Días -->
+                <div class="dashboard_panel">
+                    <div class="panel_header">
+                        <div class="panel_title">
+                            <i class="fa fa-line-chart"/>
+                            <span>Tendencia de Ventas (Últimos 7 Días)</span>
+                        </div>
+                        <span class="panel_subtitle">Ingresos diarios acumulados ($ USD)</span>
+                    </div>
+                    <div class="chart_container">
+                        <canvas t-ref="salesChartCanvas"/>
+                    </div>
+                </div>
+
+                <!-- Panel Derecho: Top 5 Medicamentos -->
+                <div class="dashboard_panel">
+                    <div class="panel_header">
+                        <div class="panel_title">
+                            <i class="fa fa-trophy"/>
+                            <span>Top 5 Medicamentos Más Vendidos</span>
+                        </div>
+                        <span class="panel_subtitle">Mayor rotación y volumen</span>
+                    </div>
+                    <t t-if="state.kpiData.top_5_medicines and state.kpiData.top_5_medicines.length > 0">
+                        <table class="ranking_table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">#</th>
+                                    <th>Medicamento</th>
+                                    <th class="text_end">Unidades</th>
+                                    <th class="text_end">Total ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="state.kpiData.top_5_medicines" t-as="item" t-key="item.product_id">
+                                    <tr>
+                                        <td>
+                                            <span class="rank_badge" t-att-class="'rank_' + (item_index + 1 > 3 ? 'other' : (item_index + 1))">
+                                                <t t-esc="item_index + 1"/>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="med_info">
+                                                <div class="med_name"><t t-esc="item.name"/></div>
+                                                <t t-if="item.code">
+                                                    <div class="med_code">Ref: <t t-esc="item.code"/></div>
+                                                </t>
+                                            </div>
+                                        </td>
+                                        <td class="text_end">
+                                            <span class="units_badge">
+                                                <t t-esc="item.qty_sold"/> u.
+                                            </span>
+                                        </td>
+                                        <td class="text_end">
+                                            <span class="amount_strong">
+                                                <t t-esc="formatMoney(item.total_amount)"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                    <t t-else="">
+                        <div class="empty_state">
+                            <i class="fa fa-medkit"/>
+                            <p>No se registran ventas de medicamentos aún en este período.</p>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

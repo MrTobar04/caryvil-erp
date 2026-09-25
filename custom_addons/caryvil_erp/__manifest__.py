@@ -43,6 +43,7 @@
         "data/iva_purchase_tax.xml",
         "data/stock_lot_cron.xml",
         "views/caryvil_medicine_views.xml",
+        "views/caryvil_dashboard_views.xml",
         "views/caryvil_menus.xml",
         "views/res_partner_customer_views.xml",
         "views/res_partner_vendor_views.xml",
@@ -71,9 +72,12 @@
     "assets": {
         "web.assets_backend": [
             "caryvil_erp/static/src/scss/custom_theme.scss",
+            "caryvil_erp/static/src/scss/caryvil_sales_dashboard.scss",
             "caryvil_erp/static/src/js/masked_char_field.js",
             "caryvil_erp/static/src/js/purchase_live_totals.js",
+            "caryvil_erp/static/src/js/caryvil_sales_dashboard.js",
             "caryvil_erp/static/src/xml/purchase_live_totals.xml",
+            "caryvil_erp/static/src/xml/caryvil_sales_dashboard.xml",
         ],
         "web.assets_frontend": [
             "caryvil_erp/static/src/scss/custom_login.scss",

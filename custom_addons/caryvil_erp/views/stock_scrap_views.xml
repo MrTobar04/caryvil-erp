@@ -8,11 +8,12 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='lot_id']" position="after">
-                <field name="scrap_reason"/>
+                <field name="scrap_reason" readonly="state == 'done'"/>
                 <field name="scrap_unit_cost" readonly="1"/>
                 <field name="scrap_total_loss" readonly="1"/>
-                <field name="justification_notes"/>
+                <field name="justification_notes" readonly="state == 'done'"/>
                 <field name="authorized_by_id" readonly="1"/>
+                <field name="authorization_date" readonly="1" invisible="state != 'done'"/>
             </xpath>
 
             <xpath expr="//button[@name='action_validate']" position="attributes">
