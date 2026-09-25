@@ -773,3 +773,70 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 2. **Rechazo de Múltiplo Inválido ($\le 0$):** Intentar ingresar un múltiplo de compra igual a `0.00` o `-2.00`. El sistema debe rechazar el guardado indicando: *"El múltiplo de compra / empaque debe ser un valor positivo estrictamente mayor a 0."*
 3. **Respeto de Unidad de Medida de Compra (`uom_po_id`):** En un producto configurado con UoM de inventario en *Unidades* y UoM de compra en *Cajas x 10*, verificar que al generar el borrador de compra la cantidad sugerida de 40 unidades se convierte automáticamente a 4 cajas de compra.
 
+---
+
+### Flujo 7.5: Conteo Físico, Conciliación y Ajustes de Inventario (SPEC-7.3.1)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado y actualizado. Usuarios con credenciales:
+> - Encargado de Compras e Inventario: `compras@caryvil.com` / `compras123`
+> - Cajero: `cajero@caryvil.com` / `cajero123`
+> - Administrador / Propietaria: `admin_caryvil@caryvil.com` o `admin`
+> Medicamentos de prueba configurados en `WH/Stock` (uno sin seguimiento y otro rastreado por lotes con existencias activas).
+
+#### Fase A: Conteo Físico Coincidente (Escenario 1)
+
+1. **Acceso a Ajustes de Inventario:** Iniciar sesión como Encargado de Compras e Inventario (`compras@caryvil.com`).
+2. **Navegación al Menú de Ajustes:** Dirigirse a **Inventario** → **Operaciones** → **Ajustes de Inventario** (o mediante la vista de quants en modo inventario).
+3. **Registro de Conteo Exacto:** Localizar un medicamento con stock teórico de 10 unidades en `WH/Stock`. En la columna **Contado** (`inventory_quantity`), ingresar `10.00`.
+4. **Verificación de Diferencia Nula y Campos Ocultos:**
+   - Comprobar que la columna **Diferencia** (`inventory_diff_quantity`) marca `0.00`.
+   - Comprobar que las columnas **Motivo del Ajuste** y **Observaciones** permanecen ocultas en la fila (`invisible="inventory_diff_quantity == 0"`).
+   - Comprobar que en la fila se asigna automáticamente al usuario en la columna **Contado por** (`counted_by_user_id`).
+   - Comprobar que el botón **Aplicar Ajuste** no es visible ni está habilitado para el encargado de inventario.
+
+#### Fase B: Registro de Discrepancia Física (Sobrante/Faltante) por Personal de Inventario (Escenario 2)
+
+5. **Registro de Sobrante:** En la misma vista de ajustes, localizar un producto con stock a mano de 10 unidades. En la columna **Contado**, digitar `14.00`.
+6. **Despliegue Dinámico de Campos Justificativos:**
+   - Comprobar que la columna **Diferencia** pasa inmediatamente a `+4.00` en tipografía verde/negrita (`decoration-success` y `decoration-bf`).
+   - Verificar que los campos **Motivo del Ajuste** (`adjustment_reason`) y **Observaciones** (`adjustment_notes`) se muestran de forma obligatoria y visible en la línea.
+   - En el selector **Motivo del Ajuste**, seleccionar `Conteo Cíclico Periódico`.
+   - En el campo **Observaciones / Justificación**, escribir: `Sobrante verificado en estantería B-02 durante auditoría periódica`.
+7. **Captura Automática de Operador Responsable:**
+   - Guardar el registro presionando Enter o el icono de guardar de la fila.
+   - Verificar que la columna **Contado por** (`counted_by_user_id`) registra automáticamente a `compras@caryvil.com`.
+   - Verificar que la columna **Validado por** (`validated_by_user_id`) permanece vacía (`False`), en espera de autorización gerencial.
+
+#### Fase C: Aprobación y Aplicación por Administrador / Propietaria (Sección 2.1 y 8)
+
+8. **Revisión Gerencial de Ajustes Pendientes:** Cerrar sesión e iniciar sesión como Administrador / Propietaria (`admin_caryvil@caryvil.com` o `admin`).
+9. **Visualización y Autorización:**
+   - Navegar a **Inventario** → **Operaciones** → **Ajustes de Inventario**.
+   - Localizar la línea con la discrepancia registrada por el operador.
+   - Comprobar que el botón **Aplicar Ajuste** (`action_apply_inventory`) se encuentra visible y activo exclusivamente para el Administrador.
+10. **Aplicación del Ajuste:**
+    - Hacer clic en el botón **Aplicar Ajuste**.
+    - Comprobar que el ajuste se procesa satisfactoriamente.
+    - Verificar que el stock a mano del producto se actualiza inmediatamente a `14.00` unidades.
+    - Verificar que la columna **Validado por** registra al Administrador actual.
+11. **Auditoría Permanente en Movimiento de Stock (Kardex):**
+    - Navegar a **Inventario** → **Informes** → **Movimientos de Existencias** (o abrir el botón inteligente de movimientos del producto).
+    - Localizar el último movimiento generado con ubicación de origen `Virtual Locations/Inventory adjustment` y destino `WH/Stock`.
+    - Comprobar que el campo **Origen** (`origin`) indica: `Ajuste de Inventario: Conteo Cíclico Periódico`.
+    - Comprobar que el campo **Descripción** (`description_picking`) preserva la justificación completa: `Motivo: Conteo Cíclico Periódico | Notas: Sobrante verificado en estantería B-02 durante auditoría periódica | Contado por: Compras e Inventario`.
+
+#### Fase D: Conciliación de Medicamento Rastreado por Lote
+
+12. **Ajuste de Lote Específico:** En un medicamento configurado con seguimiento por lote (`tracking = 'lot'`), registrar un conteo físico sobre el lote `LOT-AMX-2027-VIGENTE`.
+13. **Aplicación Exitosa:** Ingresar motivo `Error de Conteo Previo` y presionar **Aplicar Ajuste** como Administrador.
+    - Comprobar que el balance de stock del lote exacto se actualiza y la trazabilidad por lote se mantiene intacta.
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Rechazo de Cantidad Contada Negativa (Límite Físico):** Con cualquier usuario, intentar ingresar un conteo de `-3.00` en la columna **Contado**. Al guardar o presionar aplicar, el sistema debe disparar la excepción `ValidationError`: *"La cantidad física contada no puede ser negativa (-3.0) para el producto (...)."*
+2. **Bloqueo de Ajuste sin Motivo Seleccionado (Escenario 3):** En una línea con diferencia numérica distinta de cero, intentar aplicar el ajuste dejando el campo **Motivo del Ajuste** en blanco (nulo). El sistema debe bloquear la transacción con `ValidationError`: *"Debe especificar el Motivo del Ajuste para el producto (...)."*
+3. **Bloqueo de Fármaco Rastreado sin Lote:** En una línea de ajuste para un medicamento con seguimiento por lotes o número de serie, dejar la columna **Lote / Número de Serie** vacía. Al intentar aplicar el ajuste, el sistema debe bloquear con `ValidationError`: *"Debe especificar el lote para el producto con seguimiento: (...)."*
+4. **Bloqueo RBAC a Encargado de Inventario:** Iniciar sesión como `compras@caryvil.com`. Aunque pueda registrar cantidades contadas y motivos, si intenta forzar la ejecución de `action_apply_inventory` (vía RPC o atajo), el servidor rechaza con `UserError`: *"Solo el Administrador / Propietario puede aplicar ajustes de inventario."*
+5. **Bloqueo Total a Personal de Mostrador / Cajero:** Con la cuenta de `cajero@caryvil.com`, intentar modificar o registrar cualquier conteo en `stock.quant`. El sistema bloquea inmediatamente la operación con `AccessError`, impidiendo cualquier manipulación de existencias físicas por el personal de venta.
+
+
