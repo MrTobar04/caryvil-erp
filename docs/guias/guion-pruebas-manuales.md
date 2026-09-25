@@ -21,6 +21,7 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)](#flujo-71-catálogo-y-categorización-de-medicamentos-spec-711)
   - [Flujo 7.2: Gestión de Unidades de Medida Farmacéuticas (SPEC-7.1.2)](#flujo-72-gestión-de-unidades-de-medida-farmacéuticas-spec-712)
+  - [Flujo 7.3: Control de Stock, Lotes y Vencimientos (SPEC-7.2.1)](#flujo-73-control-de-stock-lotes-y-vencimientos-spec-721)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
   - [Flujo 8.2: Recepción de Mercadería y Captura Obligatoria de Lotes (SPEC-8.2.1)](#flujo-82-recepción-de-mercadería-y-captura-obligatoria-de-lotes-spec-821)
   - [Flujo 8.3: Actualización Automática de Stock y Cierre de Compras (SPEC-8.2.2)](#flujo-83-actualización-automática-de-stock-y-cierre-de-compras-spec-822)
@@ -655,6 +656,57 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 1. **Intento de modificación de factores de conversión por rol no autorizado (Sección 8):** Iniciar sesión con `cajero@caryvil.com`. Intentar modificar cualquier registro en `uom.uom` mediante la interfaz o API. Verificar que el sistema responde con una excepción `AccessError` (Acceso Denegado), impidiendo que personal operativo altere las equivalencias contables de inventario.
 2. **Restricción de fraccionamiento menor a 1 pastilla (Sección 3):** Al registrar una venta con `uom_unit_pill`, verificar que la precisión de redondeo (`rounding=1.0`) impide fraccionar medias pastillas (0.5), preservando la integridad de unidades enteras no divisibles.
 
+---
 
+### Flujo 7.3: Control de Stock, Lotes y Vencimientos (SPEC-7.2.1)
 
+> **Prerrequisito:** Módulo `caryvil_erp` instalado, producto farmacéutico con trazabilidad por lote configurado (`tracking = 'lot'`), y usuarios con roles `caryvil_erp.group_caryvil_cashier`, `caryvil_erp.group_caryvil_inventory_purchases` y `caryvil_erp.group_caryvil_manager`.
 
+#### Fase A: Alta de Lote y Cálculo Automático de Alertas Preventivas (Escenario 1)
+
+1. **Creación de Lote en Inventario:** Iniciar sesión con la cuenta de Encargado de Compras e Inventario (`compras@caryvil.com` / `compras123`).
+2. **Acceso al Menú de Lotes:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Lotes y Caducidades** (o mediante Inventario → Productos → Lotes / Números de Serie).
+3. **Registro de Lote con Vencimiento Futuro:** Hacer clic en **Nuevo**.
+   - Producto: Seleccionar `Amoxicilina 500mg`.
+   - Lote / Número de Serie: `LOT-AMX-2027-VIGENTE`.
+   - Fecha de Vencimiento: Digitar una fecha a 1 año en el futuro (ej. `31/12/2027 00:00:00`).
+4. **Verificación de Alertas de Vida Útil Autocalculadas (Sección 2.1):**
+   - Comprobar que en la sección **Control Farmacéutico y Fechas Críticas**, el campo **Fecha de Alerta** (`alert_date`) se completó automáticamente exactamente 60 días antes de la caducidad (`01/11/2027 00:00:00`).
+   - Comprobar que el campo **Fecha de Retiro** (`removal_date`) se completó automáticamente 15 días antes de la caducidad (`16/12/2027 00:00:00`).
+   - Verificar que el indicador **Lote Vencido** (`is_expired`) permanece desmarcado (`False`) y en modo solo lectura.
+5. **Guardar Registro:** Presionar **Guardar**; el registro se almacena de forma conforme.
+
+#### Fase B: Consulta de Existencias y Semáforo Visual en Lista (Escenarios 1 y UI)
+
+6. **Desglose de Existencias por Lote:** Mediante un Ajuste de Inventario o recepción de compra, asignar 50 unidades de stock a `LOT-AMX-2027-VIGENTE` en `WH/Stock`. Navegar a **Medicamentos**, abrir `Amoxicilina 500mg` y hacer clic en el botón inteligente **A Mano**.
+   - Comprobar que Odoo desglosa la existencia indicando que las 50 unidades corresponden exactamente al lote `LOT-AMX-2027-VIGENTE`.
+7. **Filtro Predeterminado de Lotes Vigentes (Sección 5):** Regresar a **Lotes y Caducidades**.
+   - Comprobar que la vista de búsqueda tiene activo por defecto el filtro **Lotes Vigentes** (`search_default_vigentes = 1`), ocultando cualquier lote caducado.
+8. **Semáforo Visual de Lotes Vencidos:** Desactivar temporalmente el filtro predeterminado en la barra de búsqueda para mostrar la totalidad de lotes.
+   - Verificar que las filas de lotes caducados (`is_expired = True`) se muestran automáticamente resaltadas en **rojo negrita** (`decoration-danger` y `decoration-bf`), mientras que los lotes vigentes mantienen tipografía normal.
+
+#### Fase C: Bloqueo Estricto de Venta y Dispensación de Lote Caducado (Escenario 2)
+
+9. **Intento de Dispensación en Albarán de Salida:** Iniciar sesión como Cajero (`cajero@caryvil.com` / `cajero123`).
+10. **Selección de Lote Caducado:** En una entrega saliente al cliente (albarán de salida `outgoing`), en la línea de operaciones detalladas de `Amoxicilina 500mg`, intentar asignar un lote cuya fecha de caducidad esté vencida (`LOT-AMX-EXP`).
+11. **Validación Bloqueante:** Hacer clic en el botón **Validar** del albarán.
+    - Debes verificar que el sistema interrumpe la operación y muestra una alerta bloqueante de validación (`ValidationError`):
+      > *"No es posible dispensar el lote LOT-AMX-EXP porque se encuentra vencido."*
+    - Comprobar que el albarán NO cambia a estado `Hecho` (`done`), impidiendo la entrega de fármacos caducados.
+
+#### Fase D: Seguridad RBAC y Auditoría en Chatter (Sección 8)
+
+12. **Bloqueo de Modificación de Fecha por Cajero o Bodeguero:** Con la sesión de `cajero@caryvil.com` o `compras@caryvil.com`, abrir cualquier lote existente, intentar modificar la fecha de vencimiento y presionar **Guardar**.
+    - Comprobar que el sistema rechaza la edición con el mensaje:
+      > *"Solo un Administrador de Farmacia Caryvil puede modificar la fecha de vencimiento de un lote."*
+13. **Modificación Legítima y Trazabilidad por Administrador / Propietaria:** Iniciar sesión con la cuenta de Administrador / Propietaria (`admin_caryvil@caryvil.com` o `admin`).
+    - Abrir el lote `LOT-AMX-2027-VIGENTE`.
+    - Modificar la fecha de vencimiento. Presionar **Guardar**.
+    - Desplazarse al **Chatter** (panel inferior de mensajes). Comprobar que el sistema publicó automáticamente una nota de auditoría:
+      > *"Fecha de vencimiento modificada: 2027-12-31 00:00:00 → [nueva fecha]."*
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Rechazo de Fecha Retroactiva en Creación (Sección 3):** Como Encargado de Inventario o Administrador, intentar crear un lote con fecha de caducidad de ayer (`hoy - 1 día`). Al presionar **Guardar**, el sistema debe disparar la excepción `ValidationError`: *"La fecha de vencimiento del lote (...) no puede ser anterior a su fecha de creación/recepción."*
+2. **Rechazo de Rango Ilógico Superior a 10 Años (Sección 9):** Intentar ingresar un lote con fecha de caducidad a 15 años en el futuro. El sistema debe bloquear el guardado indicando que no puede exceder el rango lógico de 10 años.
+3. **Sincronización Automática Diaria por Cron:** Verificar en **Ajustes** → **Técnico** → **Acciones Planificadas** la existencia de `Caryvil ERP: Actualizar Estado de Lotes Vencidos` (`ir_cron_update_expired_lots`), la cual corre a diario para asegurar que ningún lote quede estancado en estado vigente tras transcurrir su fecha límite.
