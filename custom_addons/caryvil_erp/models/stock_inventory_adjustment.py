@@ -44,10 +44,7 @@ class StockQuantAdjustment(models.Model):
         for quant in self:
             if quant.inventory_quantity_set and quant.inventory_quantity < 0:
                 raise ValidationError(
-                    _(
-                        "La cantidad física contada no puede ser negativa (%s) "
-                        "para el producto %s."
-                    )
+                    _("La cantidad física contada no puede ser negativa (%s) " "para el producto %s.")
                     % (quant.inventory_quantity, quant.product_id.display_name)
                 )
 
@@ -77,18 +74,13 @@ class StockQuantAdjustment(models.Model):
 
     def action_apply_inventory(self):
         if not self.env.user.has_group("caryvil_erp.group_caryvil_manager"):
-            raise UserError(
-                _("Solo el Administrador / Propietario puede aplicar ajustes de inventario.")
-            )
+            raise UserError(_("Solo el Administrador / Propietario puede aplicar ajustes de inventario."))
 
         for quant in self:
             if quant.inventory_quantity_set:
                 if quant.inventory_quantity < 0:
                     raise ValidationError(
-                        _(
-                            "La cantidad física contada no puede ser negativa (%s) "
-                            "para el producto %s."
-                        )
+                        _("La cantidad física contada no puede ser negativa (%s) " "para el producto %s.")
                         % (quant.inventory_quantity, quant.product_id.display_name)
                     )
 
@@ -98,19 +90,13 @@ class StockQuantAdjustment(models.Model):
                 ):
                     if not quant.adjustment_reason:
                         raise ValidationError(
-                            _(
-                                "Debe especificar el Motivo del Ajuste "
-                                "para el producto %s."
-                            )
+                            _("Debe especificar el Motivo del Ajuste " "para el producto %s.")
                             % quant.product_id.display_name
                         )
 
                     if quant.product_id.tracking in ("lot", "serial") and not quant.lot_id:
                         raise ValidationError(
-                            _(
-                                "Debe especificar el lote para el producto "
-                                "con seguimiento: %s."
-                            )
+                            _("Debe especificar el lote para el producto " "con seguimiento: %s.")
                             % quant.product_id.display_name
                         )
 
@@ -118,9 +104,7 @@ class StockQuantAdjustment(models.Model):
 
         return super().action_apply_inventory()
 
-    def _get_inventory_move_values(
-        self, qty, location_id, location_dest_id, package_id=False, package_dest_id=False
-    ):
+    def _get_inventory_move_values(self, qty, location_id, location_dest_id, package_id=False, package_dest_id=False):
         res = super()._get_inventory_move_values(
             qty,
             location_id,
@@ -129,17 +113,11 @@ class StockQuantAdjustment(models.Model):
             package_dest_id=package_dest_id,
         )
         if self.adjustment_reason:
-            reason_label = dict(
-                self._fields["adjustment_reason"].selection
-            ).get(self.adjustment_reason, self.adjustment_reason)
+            reason_label = dict(self._fields["adjustment_reason"].selection).get(
+                self.adjustment_reason, self.adjustment_reason
+            )
             res["origin"] = _("Ajuste de Inventario: %s") % reason_label
             notes_str = f" | Notas: {self.adjustment_notes}" if self.adjustment_notes else ""
-            counter_str = (
-                f" | Contado por: {self.counted_by_user_id.name}"
-                if self.counted_by_user_id
-                else ""
-            )
-            res["description_picking"] = (
-                _("Motivo: %s%s%s") % (reason_label, notes_str, counter_str)
-            )
+            counter_str = f" | Contado por: {self.counted_by_user_id.name}" if self.counted_by_user_id else ""
+            res["description_picking"] = _("Motivo: %s%s%s") % (reason_label, notes_str, counter_str)
         return res

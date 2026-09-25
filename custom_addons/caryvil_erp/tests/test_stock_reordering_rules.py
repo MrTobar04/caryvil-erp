@@ -39,9 +39,7 @@ class TestStockReorderingRules(TransactionCase):
                 "name": "Encargado Inventario Test SPEC-7.2.2",
                 "login": "inv_test_spec722@caryvil.com",
                 "email": "inv_test_spec722@caryvil.com",
-                "groups_id": [
-                    (4, cls.env.ref("caryvil_erp.group_caryvil_inventory_purchases").id)
-                ],
+                "groups_id": [(4, cls.env.ref("caryvil_erp.group_caryvil_inventory_purchases").id)],
             }
         )
 
@@ -50,9 +48,7 @@ class TestStockReorderingRules(TransactionCase):
                 "name": "Cajero Test SPEC-7.2.2",
                 "login": "cajero_test_spec722@caryvil.com",
                 "email": "cajero_test_spec722@caryvil.com",
-                "groups_id": [
-                    (4, cls.env.ref("caryvil_erp.group_caryvil_cashier").id)
-                ],
+                "groups_id": [(4, cls.env.ref("caryvil_erp.group_caryvil_cashier").id)],
             }
         )
 

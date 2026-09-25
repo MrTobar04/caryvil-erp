@@ -53,13 +53,17 @@ class TestStockLotMedicine(TransactionCase):
         if bypass_check:
             context["bypass_expiration_check"] = True
 
-        return self.env["stock.lot"].with_context(context).create(
-            {
-                "name": "LOT-TEST-%s" % expiration_date,
-                "product_id": self.product.id,
-                "company_id": self.env.company.id,
-                "expiration_date": expiration_date,
-            }
+        return (
+            self.env["stock.lot"]
+            .with_context(context)
+            .create(
+                {
+                    "name": "LOT-TEST-%s" % expiration_date,
+                    "product_id": self.product.id,
+                    "company_id": self.env.company.id,
+                    "expiration_date": expiration_date,
+                }
+            )
         )
 
     def _add_stock(self, lot, quantity=10):
@@ -137,9 +141,7 @@ class TestStockLotMedicine(TransactionCase):
 
     def test_valid_lot_can_be_dispensed(self):
         """Verifica que un lote con fecha futura vigente se dispense sin errores."""
-        lot = self._create_lot(
-            fields.Datetime.add(fields.Datetime.now(), days=30)
-        )
+        lot = self._create_lot(fields.Datetime.add(fields.Datetime.now(), days=30))
         self._add_stock(lot)
         picking = self._create_delivery(lot)
         picking.button_validate()
@@ -205,9 +207,7 @@ class TestStockLotMedicine(TransactionCase):
             ValidationError,
             "Solo un Administrador de Farmacia Caryvil puede modificar la fecha de vencimiento de un lote.",
         ):
-            lot.with_user(self.cashier_user).write(
-                {"expiration_date": fields.Datetime.add(future_date, days=30)}
-            )
+            lot.with_user(self.cashier_user).write({"expiration_date": fields.Datetime.add(future_date, days=30)})
 
         # Modificación legítima como Administrador / Propietario (debe triunfar y auditar en chatter)
         new_date = fields.Datetime.add(future_date, days=45)
@@ -221,9 +221,7 @@ class TestStockLotMedicine(TransactionCase):
 
     def test_cron_updates_expired_lots(self):
         """Verifica que el cron diario sincronice el campo is_expired de lotes vencidos."""
-        lot = self._create_lot(
-            fields.Datetime.add(fields.Datetime.now(), days=1)
-        )
+        lot = self._create_lot(fields.Datetime.add(fields.Datetime.now(), days=1))
         self.assertFalse(lot.is_expired)
 
         # Simular que el lote venció actualizando su fecha de vencimiento en BD
@@ -244,9 +242,7 @@ class TestStockLotMedicine(TransactionCase):
 
     def test_lot_traceability_link(self):
         """Verifica la trazabilidad del lote desde su existencia en inventario hasta el movimiento."""
-        lot = self._create_lot(
-            fields.Datetime.add(fields.Datetime.now(), days=120)
-        )
+        lot = self._create_lot(fields.Datetime.add(fields.Datetime.now(), days=120))
         self._add_stock(lot, quantity=15)
 
         quant = self.env["stock.quant"].search(

@@ -29,9 +29,7 @@ class StockWarehouseOrderpointMedicine(models.Model):
                 continue
 
             # Evalúa el stock virtual proyectado considerando la ubicación específica del almacén
-            virtual_stock = rule.product_id.with_context(
-                location=rule.location_id.id
-            ).virtual_available
+            virtual_stock = rule.product_id.with_context(location=rule.location_id.id).virtual_available
 
             if virtual_stock < rule.product_min_qty:
                 needed = rule.product_max_qty - virtual_stock
@@ -50,9 +48,7 @@ class StockWarehouseOrderpointMedicine(models.Model):
     def _check_min_max_quantities(self):
         for rule in self:
             if rule.product_min_qty < 0:
-                raise ValidationError(
-                    _("El stock mínimo de seguridad (Punto de Reorden) no puede ser negativo.")
-                )
+                raise ValidationError(_("El stock mínimo de seguridad (Punto de Reorden) no puede ser negativo."))
             if rule.product_max_qty < rule.product_min_qty:
                 raise ValidationError(
                     _(
@@ -67,10 +63,7 @@ class StockWarehouseOrderpointMedicine(models.Model):
         for rule in self:
             if rule.qty_multiple <= 0:
                 raise ValidationError(
-                    _(
-                        "El múltiplo de compra / empaque debe ser "
-                        "un valor positivo estrictamente superior a 0."
-                    )
+                    _("El múltiplo de compra / empaque debe ser " "un valor positivo estrictamente superior a 0.")
                 )
 
     def _check_reordering_security(self):
@@ -78,9 +71,7 @@ class StockWarehouseOrderpointMedicine(models.Model):
         if self.env.is_superuser() or self.env.su:
             return
         user = self.env.user
-        is_inventory_purchases = user.has_group(
-            "caryvil_erp.group_caryvil_inventory_purchases"
-        )
+        is_inventory_purchases = user.has_group("caryvil_erp.group_caryvil_inventory_purchases")
         is_manager = user.has_group("caryvil_erp.group_caryvil_manager")
         if not (is_inventory_purchases or is_manager):
             raise AccessError(
@@ -114,10 +105,7 @@ class StockWarehouseOrderpointMedicine(models.Model):
         if not vendor:
             return None, None
 
-        if not (
-            vendor.is_pharmacy_vendor
-            or vendor.commercial_partner_id.is_pharmacy_vendor
-        ):
+        if not (vendor.is_pharmacy_vendor or vendor.commercial_partner_id.is_pharmacy_vendor):
             return None, None
 
         return vendor, seller
@@ -127,14 +115,9 @@ class StockWarehouseOrderpointMedicine(models.Model):
         if seller:
             price_unit = seller.price or seller.gross_price
         elif product.seller_ids:
-            matching_sellers = product.seller_ids.filtered(
-                lambda line: line.partner_id == vendor
-            )
+            matching_sellers = product.seller_ids.filtered(lambda line: line.partner_id == vendor)
             if matching_sellers:
-                price_unit = (
-                    matching_sellers[0].price
-                    or matching_sellers[0].gross_price
-                )
+                price_unit = matching_sellers[0].price or matching_sellers[0].gross_price
         if not price_unit:
             price_unit = product.standard_price
         return price_unit
@@ -178,9 +161,7 @@ class StockWarehouseOrderpointMedicine(models.Model):
                 "tag": "display_notification",
                 "params": {
                     "title": _("Reabastecimiento Caryvil"),
-                    "message": _(
-                        "No hay medicamentos con existencias por debajo del stock mínimo."
-                    ),
+                    "message": _("No hay medicamentos con existencias por debajo del stock mínimo."),
                     "type": "info",
                     "sticky": False,
                 },
@@ -194,25 +175,19 @@ class StockWarehouseOrderpointMedicine(models.Model):
             if not vendor:
                 continue
 
-            po = self._get_or_create_draft_po(
-                orders_by_vendor, vendor, rule.company_id.id
-            )
+            po = self._get_or_create_draft_po(orders_by_vendor, vendor, rule.company_id.id)
 
             # Calcular cantidad en la unidad de medida de compra (uom_po_id)
             qty_stock = rule.suggested_replenishment_qty
             po_uom = product.uom_po_id or product.uom_id
             if product.uom_po_id and product.uom_po_id != product.uom_id:
-                qty_to_order = product.uom_id._compute_quantity(
-                    qty_stock, product.uom_po_id
-                )
+                qty_to_order = product.uom_id._compute_quantity(qty_stock, product.uom_po_id)
             else:
                 qty_to_order = qty_stock
 
             price_unit = self._get_unit_price_for_vendor(product, vendor, seller)
 
-            existing_line = po.order_line.filtered(
-                lambda line: line.product_id == product
-            )
+            existing_line = po.order_line.filtered(lambda line: line.product_id == product)
             if existing_line:
                 existing_line.write({"product_qty": qty_to_order})
             else:
@@ -230,13 +205,7 @@ class StockWarehouseOrderpointMedicine(models.Model):
 
         generated_pos = (
             self.env["purchase.order"]
-            .browse(
-                [
-                    po_record.id
-                    for po_record in orders_by_vendor.values()
-                    if po_record
-                ]
-            )
+            .browse([po_record.id for po_record in orders_by_vendor.values() if po_record])
             .exists()
         )
 

@@ -33,8 +33,7 @@ class StockPickingReception(models.Model):
                 lot = line.lot_id
                 if lot.is_expired or (lot.expiration_date and lot.expiration_date < now):
                     raise ValidationError(
-                        _("No es posible dispensar el lote %s porque se encuentra vencido.")
-                        % lot.name
+                        _("No es posible dispensar el lote %s porque se encuentra vencido.") % lot.name
                     )
 
     def button_validate(self):

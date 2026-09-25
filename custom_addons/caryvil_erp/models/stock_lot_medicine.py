@@ -25,17 +25,21 @@ class StockLotMedicine(models.Model):
     def _cron_update_expired_lots(self):
         """Cron diario para sincronizar el estado de caducidad de lotes."""
         now = fields.Datetime.now()
-        expired_lots = self.search([
-            ("expiration_date", "<", now),
-            ("is_expired", "=", False),
-        ])
+        expired_lots = self.search(
+            [
+                ("expiration_date", "<", now),
+                ("is_expired", "=", False),
+            ]
+        )
         if expired_lots:
             expired_lots.write({"is_expired": True})
 
-        valid_lots = self.search([
-            ("expiration_date", ">=", now),
-            ("is_expired", "=", True),
-        ])
+        valid_lots = self.search(
+            [
+                ("expiration_date", ">=", now),
+                ("is_expired", "=", True),
+            ]
+        )
         if valid_lots:
             valid_lots.write({"is_expired": False})
 
@@ -121,9 +125,7 @@ class StockLotMedicine(models.Model):
             for lot in self:
                 if old_dates.get(lot.id) != lot.expiration_date:
                     lot.message_post(
-                        body=_(
-                            "Fecha de vencimiento modificada: <b>%s</b> → <b>%s</b>."
-                        )
+                        body=_("Fecha de vencimiento modificada: <b>%s</b> → <b>%s</b>.")
                         % (
                             old_dates.get(lot.id) or _("Sin fecha"),
                             lot.expiration_date or _("Sin fecha"),
