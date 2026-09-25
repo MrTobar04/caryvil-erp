@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_stock_scrap_form_caryvil" model="ir.ui.view">
+        <field name="name">stock.scrap.form.caryvil</field>
+        <field name="model">stock.scrap</field>
+        <field name="inherit_id" ref="stock.stock_scrap_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='lot_id']" position="after">
+                <field name="scrap_reason"/>
+                <field name="scrap_unit_cost" readonly="1"/>
+                <field name="scrap_total_loss" readonly="1"/>
+                <field name="justification_notes"/>
+                <field name="authorized_by_id" readonly="1"/>
+            </xpath>
+
+            <xpath expr="//button[@name='action_validate']" position="attributes">
+                <attribute name="groups">caryvil_erp.group_caryvil_manager</attribute>
+                <attribute name="string">Autorizar Baja</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
