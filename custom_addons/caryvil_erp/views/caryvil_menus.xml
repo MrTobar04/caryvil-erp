@@ -69,6 +69,13 @@
                   action="action_caryvil_medicamentos"
                   sequence="10"/>
 
+        <menuitem id="menu_caryvil_lotes_medicamentos"
+                  name="Lotes y Caducidades"
+                  parent="menu_caryvil_inventario"
+                  action="stock.action_production_lot_form"
+                  sequence="15"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
+
         <menuitem id="menu_caryvil_principios_activos"
                   name="Principios Activos"
                   parent="menu_caryvil_inventario"
