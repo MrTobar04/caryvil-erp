@@ -21,8 +21,9 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
   - [Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)](#flujo-71-catálogo-y-categorización-de-medicamentos-spec-711)
-  - [Flujo 7.2: Gestión de Unidades de Medida Farmacéuticas (SPEC-7.1.2)](#flujo-72-gestión-de-unidades-de-medida-farmacéuticas-spec-712)
   - [Flujo 7.3: Control de Stock, Lotes y Vencimientos (SPEC-7.2.1)](#flujo-73-control-de-stock-lotes-y-vencimientos-spec-721)
+  - [Flujo 7.5: Conteo Físico, Conciliación y Ajustes de Inventario (SPEC-7.3.1)](#flujo-75-conteo-físico-conciliación-y-ajustes-de-inventario-spec-731)
+  - [Flujo 7.6: Gestión de Mermas y Bajas de Medicamentos (SPEC-7.3.2)](#flujo-76-gestión-de-mermas-y-bajas-de-medicamentos-spec-732)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
   - [Flujo 8.2: Recepción de Mercadería y Captura Obligatoria de Lotes (SPEC-8.2.1)](#flujo-82-recepción-de-mercadería-y-captura-obligatoria-de-lotes-spec-821)
   - [Flujo 8.3: Actualización Automática de Stock y Cierre de Compras (SPEC-8.2.2)](#flujo-83-actualización-automática-de-stock-y-cierre-de-compras-spec-822)
@@ -887,5 +888,81 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 3. **Bloqueo de Fármaco Rastreado sin Lote:** En una línea de ajuste para un medicamento con seguimiento por lotes o número de serie, dejar la columna **Lote / Número de Serie** vacía. Al intentar aplicar el ajuste, el sistema debe bloquear con `ValidationError`: *"Debe especificar el lote para el producto con seguimiento: (...)."*
 4. **Bloqueo RBAC a Encargado de Inventario:** Iniciar sesión como `compras@caryvil.com`. Aunque pueda registrar cantidades contadas y motivos, si intenta forzar la ejecución de `action_apply_inventory` (vía RPC o atajo), el servidor rechaza con `UserError`: *"Solo el Administrador / Propietario puede aplicar ajustes de inventario."*
 5. **Bloqueo Total a Personal de Mostrador / Cajero:** Con la cuenta de `cajero@caryvil.com`, intentar modificar o registrar cualquier conteo en `stock.quant`. El sistema bloquea inmediatamente la operación con `AccessError`, impidiendo cualquier manipulación de existencias físicas por el personal de venta.
+
+---
+
+### Flujo 7.6: Gestión de Mermas y Bajas de Medicamentos (SPEC-7.3.2)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado y actualizado. Usuarios con credenciales:
+> - Administrador / Propietaria: `admin_caryvil@caryvil.com` / `admin123`
+> - Encargado de Compras e Inventario: `compras@caryvil.com` / `compras123`
+> - Cajero / Mostrador: `cajero@caryvil.com` / `cajero123`
+> Medicamento de prueba configurado con seguimiento por lote (`tracking='lot'`) con existencia física confirmada de 8 unidades en `WH/Stock` (ej. `Amoxicilina 500mg`, lote `LOT-AMX-202801`, costo $3.50).
+
+#### Fase A: Registro y Autorización Exitosa de Merma por Administrador (Escenario 1)
+
+1. **Acceso al Menú de Desecho:** Iniciar sesión como Administrador (`admin_caryvil@caryvil.com` / `admin123`). Navegar a **Inventario** → **Operaciones** → **Desecho** y hacer clic en **Nuevo**.
+2. **Captura de la Baja Farmacéutica:**
+   - Seleccionar **Medicamento:** `Amoxicilina 500mg`.
+   - Ingresar **Cantidad a desechar:** `2.00` Unidades.
+   - Seleccionar **Lote / Serie:** `LOT-AMX-202801`.
+   - En **Causa de la Merma**, seleccionar `Medicamento Caducado / Vencido`.
+   - En **Justificación / Observaciones**, escribir: `Retiro de producto caducado de estantería de mostrador`.
+3. **Verificación de Cálculos Financieros Automáticos:**
+   - Comprobar que **Costo Unitario ($)** refleja automáticamente `$ 3.50`.
+   - Comprobar que **Pérdida Total ($)** se calcula como `$ 7.00` (`2.00 * 3.50`).
+   - Comprobar que la **Ubicación de Desecho** apunta a `Virtual Locations/Desecho y Cuarentena Caryvil`.
+4. **Autorización Gerencial:**
+   - Hacer clic en el botón superior **Autorizar Baja** (`action_validate`).
+   - Comprobar que el estado pasa a **Hecho** (`done`).
+   - Comprobar que el campo **Autorizado por** registra a `Administrador Caryvil`.
+   - Comprobar que el campo **Fecha de Autorización** registra la fecha y hora de la operación.
+5. **Verificación de Descuento de Stock Físico:**
+   - Navegar a **Inventario** → **Productos** → **Lotes/Números de Serie** y abrir `LOT-AMX-202801`.
+   - Comprobar que la existencia en `WH/Stock` disminuyó de 8.00 a 6.00 unidades.
+   - Comprobar que la ubicación `Desecho y Cuarentena Caryvil` refleja las 2.00 unidades dadas de baja.
+6. **Emisión de Acta de Merma y Destrucción Farmacéutica:**
+   - En el formulario de la merma, hacer clic en **Imprimir** → **Acta de Merma y Destrucción Farmacéutica**.
+   - Comprobar que se descarga el PDF oficial con encabezado de Farmacia Caryvil, fecha de autorización, detalles de producto, lote, causa, costos, justificación y líneas de firma.
+
+#### Fase B: Bloqueo de Baja sin Lote en Fármaco Controlado (Escenario 2)
+
+7. **Intento de Baja sin Lote:**
+   - Crear un nuevo registro de desecho seleccionando `Amoxicilina 500mg`.
+   - Ingresar Cantidad: `1.00`, Causa: `Rotura de Frasco / Ampolla`.
+   - Dejar el campo **Lote / Serie** en blanco.
+   - Hacer clic en **Autorizar Baja**.
+   - Comprobar que el sistema bloquea inmediatamente la transacción con `ValidationError`:
+     > *"Debe especificar el número de lote para dar de baja el medicamento Amoxicilina 500mg."*
+
+#### Fase C: Bloqueo por Existencia Física Insuficiente (Restricción Sección 3)
+
+8. **Intento de Desechar Cantidad Excesiva:**
+   - Con 6.00 unidades disponibles en el lote `LOT-AMX-202801`, crear un desecho para este lote ingresando Cantidad: `50.00`.
+   - Hacer clic en **Autorizar Baja**.
+   - Comprobar que el sistema rechaza la operación con `ValidationError`:
+     > *"No se puede dar de baja una cantidad superior a la existencia física disponible en el lote seleccionado."*
+
+#### Fase D: Seguridad RBAC e Inmutabilidad de Registros
+
+9. **Bloqueo a Encargado de Inventario:**
+   - Iniciar sesión como `compras@caryvil.com`.
+   - Abrir un desecho en borrador y comprobar que el botón **Autorizar Baja** no es visible.
+   - Si se intenta invocar `action_validate` o `do_scrap` por RPC, el servidor rechaza con `UserError`:
+     > *"Solo el Administrador / Propietario puede autorizar la baja del medicamento."*
+10. **Bloqueo Total a Personal de Ventas / Cajero:**
+    - Iniciar sesión como `cajero@caryvil.com`.
+    - Comprobar que no tiene acceso al menú `Desecho` ni permisos de lectura/creación sobre `stock.scrap`.
+11. **Inmutabilidad Post-Autorización:**
+    - Con la cuenta de Administrador, abrir un registro de desecho en estado `Hecho`.
+    - Comprobar que los campos de causa, justificación, lote y cantidades son de solo lectura.
+    - Comprobar que intentar modificar campos protegidos o eliminar el registro arroja `UserError`.
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Conversión de UdM en Costo:** En un producto adquirido por caja o docena, desechar unidades individuales y verificar que el costo unitario y pérdida total se calculan proporcionalmente a la UdM del desecho sin inflar el costo.
+2. **Rechazo de Cantidad Menor o Igual a Cero:** Intentar desechar `0.00` o `-1.00` unidades; el sistema bloquea con `ValidationError`: *"La cantidad a dar de baja debe ser mayor a cero."*
+3. **Impresión de Acta en Borrador:** Al imprimir el reporte sobre un registro en estado borrador, el documento incluye el banner de advertencia: *"DOCUMENTO EN BORRADOR — NO VÁLIDO COMO ACTA OFICIAL DE DESTRUCCIÓN"*.
+
 
 
