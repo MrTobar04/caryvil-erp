@@ -27,11 +27,15 @@ class StockPickingReception(models.Model):
         if picking.picking_type_code != "outgoing":
             return
 
+        now = fields.Datetime.now()
         for line in picking.move_line_ids:
-            if line.quantity > 0 and line.lot_id and line.lot_id.is_expired:
-                raise ValidationError(
-                    _("No es posible dispensar el lote %s " "porque se encuentra vencido.") % line.lot_id.name
-                )
+            if line.quantity > 0 and line.lot_id:
+                lot = line.lot_id
+                if lot.is_expired or (lot.expiration_date and lot.expiration_date < now):
+                    raise ValidationError(
+                        _("No es posible dispensar el lote %s porque se encuentra vencido.")
+                        % lot.name
+                    )
 
     def button_validate(self):
         today = fields.Datetime.now()

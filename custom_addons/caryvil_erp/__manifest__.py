@@ -41,6 +41,7 @@
         "data/res_partner_vendor_sequence.xml",
         "data/purchase_order_sequence.xml",
         "data/iva_purchase_tax.xml",
+        "data/stock_lot_cron.xml",
         "views/caryvil_medicine_views.xml",
         "views/caryvil_menus.xml",
         "views/res_partner_customer_views.xml",
