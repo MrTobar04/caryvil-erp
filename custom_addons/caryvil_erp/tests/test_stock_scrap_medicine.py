@@ -21,20 +21,26 @@ class TestStockScrapMedicine(TransactionCase):
         cls.scrap_location = cls.env.ref("caryvil_erp.stock_location_scrap_caryvil")
 
         cls.manager_user = cls.env.ref("caryvil_erp.user_admin_demo")
-        cls.manager_user.write({
-            "company_id": cls.company.id,
-            "company_ids": [(4, cls.company.id)],
-        })
+        cls.manager_user.write(
+            {
+                "company_id": cls.company.id,
+                "company_ids": [(4, cls.company.id)],
+            }
+        )
         cls.inventory_user = cls.env.ref("caryvil_erp.user_compras_demo")
-        cls.inventory_user.write({
-            "company_id": cls.company.id,
-            "company_ids": [(4, cls.company.id)],
-        })
+        cls.inventory_user.write(
+            {
+                "company_id": cls.company.id,
+                "company_ids": [(4, cls.company.id)],
+            }
+        )
         cls.cashier_user = cls.env.ref("caryvil_erp.user_cajero_demo")
-        cls.cashier_user.write({
-            "company_id": cls.company.id,
-            "company_ids": [(4, cls.company.id)],
-        })
+        cls.cashier_user.write(
+            {
+                "company_id": cls.company.id,
+                "company_ids": [(4, cls.company.id)],
+            }
+        )
 
         cls.product = (
             cls.env["product.product"]

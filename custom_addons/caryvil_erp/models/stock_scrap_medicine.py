@@ -65,14 +65,8 @@ class StockScrapMedicine(models.Model):
                 continue
 
             base_cost = scrap.product_id.standard_price or 0.0
-            if (
-                scrap.product_uom_id
-                and scrap.product_id.uom_id
-                and scrap.product_uom_id != scrap.product_id.uom_id
-            ):
-                unit_cost = scrap.product_id.uom_id._compute_price(
-                    base_cost, scrap.product_uom_id
-                )
+            if scrap.product_uom_id and scrap.product_id.uom_id and scrap.product_uom_id != scrap.product_id.uom_id:
+                unit_cost = scrap.product_id.uom_id._compute_price(base_cost, scrap.product_uom_id)
             else:
                 unit_cost = base_cost
 
@@ -99,9 +93,7 @@ class StockScrapMedicine(models.Model):
         precision = self.env["decimal.precision"].precision_get("Product Unit of Measure")
         for scrap in self:
             if not self.env.user.has_group("caryvil_erp.group_caryvil_manager"):
-                raise UserError(
-                    _("Solo el Administrador / Propietario puede autorizar la baja del medicamento.")
-                )
+                raise UserError(_("Solo el Administrador / Propietario puede autorizar la baja del medicamento."))
 
             if scrap.product_id.tracking in ("lot", "serial") and not scrap.lot_id:
                 raise ValidationError(
@@ -119,9 +111,7 @@ class StockScrapMedicine(models.Model):
                     lot_id=scrap.lot_id,
                     strict=True,
                 )
-                scrap_qty_in_prod_uom = scrap.product_uom_id._compute_quantity(
-                    scrap.scrap_qty, scrap.product_id.uom_id
-                )
+                scrap_qty_in_prod_uom = scrap.product_uom_id._compute_quantity(scrap.scrap_qty, scrap.product_id.uom_id)
                 if float_compare(scrap_qty_in_prod_uom, available_qty, precision_digits=precision) > 0:
                     lot_name = scrap.lot_id.name if scrap.lot_id else _("Sin lote")
                     raise ValidationError(
