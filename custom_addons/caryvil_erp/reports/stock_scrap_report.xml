@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_stock_scrap_medicine_document">
+        <t t-call="web.html_container">
+
+            <meta charset="UTF-8"/>
+
+            <t t-foreach="docs" t-as="scrap">
+
+                <div class="page">
+
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h2 style="margin-bottom: 5px;">
+                            ACTA DE MERMA Y DESTRUCCIÓN FARMACÉUTICA
+                        </h2>
+
+                        <div>
+                            <strong>Farmacia Caryvil</strong>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm table-borderless">
+                        <tbody>
+                            <tr>
+                                <td style="width: 25%;">
+                                    <strong>Número de Acta:</strong>
+                                </td>
+                                <td>
+                                    <span t-field="scrap.name"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Fecha de Autorización:</strong>
+                                </td>
+                                <td>
+                                    <span t-field="scrap.date_done"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="margin-top: 20px;">
+                        Datos del Medicamento
+                    </h4>
+
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+
+                            <tr>
+                                <td style="width: 35%;">
+                                    <strong>Medicamento</strong>
+                                </td>
+                                <td>
+                                    <span t-field="scrap.product_id"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Cantidad</strong>
+                                </td>
+                                <td>
+                                    <span t-field="scrap.scrap_qty"/>
+                                    <span t-field="scrap.product_uom_id"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Lote / Serie</strong>
+                                </td>
+                                <td>
+                                    <span t-field="scrap.lot_id"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Causa de la Merma</strong>
+                                </td>
+                                <td>
+                                    <span t-field="scrap.scrap_reason"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Costo Unitario</strong>
+                                </td>
+                                <td>
+                                    <span t-field="scrap.scrap_unit_cost"/>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Pérdida Total</strong>
+                                </td>
+                                <td>
+                                    <span t-field="scrap.scrap_total_loss"/>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <h4 style="margin-top: 20px;">
+                        Justificación / Observaciones
+                    </h4>
+
+                    <div style="border: 1px solid #ccc; padding: 12px; min-height: 60px;">
+                        <span t-field="scrap.justification_notes"/>
+                    </div>
+
+                    <h4 style="margin-top: 25px;">
+                        Autorización
+                    </h4>
+
+                    <p>
+                        <strong>Autorizado por:</strong>
+                        <span t-field="scrap.authorized_by_id"/>
+                    </p>
+
+                    <div style="margin-top: 70px;">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 50%; text-align: center;">
+                                        ______________________________
+                                        <br/>
+                                        Responsable de la Baja
+                                    </td>
+
+                                    <td style="width: 50%; text-align: center;">
+                                        ______________________________
+                                        <br/>
+                                        Autorización
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </t>
+        </t>
+    </template>
+
+</odoo>
