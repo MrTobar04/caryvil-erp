@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        El impuesto de ventas fue creado originalmente con noupdate=True.
+        Se desbloquea para permitir que tax_data.xml corrija su compañía y grupo fiscal.
+    -->
+    <function
+        model="ir.model.data"
+        name="write"
+    >
+        <function
+            model="ir.model.data"
+            name="search"
+            eval="[[
+                ('module', '=', 'caryvil_erp'),
+                ('name', '=', 'tax_caryvil_iva_ventas_13')
+            ]]"
+        />
+
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+</odoo>

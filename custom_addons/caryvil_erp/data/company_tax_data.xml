@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Configura el IVA de Caryvil como impuesto predeterminado. -->
+
+    <function
+        model="res.company"
+        name="write"
+    >
+        <function
+            model="res.company"
+            name="search"
+            eval="[[
+                (
+                    'id',
+                    '=',
+                    ref('caryvil_erp.company_farmacia_caryvil')
+                )
+            ]]"
+        />
+
+        <value
+            eval="{
+                'account_sale_tax_id': ref(
+                    'caryvil_erp.tax_caryvil_iva_ventas_13'
+                )
+            }"
+        />
+    </function>
+
+</odoo>

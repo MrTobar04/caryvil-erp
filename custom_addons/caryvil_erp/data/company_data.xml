@@ -11,7 +11,6 @@
             <field name="phone">2270-1234</field>
             <field name="email">contacto@farmaciacaryvil.com</field>
             <field name="economic_activity">Venta al por menor de productos farmacéuticos y medicinales</field>
-            <field name="account_sale_tax_id" ref="caryvil_erp.tax_caryvil_iva_ventas_13"/>
         </record>
     </data>
 </odoo>
