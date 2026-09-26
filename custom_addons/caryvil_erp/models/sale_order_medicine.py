@@ -266,6 +266,206 @@ class SaleOrderMedicine(models.Model):
                     }
                 )
 
+    def _caryvil_get_stock_location(self):
+        # Obtiene la ubicación origen utilizada por las entregas.
+        self.ensure_one()
+
+        warehouse = self.warehouse_id
+
+        if not warehouse:
+            raise UserError(
+                _(
+                    "La venta no tiene un almacén configurado."
+                )
+            )
+
+        picking_type = warehouse.out_type_id
+
+        location = (
+            picking_type.default_location_src_id
+            or warehouse.lot_stock_id
+        )
+
+        if not location:
+            raise UserError(
+                _(
+                    "No se encontró una ubicación de salida "
+                    "configurada para el almacén."
+                )
+            )
+
+        return location
+
+    def _caryvil_lock_stock_quants(self, product, location):
+        # Bloquea los quants del producto durante la validación de stock.
+
+        location_ids = self.env["stock.location"].search(
+            [
+                ("id", "child_of", location.id),
+            ]
+        ).ids
+
+        if not location_ids:
+            return
+
+        self.env.cr.execute(
+            """
+                SELECT id
+                  FROM stock_quant
+                 WHERE product_id = %s
+                   AND location_id = ANY(%s)
+                 FOR UPDATE
+            """,
+            (
+                product.id,
+                location_ids,
+            ),
+        )
+
+    def _caryvil_check_and_lock_stock(self):
+        # Valida y bloquea el stock disponible antes de confirmar la venta.
+
+        self.ensure_one()
+
+        requested_quantities = (
+            self._get_caryvil_requested_quantities()
+        )
+
+        if not requested_quantities:
+            return
+
+        location = self._caryvil_get_stock_location()
+        quant_model = self.env["stock.quant"].sudo()
+
+        for product_id in sorted(requested_quantities):
+            requested_qty = requested_quantities[product_id]
+            product = (
+                self.env["product.product"]
+                .browse(product_id)
+                .exists()
+            )
+
+            if not product:
+                continue
+
+            self._caryvil_lock_stock_quants(
+                product,
+                location,
+            )
+
+            available_qty = (
+                quant_model._get_available_quantity(
+                    product,
+                    location,
+                    strict=False,
+                )
+            )
+
+            if float_compare(
+                requested_qty,
+                available_qty,
+                precision_rounding=product.uom_id.rounding,
+            ) > 0:
+                raise UserError(
+                    _(
+                        'Stock insuficiente para "%(product)s".\n'
+                        "Cantidad solicitada: %(requested)s %(uom)s\n"
+                        "Cantidad disponible en la ubicación de salida: "
+                        "%(available)s %(uom)s"
+                    )
+                    % {
+                        "product": product.display_name,
+                        "requested": requested_qty,
+                        "available": available_qty,
+                        "uom": product.uom_id.name,
+                    }
+                )
+
+    def _caryvil_validate_outgoing_pickings(self):
+        # Reserva y valida automáticamente las entregas de la venta.
+
+        pickings = self.mapped(
+            "picking_ids"
+        ).filtered(
+            lambda picking: (
+                picking.picking_type_code == "outgoing"
+                and picking.state not in ("done", "cancel")
+            )
+        )
+
+        if not pickings:
+            if self._get_caryvil_requested_quantities():
+                raise UserError(
+                    _(
+                        "No se generó el albarán de salida "
+                        "para la venta."
+                    )
+                )
+            return
+
+        for picking in pickings:
+
+            picking.action_assign()
+
+            incomplete_moves = picking.move_ids.filtered(
+                lambda move: (
+                    move.state not in ("done", "cancel")
+                    and float_compare(
+                        move.quantity,
+                        move.product_uom_qty,
+                        precision_rounding=move.product_uom.rounding,
+                    ) < 0
+                )
+            )
+
+            if incomplete_moves:
+                products = ", ".join(
+                    incomplete_moves.mapped(
+                        "product_id.display_name"
+                    )
+                )
+
+                raise UserError(
+                    _(
+                        "No fue posible reservar completamente "
+                        "el stock para: %s"
+                    )
+                    % products
+                )
+
+            picking.with_context(
+                skip_backorder=True,
+                picking_ids_not_to_backorder=picking.ids,
+                skip_sms=True,
+            ).button_validate()
+
+            if picking.state != "done":
+                raise UserError(
+                    _(
+                        "No fue posible completar el albarán "
+                        "de salida %s."
+                    )
+                    % picking.name
+                )
+
+    def _action_confirm(self):
+        # Confirma la venta y, cuando corresponde, descuenta el stock.
+
+        auto_stock_deduction = self.env.context.get(
+            "caryvil_auto_stock_deduction"
+        )
+
+        if auto_stock_deduction:
+            for order in self:
+                order._caryvil_check_and_lock_stock()
+
+        result = super()._action_confirm()
+
+        if auto_stock_deduction:
+            self._caryvil_validate_outgoing_pickings()
+
+        return result
+
     def _prepare_caryvil_sale_line_values(self, product):
         
         # Prepara una línea de venta.
@@ -437,10 +637,11 @@ class SaleOrderMedicine(models.Model):
             )
 
         self._check_caryvil_payment()
-        self._check_caryvil_stock_availability()
 
-        # Flujo nativo de Odoo.
-        self.action_confirm()
+        # Activa el flujo transaccional de stock.
+        self.with_context(
+            caryvil_auto_stock_deduction=True
+        ).action_confirm()
 
         invoices = self._create_invoices()
 
