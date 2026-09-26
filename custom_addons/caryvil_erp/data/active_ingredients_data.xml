@@ -2,59 +2,108 @@
 <odoo>
     <data noupdate="1">
         <!-- Categoría Padre: Principios Activos Farmacéuticos (SPEC-10.1.1) -->
-        <record id="cat_principios_activos_root" model="product.category">
-            <field name="name">Principios Activos</field>
-        </record>
+        <!-- Principios Activos Farmacéuticos - SPEC-7.1.1 -->
 
-        <!-- Principios Activos Base -->
-        <record id="active_paracetamol" model="product.category">
+        <record id="caryvil_active_paracetamol" model="caryvil.active.ingredient">
             <field name="name">Paracetamol (Acetaminofén)</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_ibuprofeno" model="product.category">
+        <record id="caryvil_active_ibuprofeno" model="caryvil.active.ingredient">
             <field name="name">Ibuprofeno</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_amoxicilina" model="product.category">
+        <record id="caryvil_active_amoxicilina" model="caryvil.active.ingredient">
             <field name="name">Amoxicilina</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_loratadina" model="product.category">
+        <record id="caryvil_active_loratadina" model="caryvil.active.ingredient">
             <field name="name">Loratadina</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_enalapril" model="product.category">
+        <record id="caryvil_active_enalapril" model="caryvil.active.ingredient">
             <field name="name">Enalapril</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_metformina" model="product.category">
+        <record id="caryvil_active_metformina" model="caryvil.active.ingredient">
             <field name="name">Metformina</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_omeprazol" model="product.category">
+        <record id="caryvil_active_omeprazol" model="caryvil.active.ingredient">
             <field name="name">Omeprazol</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_salbutamol" model="product.category">
+        <record id="caryvil_active_salbutamol" model="caryvil.active.ingredient">
             <field name="name">Salbutamol</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_complejo_b" model="product.category">
+        <record id="caryvil_active_complejo_b" model="caryvil.active.ingredient">
             <field name="name">Complejo B</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
 
-        <record id="active_aspirina" model="product.category">
+        <record id="caryvil_active_aspirina" model="caryvil.active.ingredient">
             <field name="name">Ácido Acetilsalicílico</field>
-            <field name="parent_id" ref="cat_principios_activos_root"/>
         </record>
-    </data>
+
+        <!-- Principios activos adicionales para el catálogo demo -->
+
+        <record id="caryvil_active_azitromicina" model="caryvil.active.ingredient">
+            <field name="name">Azitromicina</field>
+        </record>
+
+        <record id="caryvil_active_cetirizina" model="caryvil.active.ingredient">
+            <field name="name">Cetirizina</field>
+        </record>
+
+        <record id="caryvil_active_losartan" model="caryvil.active.ingredient">
+            <field name="name">Losartán</field>
+        </record>
+
+        <record id="caryvil_active_ranitidina" model="caryvil.active.ingredient">
+            <field name="name">Ranitidina</field>
+        </record>
+
+        <record id="caryvil_active_vitamina_c" model="caryvil.active.ingredient">
+            <field name="name">Vitamina C</field>
+        </record>
+
+        <record id="caryvil_active_hidrocortisona" model="caryvil.active.ingredient">
+            <field name="name">Hidrocortisona</field>
+        </record>
+
+        <record id="caryvil_active_clotrimazol" model="caryvil.active.ingredient">
+            <field name="name">Clotrimazol</field>
+        </record>
+
+        <record id="caryvil_active_tobramicina" model="caryvil.active.ingredient">
+            <field name="name">Tobramicina</field>
+        </record>
+
+        <record id="caryvil_active_ambroxol" model="caryvil.active.ingredient">
+            <field name="name">Ambroxol</field>
+        </record>
+
+        <record id="caryvil_active_diclofenac" model="caryvil.active.ingredient">
+            <field name="name">Diclofenac Sódico</field>
+        </record>
+
+        <record id="caryvil_active_ciprofloxacino" model="caryvil.active.ingredient">
+            <field name="name">Ciprofloxacino</field>
+        </record>
+
+        <record id="caryvil_active_glibenclamida" model="caryvil.active.ingredient">
+            <field name="name">Glibenclamida</field>
+        </record>
+
+        <record id="caryvil_active_electrolitos_orales" model="caryvil.active.ingredient">
+            <field name="name">Electrolitos Orales</field>
+        </record>
+
+        <record id="caryvil_active_multivitaminico" model="caryvil.active.ingredient">
+            <field name="name">Multivitamínico con Minerales</field>
+        </record>
+
+        <record id="caryvil_active_naproxeno" model="caryvil.active.ingredient">
+            <field name="name">Naproxeno Sódico</field>
+        </record>
+            </data>
 </odoo>
