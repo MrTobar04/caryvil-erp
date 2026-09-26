@@ -10,3 +10,4 @@ from . import stock_lot_medicine  # noqa: F401
 from . import purchase_order_abono  # noqa: F401
 from . import sale_order_medicine  # noqa: F401
 from . import account_move_invoice  # noqa: F401
+from . import ir_actions_report  # noqa: F401

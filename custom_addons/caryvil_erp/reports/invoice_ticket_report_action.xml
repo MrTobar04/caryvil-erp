@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <record id="action_report_caryvil_invoice_ticket" model="ir.actions.report">
+        <field name="name">Ticket de Venta Caryvil</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">caryvil_erp.report_invoice_ticket_template</field>
+        <field name="report_file">caryvil_erp.report_invoice_ticket_template</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="caryvil_erp.paperformat_ticket_80mm"/>
+    </record>
+</odoo>

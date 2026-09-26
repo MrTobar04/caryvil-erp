@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <template id="report_invoice_ticket_template">
+
+        <t t-call="web.html_container">
+
+            <t t-foreach="docs" t-as="o">
+
+                <t t-set="company" t-value="o.company_id"/>
+
+                <t t-set="sale_orders"
+                   t-value="o.invoice_line_ids.mapped('sale_line_ids.order_id')"/>
+
+                <t t-set="sale_order"
+                   t-value="sale_orders[:1]"/>
+
+                <div class="article"
+                     t-att-data-oe-model="o._name"
+                     t-att-data-oe-id="o.id">
+
+                    <div class="caryvil-ticket">
+
+                        <style>
+
+                            .caryvil-ticket {
+                                width: 100%;
+                                max-width: 76mm;
+                                margin: 0 auto;
+                                padding: 0;
+                                font-family: "DejaVu Sans", sans-serif;
+                                font-size: 9px;
+                                line-height: 1.25;
+                                color: #000;
+                            }
+
+                            .caryvil-ticket * {
+                                box-sizing: border-box;
+                            }
+
+                            .ticket-header {
+                                text-align: center;
+                                margin-bottom: 8px;
+                            }
+
+                            .ticket-logo {
+                                display: block;
+                                width: 34mm;
+                                max-height: 18mm;
+                                margin: 0 auto 4px auto;
+                            }
+
+                            .ticket-title {
+                                font-size: 12px;
+                                font-weight: bold;
+                                margin: 0;
+                                line-height: 1.2;
+                                white-space: nowrap;
+                            }
+
+                            .ticket-subtitle {
+                                font-size: 8.5px;
+                                margin-top: 2px;
+                            }
+
+                            .ticket-company-data {
+                                font-size: 8px;
+                                line-height: 1.2;
+                                margin-top: 3px;
+                            }
+
+                            .ticket-phone {
+                                white-space: nowrap;
+                            }
+
+                            .ticket-separator {
+                                border-top: 1px dashed #000;
+                                margin: 6px 0;
+                                height: 1px;
+                            }
+
+                            .ticket-info {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-bottom: 5px;
+                            }
+
+                            .ticket-info td {
+                                padding: 1px 0;
+                                vertical-align: top;
+                            }
+
+                            .ticket-info td:first-child {
+                                width: 28%;
+                                font-weight: bold;
+                            }
+
+                            .ticket-info td:last-child {
+                                width: 72%;
+                                text-align: right;
+                            }
+
+                            .ticket-client td:last-child {
+                                text-align: left;
+                            }
+
+                            .ticket-products {
+                                width: 100%;
+                                border-collapse: collapse;
+                                table-layout: fixed;
+                            }
+
+                            .ticket-products th {
+                                font-size: 7.5px;
+                                text-align: center;
+                                border-bottom: 1px solid #000;
+                                padding: 2px 1px;
+                                vertical-align: bottom;
+                            }
+
+                            .ticket-products td {
+                                font-size: 8px;
+                                padding: 3px 1px;
+                                vertical-align: top;
+                                border-bottom: 1px dotted #777;
+                                word-wrap: break-word;
+                            }
+
+                            .ticket-products th:nth-child(1),
+                            .ticket-products td:nth-child(1) {
+                                width: 38%;
+                                text-align: left;
+                            }
+
+                            .ticket-products th:nth-child(2),
+                            .ticket-products td:nth-child(2) {
+                                width: 10%;
+                                text-align: center;
+                            }
+
+                            .ticket-products th:nth-child(3),
+                            .ticket-products td:nth-child(3) {
+                                width: 16%;
+                                text-align: right;
+                            }
+
+                            .ticket-products th:nth-child(4),
+                            .ticket-products td:nth-child(4) {
+                                width: 12%;
+                                text-align: right;
+                            }
+
+                            .ticket-products th:nth-child(5),
+                            .ticket-products td:nth-child(5) {
+                                width: 24%;
+                                text-align: right;
+                            }
+
+                            .product-name {
+                                font-weight: bold;
+                            }
+
+                            .product-description {
+                                font-size: 7.5px;
+                                margin-top: 1px;
+                            }
+
+                            .ticket-totals {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 6px;
+                            }
+
+                            .ticket-totals td {
+                                padding: 2px 0;
+                            }
+
+                            .ticket-totals td:first-child {
+                                width: 65%;
+                                text-align: right;
+                                padding-right: 5px;
+                            }
+
+                            .ticket-totals td:last-child {
+                                width: 35%;
+                                text-align: right;
+                                white-space: nowrap;
+                            }
+
+                            .ticket-total {
+                                font-size: 11px;
+                                font-weight: bold;
+                                border-top: 1px solid #000;
+                                border-bottom: 1px double #000;
+                                padding-top: 4px !important;
+                                padding-bottom: 4px !important;
+                            }
+
+                            .ticket-amount-words {
+                                margin-top: 6px;
+                                font-size: 8px;
+                            }
+
+                            .ticket-payment {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 6px;
+                            }
+
+                            .ticket-payment td {
+                                padding: 2px 0;
+                            }
+
+                            .ticket-payment td:first-child {
+                                font-weight: bold;
+                                width: 58%;
+                            }
+
+                            .ticket-payment td:last-child {
+                                text-align: right;
+                                width: 42%;
+                                white-space: nowrap;
+                            }
+
+                            .ticket-footer {
+                                text-align: center;
+                                font-size: 8px;
+                                line-height: 1.3;
+                                margin-top: 9px;
+                                padding-top: 6px;
+                                border-top: 1px dashed #000;
+                            }
+
+                            .ticket-footer strong {
+                                font-size: 8.5px;
+                            }
+
+                            .ticket-footer-secondary {
+                                margin-top: 2px;
+                            }
+
+                            .avoid-break {
+                                page-break-inside: avoid;
+                            }
+
+                        </style>
+
+                        <!-- Header -->
+
+                        <div class="ticket-header">
+
+                            <img
+                                t-att-src="'/caryvil_erp/static/src/img/caryvil_logo_full.png'"
+                                class="ticket-logo"
+                                alt="Farmacia Caryvil"
+                            />
+
+                            <div class="ticket-title">
+                                FARMACIA CARYVIL • ERP FARMACIA
+                            </div>
+
+                            <div class="ticket-company-data">
+
+                                <t t-if="company.street">
+                                    <div>
+                                        <span t-esc="company.street"/>
+                                    </div>
+                                </t>
+
+                                <t t-if="company.city">
+                                    <div>
+                                        <span t-esc="company.city"/>
+                                    </div>
+                                </t>
+
+                                <t t-if="company.phone">
+                                    <div class="ticket-phone">
+                                        Tel: <span t-esc="company.phone"/>
+                                    </div>
+                                </t>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ticket-separator"/>
+
+                        <!-- Info del documento -->
+
+                        <table class="ticket-info">
+                            <tbody>
+
+                                <tr>
+                                    <td>Factura</td>
+                                    <td>
+                                        <span t-esc="o.simple_invoice_number"/>
+                                    </td>
+                                </tr>
+
+                                <t t-if="sale_order">
+                                    <tr>
+                                        <td>Venta</td>
+                                        <td>
+                                            <span t-esc="sale_order.name"/>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <tr>
+                                    <td>Fecha</td>
+                                    <td>
+                                        <span t-field="o.invoice_date"/>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <!-- Cliente -->
+
+                        <table class="ticket-info ticket-client">
+                            <tbody>
+
+                                <tr>
+                                    <td>Cliente</td>
+                                    <td>
+                                        <span t-esc="o.partner_id.name"/>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>DUI</td>
+                                    <td>
+                                        <t t-if="o.partner_id.dui">
+                                            <span t-esc="o.partner_id.dui"/>
+                                        </t>
+                                        <t t-else="">
+                                            N/A
+                                        </t>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                        <div class="ticket-separator"/>
+
+                        <!-- Productos -->
+
+                        <table class="ticket-products">
+
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cant.</th>
+                                    <th>P.Unit.</th>
+                                    <th>Desc.</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <t t-foreach="o.invoice_line_ids.filtered(
+                                    lambda line: line.display_type == 'product'
+                                )" t-as="line">
+
+                                    <t t-set="sale_line"
+                                       t-value="line.sale_line_ids[:1]"/>
+
+                                    <tr class="avoid-break">
+
+                                        <td>
+                                            <div class="product-name">
+                                                <span t-esc="line.product_id.name"/>
+                                            </div>
+
+                                            <t t-if="line.product_id.product_tmpl_id.active_ingredient_id">
+                                                <div class="product-description">
+                                                    <span t-esc="
+                                                        line.product_id.product_tmpl_id.active_ingredient_id.name
+                                                    "/>
+                                                </div>
+                                            </t>
+
+                                            <t t-if="line.product_id.product_tmpl_id.concentration">
+                                                <div class="product-description">
+                                                    <span t-esc="
+                                                        line.product_id.product_tmpl_id.concentration
+                                                    "/>
+                                                </div>
+                                            </t>
+                                        </td>
+
+                                        <td>
+                                            <span t-field="line.quantity"/>
+                                        </td>
+
+                                        <td>
+                                            <span
+                                                t-field="line.price_unit"
+                                                t-options='{
+                                                    "widget": "monetary",
+                                                    "display_currency": o.currency_id
+                                                }'
+                                            />
+                                        </td>
+
+                                        <td>
+                                            <t t-if="sale_line">
+                                                <span t-esc="sale_line.discount or 0.0"/>
+                                            </t>
+                                            <t t-else="">
+                                                0.0
+                                            </t>
+                                            %
+                                        </td>
+
+                                        <td>
+                                            <span
+                                                t-field="line.price_subtotal"
+                                                t-options='{
+                                                    "widget": "monetary",
+                                                    "display_currency": o.currency_id
+                                                }'
+                                            />
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+
+                            </tbody>
+
+                        </table>
+
+                        <!-- Total -->
+
+                        <table class="ticket-totals">
+
+                            <tbody>
+
+                                <tr>
+                                    <td>SubTotal</td>
+                                    <td>
+                                        <span
+                                            t-field="o.amount_untaxed"
+                                            t-options='{
+                                                "widget": "monetary",
+                                                "display_currency": o.currency_id
+                                            }'
+                                        />
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Descuento</td>
+                                    <td>
+                                        <span
+                                            t-esc="o._caryvil_get_discount_total()"
+                                            t-options='{
+                                                "widget": "monetary",
+                                                "display_currency": o.currency_id
+                                            }'
+                                        />
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>IVA (13%)</td>
+                                    <td>
+                                        <span
+                                            t-field="o.amount_tax"
+                                            t-options='{
+                                                "widget": "monetary",
+                                                "display_currency": o.currency_id
+                                            }'
+                                        />
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="ticket-total">TOTAL</td>
+                                    <td class="ticket-total">
+                                        <span
+                                            t-field="o.amount_total"
+                                            t-options='{
+                                                "widget": "monetary",
+                                                "display_currency": o.currency_id
+                                            }'
+                                        />
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                        <!-- Cantidad en letra -->
+
+                        <div class="ticket-amount-words">
+
+                            <strong>Importe en Letras:</strong>
+
+                            <div>
+                                <span t-esc="o.amount_in_words"/>
+                            </div>
+
+                        </div>
+
+                        <!--Pago -->
+
+                        <t t-if="sale_order">
+
+                            <table class="ticket-payment">
+
+                                <tbody>
+
+                                    <tr>
+                                        <td>Método de Pago</td>
+                                        <td>
+                                            <span t-esc="o.payment_method_display"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Monto Recibido</td>
+                                        <td>
+                                            <span
+                                                t-field="sale_order.amount_tendered"
+                                                t-options='{
+                                                    "widget": "monetary",
+                                                    "display_currency": o.currency_id
+                                                }'
+                                            />
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Cambio</td>
+                                        <td>
+                                            <span
+                                                t-field="sale_order.amount_change"
+                                                t-options='{
+                                                    "widget": "monetary",
+                                                    "display_currency": o.currency_id
+                                                }'
+                                            />
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Saldo Pendiente</td>
+                                        <td>
+                                            <span
+                                                t-field="o.amount_residual"
+                                                t-options='{
+                                                    "widget": "monetary",
+                                                    "display_currency": o.currency_id
+                                                }'
+                                            />
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </t>
+
+                        <!-- Footer -->
+
+                        <div class="ticket-footer">
+
+                            <div>
+                                <strong>¡Gracias por su compra!</strong>
+                            </div>
+
+                            <div class="ticket-footer-secondary">
+                                Cuide su salud con Farmacia Caryvil
+                            </div>
+
+                            <div class="ticket-footer-secondary">
+                                Soyapango
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </t>
+
+        </t>
+
+    </template>
+
+</odoo>

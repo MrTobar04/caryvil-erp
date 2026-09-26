@@ -78,6 +78,31 @@ class AccountMoveInvoice(models.Model):
                 f"{decimales:02d}/100 USD"
             )
 
+    def _caryvil_get_discount_total(self):
+        self.ensure_one()
+
+        discount_total = 0.0
+
+        invoice_lines = self.invoice_line_ids.filtered(
+            lambda line: line.display_type == "product"
+        )
+
+        for invoice_line in invoice_lines:
+            sale_line = invoice_line.sale_line_ids[:1]
+
+            if not sale_line:
+                continue
+
+            discount = sale_line.discount or 0.0
+
+            discount_total += (
+                invoice_line.price_unit
+                * invoice_line.quantity
+                * discount
+                / 100.0
+            )
+
+        return self.currency_id.round(discount_total)
 
     def action_post(self):
         result = super().action_post()
