@@ -11,6 +11,10 @@ class TestSaleOrderMedicine(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
+        cls.company = cls.env.ref(
+            "caryvil_erp.company_farmacia_caryvil"
+        )
+
         cls.ingredient = cls.env["caryvil.active.ingredient"].create(
             {
                 "name": "Amoxicilina Test",
@@ -41,6 +45,7 @@ class TestSaleOrderMedicine(TransactionCase):
         return self.env["sale.order"].new(
             {
                 "partner_id": self.customer.id,
+                "company_id": self.company.id,
                 "payment_method": "efectivo",
             }
         )
