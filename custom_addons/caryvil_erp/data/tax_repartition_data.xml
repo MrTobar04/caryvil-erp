@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Configura la cuenta contable de las líneas de impuesto del IVA 13%. -->
+
+    <!-- IVA sobre facturas de cliente. -->
+    <function
+        model="account.tax.repartition.line"
+        name="write"
+    >
+        <function
+            model="account.tax.repartition.line"
+            name="search"
+            eval="[[
+                ('tax_id', '=', ref('caryvil_erp.tax_caryvil_iva_ventas_13')),
+                ('document_type', '=', 'invoice'),
+                ('repartition_type', '=', 'tax')
+            ]]"
+        />
+
+        <value
+            eval="{
+                'account_id': ref(
+                    'caryvil_erp.account_caryvil_iva_debito_fiscal'
+                )
+            }"
+        />
+    </function>
+
+    <!-- IVA sobre notas de crédito/devoluciones. -->
+    <function
+        model="account.tax.repartition.line"
+        name="write"
+    >
+        <function
+            model="account.tax.repartition.line"
+            name="search"
+            eval="[[
+                ('tax_id', '=', ref('caryvil_erp.tax_caryvil_iva_ventas_13')),
+                ('document_type', '=', 'refund'),
+                ('repartition_type', '=', 'tax')
+            ]]"
+        />
+
+        <value
+            eval="{
+                'account_id': ref(
+                    'caryvil_erp.account_caryvil_iva_debito_fiscal'
+                )
+            }"
+        />
+    </function>
+
+</odoo>
