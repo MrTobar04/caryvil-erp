@@ -46,8 +46,17 @@ INIT_FLAGS=()
 if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
     TABLE_CHECK=$(PGPASSWORD="${PASSWORD}" psql -h "${HOST}" -p "${DB_PORT}" -U "${USER}" -d "${DB_NAME}" -tAc "SELECT 1 FROM information_schema.tables WHERE table_name = 'ir_module_module';" 2>/dev/null || true)
     if [ "$TABLE_CHECK" != "1" ]; then
-        echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' no inicializada. Ejecutando inicialización automática (-i base,caryvil_erp) ==="
-        INIT_FLAGS=(-i "base,caryvil_erp")
+        echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' no inicializada. Instalando base y caryvil_erp (--stop-after-init --no-http)... ==="
+        odoo -c /etc/odoo/odoo.conf \
+            --db_host="${HOST}" \
+            --db_port="${DB_PORT}" \
+            --db_user="${USER}" \
+            --db_password="${PASSWORD}" \
+            -d "${DB_NAME}" \
+            -i "base,caryvil_erp" \
+            --stop-after-init \
+            --no-http
+        echo "=== [Caryvil ERP] Inicializacion de base de datos completada. ==="
     else
         echo "=== [Caryvil ERP] Base de datos '${DB_NAME}' ya inicializada. Sincronizando configuracion y assets... ==="
         # -----------------------------------------------------------------------
