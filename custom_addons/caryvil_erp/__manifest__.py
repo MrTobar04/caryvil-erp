@@ -40,6 +40,7 @@
         "data/tax_repartition_data.xml",
         "data/accounting_payment_data.xml",
         "data/pharmacy_categories_data.xml",
+        "data/pharmacy_removal_strategy_data.xml",
         "data/active_ingredients_data.xml",
         "data/pharmacy_uom_data.xml",
         "data/users_roles_data.xml",
