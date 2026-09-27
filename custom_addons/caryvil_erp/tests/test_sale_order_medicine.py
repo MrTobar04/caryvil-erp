@@ -278,4 +278,4 @@ class TestSaleOrderMedicine(TransactionCase):
         # Simular lectura de existencias por parte del cajero
         product_as_cashier = self.product.with_user(cashier_user)
         qty = product_as_cashier.qty_available
-        self.assertIsInstance(qty, float)
+        self.assertIsInstance(qty, float)

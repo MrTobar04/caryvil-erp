@@ -8,7 +8,8 @@ from odoo.tools import float_compare
 
 class ProductProductCaryvilSearch(models.Model):
 
-    #Extiende la búsqueda de variantes de productos para que también permita localizar medicamentos mediante su principio activo.
+    # Extiende la búsqueda de variantes de productos para que también
+    # permita localizar medicamentos mediante su principio activo.
 
     _inherit = "product.product"
 
@@ -52,6 +53,7 @@ class ProductProductCaryvilSearch(models.Model):
             order=order,
         )
 
+
 class SaleOrderLineCaryvilTax(models.Model):
     _inherit = "sale.order.line"
 
@@ -89,8 +91,9 @@ class SaleOrderLineCaryvilTax(models.Model):
 
             line.tax_id = tax
 
+
 class SaleOrderMedicine(models.Model):
-    
+
     # Extensión del flujo estándar de sale.order para la operación de ventas rápidas.
 
     _inherit = "sale.order"
@@ -212,7 +215,6 @@ class SaleOrderMedicine(models.Model):
                 )
 
     def _get_caryvil_requested_quantities(self):
-
         # Agrupa la cantidad solicitada por producto y la convierte a la unidad de medida base del producto.
         self.ensure_one()
 
@@ -236,9 +238,7 @@ class SaleOrderMedicine(models.Model):
         return requested
 
     def _check_caryvil_stock_availability(self):
-        
         # Validación inicial de existencias.
-
         self.ensure_one()
 
         requested_quantities = self._get_caryvil_requested_quantities()
@@ -267,9 +267,7 @@ class SaleOrderMedicine(models.Model):
                 )
 
     def _prepare_caryvil_sale_line_values(self, product):
-        
         # Prepara una línea de venta.
-        
         self.ensure_one()
 
         if self.pricelist_id:
@@ -286,7 +284,7 @@ class SaleOrderMedicine(models.Model):
             "caryvil_erp.tax_caryvil_iva_ventas_13",
             raise_if_not_found=False,
         )
-        
+
         if not caryvil_tax:
             raise UserError(
                 _(
@@ -294,7 +292,7 @@ class SaleOrderMedicine(models.Model):
                     "'IVA 13% Ventas Bienes Farmacéuticos'."
                 )
             )
-        
+
         taxes = caryvil_tax.filtered(
             lambda tax: (
                 not tax.company_id
@@ -305,7 +303,7 @@ class SaleOrderMedicine(models.Model):
 
         if not taxes:
             taxes = caryvil_tax[:1]
-        
+
         if self.fiscal_position_id:
             taxes = self.fiscal_position_id.map_tax(taxes)
 
@@ -319,8 +317,9 @@ class SaleOrderMedicine(models.Model):
         }
 
     def _add_caryvil_scanned_product(self, product):
-        # Agrega el producto escaneado a la venta. Si ya existe, incrementa la cantidad en lugar de crear una línea duplicada.
-        
+        # Agrega el producto escaneado a la venta. Si ya existe,
+        # incrementa la cantidad en lugar de crear una línea duplicada.
+
         self.ensure_one()
 
         existing_line = self.order_line.filtered(
@@ -347,10 +346,9 @@ class SaleOrderMedicine(models.Model):
 
     @api.onchange("caryvil_barcode_input")
     def _onchange_caryvil_barcode_input(self):
-        
         # Procesa automáticamente un EAN-13 cuando el lector termina de introducir el código.
-        # Los lectores USB configurados como teclado normalmente envían el código seguido de ENTER, lo que dispara el onchange.
-        
+        # Los lectores USB configurados como teclado normalmente envían el código seguido de ENTER.
+
         if not self.caryvil_barcode_input:
             return
 
@@ -398,7 +396,6 @@ class SaleOrderMedicine(models.Model):
         self.caryvil_barcode_input = False
 
     def _caryvil_get_invoice_action(self, invoices):
-        
         # Devuelve la acción de la factura.
 
         self.ensure_one()
@@ -423,7 +420,6 @@ class SaleOrderMedicine(models.Model):
         }
 
     def action_confirm_and_invoice(self):
-        
         # Flujo unificado para caja.
 
         self.ensure_one()
