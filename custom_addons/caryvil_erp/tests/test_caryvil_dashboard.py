@@ -114,9 +114,7 @@ class TestCaryvilDashboardSales(TransactionCase):
             }
         )
 
-        self.warehouse = self.env["stock.warehouse"].search(
-            [("company_id", "=", self.env.company.id)], limit=1
-        )
+        self.warehouse = self.env["stock.warehouse"].search([("company_id", "=", self.env.company.id)], limit=1)
 
         # Asegurar un diario de ventas para facturas
         self.journal_sale = self.env["account.journal"].search(
@@ -360,13 +358,17 @@ class TestCaryvilDashboardSales(TransactionCase):
     def _create_lot_with_stock(self, product, lot_name, days_to_expire, qty):
         """Helper para crear un lote con fecha de vencimiento y existencias físicas."""
         exp_date = fields.Datetime.now() + timedelta(days=days_to_expire)
-        lot = self.env["stock.lot"].with_context(bypass_expiration_check=True).create(
-            {
-                "name": lot_name,
-                "product_id": product.id,
-                "company_id": self.env.company.id,
-                "expiration_date": exp_date,
-            }
+        lot = (
+            self.env["stock.lot"]
+            .with_context(bypass_expiration_check=True)
+            .create(
+                {
+                    "name": lot_name,
+                    "product_id": product.id,
+                    "company_id": self.env.company.id,
+                    "expiration_date": exp_date,
+                }
+            )
         )
         if qty > 0:
             location = self.warehouse.lot_stock_id

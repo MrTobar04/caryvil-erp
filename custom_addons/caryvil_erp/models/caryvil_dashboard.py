@@ -212,11 +212,17 @@ class CaryvilSalesDashboard(models.TransientModel):
         """
         self._check_inventory_access()
 
-        critical_products = self.env["product.product"].search([
-            ("detailed_type", "=", "product"),
-            ("active", "=", True),
-            ("orderpoint_min_qty", ">", 0),
-        ]).filtered(lambda p: p.qty_available <= p.orderpoint_min_qty)
+        critical_products = (
+            self.env["product.product"]
+            .search(
+                [
+                    ("detailed_type", "=", "product"),
+                    ("active", "=", True),
+                    ("orderpoint_min_qty", ">", 0),
+                ]
+            )
+            .filtered(lambda p: p.qty_available <= p.orderpoint_min_qty)
+        )
 
         sorted_critical = sorted(
             critical_products,
