@@ -18,6 +18,7 @@ export class CaryvilSalesDashboard extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.actionService = useService("action");
         this.notification = useService("notification");
         this.canvasRef = useRef("salesChartCanvas");
         this.chart = null;
@@ -34,6 +35,12 @@ export class CaryvilSalesDashboard extends Component {
                 top_5_medicines: [],
                 currency: "$ USD",
             },
+            criticalData: {
+                critical_count: 0,
+                critical_list: [],
+            },
+            hasSalesAccess: true,
+            hasCriticalAccess: true,
             loading: true,
         });
 
@@ -43,7 +50,9 @@ export class CaryvilSalesDashboard extends Component {
         });
 
         useEffect(() => {
-            this.renderChart();
+            if (this.state.hasSalesAccess) {
+                this.renderChart();
+            }
             return () => {
                 if (this.chart) {
                     this.chart.destroy();
@@ -65,18 +74,31 @@ export class CaryvilSalesDashboard extends Component {
     }
 
     /**
-     * Carga de datos de KPIs llamando al servicio backend caryvil.dashboard.sales.
+     * Carga de datos de KPIs y alertas de stock llamando al servicio backend caryvil.dashboard.sales.
      */
     async loadDashboardData() {
         this.state.loading = true;
+
+        // Carga de KPIs de Ventas (Gerencial / Manager)
         try {
-            const data = await this.orm.call("caryvil.dashboard.sales", "get_sales_kpis", []);
-            Object.assign(this.state.kpiData, data);
+            const salesData = await this.orm.call("caryvil.dashboard.sales", "get_sales_kpis", []);
+            if (salesData) {
+                Object.assign(this.state.kpiData, salesData);
+                this.state.hasSalesAccess = true;
+            }
         } catch (error) {
-            console.error("Error al cargar KPIs de ventas:", error);
-            this.notification.add("No se pudieron cargar los datos del dashboard de ventas.", {
-                type: "danger",
-            });
+            this.state.hasSalesAccess = false;
+        }
+
+        // Carga de Alertas de Stock Crítico (Inventario / Manager)
+        try {
+            const criticalData = await this.orm.call("caryvil.dashboard.sales", "get_critical_stock_data", []);
+            if (criticalData) {
+                Object.assign(this.state.criticalData, criticalData);
+                this.state.hasCriticalAccess = true;
+            }
+        } catch (error) {
+            this.state.hasCriticalAccess = false;
         } finally {
             this.state.loading = false;
         }
@@ -90,6 +112,45 @@ export class CaryvilSalesDashboard extends Component {
             return;
         }
         await this.loadDashboardData();
+    }
+
+    /**
+     * Inicia la creación rápida de una Orden de Compra precargada para un medicamento crítico.
+     */
+    async onReorderProduct(productId) {
+        try {
+            const action = await this.orm.call(
+                "caryvil.dashboard.sales",
+                "action_reorder_product",
+                [productId]
+            );
+            if (action) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Error al reabastecer medicamento:", error);
+            this.notification.add("No se pudo iniciar la orden de reabastecimiento.", {
+                type: "danger",
+            });
+        }
+    }
+
+    /**
+     * Navega a la vista general de reglas de reabastecimiento.
+     */
+    async onViewAllCritical() {
+        try {
+            const action = await this.orm.call(
+                "caryvil.dashboard.sales",
+                "action_get_orderpoint_view",
+                []
+            );
+            if (action) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Error al abrir vista de reglas de reabastecimiento:", error);
+        }
     }
 
     /**

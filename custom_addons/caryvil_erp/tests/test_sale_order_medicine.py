@@ -11,7 +11,7 @@ class TestSaleOrderMedicine(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.company = cls.env.ref("caryvil_erp.company_farmacia_caryvil")
+        cls.company = cls.env.ref("base.main_company")
 
         cls.ingredient = cls.env["caryvil.active.ingredient"].create(
             {

@@ -16,6 +16,7 @@ def post_init_hook(env):
 
     company = env.ref("base.main_company", raise_if_not_found=False)
     tax_13 = env.ref("caryvil_erp.tax_caryvil_iva_ventas_13", raise_if_not_found=False)
+    account_recv = env.ref("caryvil_erp.account_caryvil_receivable", raise_if_not_found=False)
 
     if company:
         company_vals = {
@@ -30,6 +31,15 @@ def post_init_hook(env):
         if tax_13:
             company_vals["account_sale_tax_id"] = tax_13.id
         company.sudo().write(company_vals)
+
+        # Configurar la cuenta por cobrar por defecto para los clientes
+        if account_recv:
+            env["ir.property"].sudo()._set_default(
+                "property_account_receivable_id",
+                "res.partner",
+                account_recv,
+                company,
+            )
 
         # Garantizar que los usuarios clave tengan asignada la compañía principal
         users = (

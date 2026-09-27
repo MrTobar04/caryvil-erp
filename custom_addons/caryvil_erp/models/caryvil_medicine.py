@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class CaryvilTherapeuticCategory(models.Model):
@@ -57,6 +57,22 @@ class ProductTemplateMedicine(models.Model):
 
     prescription_required = fields.Boolean(string="Requiere Receta Médica", default=False)
 
+    orderpoint_min_qty = fields.Float(
+        string="Stock Mínimo de Seguridad",
+        compute="_compute_orderpoint_min_qty",
+        search="_search_orderpoint_min_qty",
+        help="Cantidad mínima de existencia de seguridad configurada en las reglas de reabastecimiento.",
+    )
+
+    @api.depends("product_variant_ids.orderpoint_min_qty")
+    def _compute_orderpoint_min_qty(self):
+        for tmpl in self:
+            tmpl.orderpoint_min_qty = sum(tmpl.product_variant_ids.mapped("orderpoint_min_qty"))
+
+    def _search_orderpoint_min_qty(self, operator, value):
+        orderpoints = self.env["stock.warehouse.orderpoint"].search([("product_min_qty", operator, value)])
+        return [("product_tmpl_id", "in", orderpoints.mapped("product_tmpl_id").ids)]
+
 
 class ProductProductMedicine(models.Model):
     _inherit = "product.product"
@@ -68,3 +84,21 @@ class ProductProductMedicine(models.Model):
             "El código de barras debe ser único por producto.",
         )
     ]
+
+    orderpoint_min_qty = fields.Float(
+        string="Stock Mínimo de Seguridad",
+        compute="_compute_orderpoint_min_qty",
+        search="_search_orderpoint_min_qty",
+        help="Cantidad mínima de existencia de seguridad configurada en las reglas de reabastecimiento.",
+    )
+
+    @api.depends("orderpoint_ids.product_min_qty")
+    def _compute_orderpoint_min_qty(self):
+        for prod in self:
+            prod.orderpoint_min_qty = sum(prod.orderpoint_ids.mapped("product_min_qty"))
+
+    def _search_orderpoint_min_qty(self, operator, value):
+        orderpoints = self.env["stock.warehouse.orderpoint"].search([
+            ("product_min_qty", operator, value)
+        ])
+        return [("id", "in", orderpoints.mapped("product_id").ids)]

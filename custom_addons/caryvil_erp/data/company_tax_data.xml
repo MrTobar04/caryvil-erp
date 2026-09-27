@@ -14,7 +14,7 @@
                 (
                     'id',
                     '=',
-                    ref('caryvil_erp.company_farmacia_caryvil')
+                    ref('base.main_company')
                 )
             ]]"
         />
