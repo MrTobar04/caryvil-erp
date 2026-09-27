@@ -207,7 +207,9 @@ class CaryvilSalesDashboard(models.TransientModel):
 
     @api.model
     def get_critical_stock_data(self):
-        """Retorna el conteo total y listado de los productos almacenables en situación de stock crítico (qty_available <= orderpoint_min_qty)."""
+        """Retorna el conteo total y listado de los productos almacenables en situación
+        de stock crítico (qty_available <= orderpoint_min_qty).
+        """
         self._check_inventory_access()
 
         critical_products = self.env["product.product"].search([
@@ -279,7 +281,9 @@ class CaryvilSalesDashboard(models.TransientModel):
 
     @api.model
     def action_reorder_product(self, product_id):
-        """Abre un borrador de Orden de Compra precargado con el proveedor, medicamento y cantidad sugerida de reposición."""
+        """Abre un borrador de Orden de Compra precargado con el proveedor,
+        medicamento y cantidad sugerida de reposición.
+        """
         self._check_inventory_access()
         product = self.env["product.product"].browse(product_id)
         if not product.exists():
@@ -322,9 +326,9 @@ class CaryvilSalesDashboard(models.TransientModel):
         po_uom = product.uom_po_id or product.uom_id
 
         if po:
-            line = po.order_line.filtered(lambda l: l.product_id == product)
-            if line:
-                line.write({"product_qty": qty_to_order})
+            order_line = po.order_line.filtered(lambda l_item: l_item.product_id == product)
+            if order_line:
+                order_line.write({"product_qty": qty_to_order})
             else:
                 self.env["purchase.order.line"].create(
                     {
@@ -382,4 +386,3 @@ class CaryvilSalesDashboard(models.TransientModel):
         action = self.env.ref("stock.action_orderpoint").read()[0]
         action["name"] = _("Productos con Reglas de Reabastecimiento")
         return action
-

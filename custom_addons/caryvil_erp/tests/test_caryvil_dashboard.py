@@ -314,9 +314,13 @@ class TestCaryvilDashboardSales(TransactionCase):
         if po_id:
             po = self.env["purchase.order"].browse(po_id)
             self.assertEqual(po.partner_id, self.vendor, "El proveedor debe ser el habitual")
-            line = po.order_line.filtered(lambda l: l.product_id == self.product_a)
+            line = po.order_line.filtered(lambda line_item: line_item.product_id == self.product_a)
             self.assertTrue(line, "Debe existir una línea para Amoxicilina 500mg")
-            self.assertEqual(line.product_qty, 45.0, "La cantidad sugerida debe ser max (50) - stock (5) = 45 o el déficit")
+            self.assertEqual(
+                line.product_qty,
+                45.0,
+                "La cantidad sugerida debe ser max (50) - stock (5) = 45 o el déficit",
+            )
 
     def test_09_scenario_3_alert_disappears_after_replenishment(self):
         """Escenario 3 de SPEC-4.2.1: Desaparición de la alerta tras reabastecimiento.
@@ -352,4 +356,3 @@ class TestCaryvilDashboardSales(TransactionCase):
         dashboard_inventory = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
         result = dashboard_inventory.get_critical_stock_data()
         self.assertIsInstance(result, dict)
-
