@@ -14,3 +14,4 @@ from . import caryvil_dashboard  # noqa: F401
 from . import stock_scrap_medicine  # noqa: F401
 from . import sale_order_medicine  # noqa: F401
 from . import account_move_invoice  # noqa: F401
+from . import ir_actions_report  # noqa: F401
