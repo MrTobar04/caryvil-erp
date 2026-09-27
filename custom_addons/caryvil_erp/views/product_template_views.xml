@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================ -->
+        <!-- Extensión de la Ficha de Medicamento con Pestaña de Reorden      -->
+        <!-- SPEC-7.2.2: Pestaña "Niveles de Stock y Reorden"                 -->
+        <!-- ================================================================ -->
+        <record id="view_product_template_form_caryvil_reordering" model="ir.ui.view">
+            <field name="name">product.template.form.caryvil.reordering</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="priority">25</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='pharma_information']" position="after">
+                    <page string="Niveles de Stock y Reorden" name="stock_reordering_levels">
+                        <field name="orderpoint_ids" context="{'default_product_id': product_variant_id}">
+                            <tree editable="bottom" decoration-warning="suggested_replenishment_qty &gt; 0">
+                                <field name="company_id" column_invisible="True"/>
+                                <field name="location_id" options="{'no_create': True}" string="Ubicación"/>
+                                <field name="product_min_qty" string="Stock Mínimo"/>
+                                <field name="product_max_qty" string="Stock Máximo"/>
+                                <field name="qty_multiple" string="Múltiplo Compra"/>
+                                <field name="suggested_replenishment_qty" readonly="1" string="Cant. Sugerida"/>
+                                <field name="trigger" string="Disparo"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

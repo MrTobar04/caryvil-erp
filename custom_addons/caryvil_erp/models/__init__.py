@@ -7,5 +7,13 @@ from . import stock_picking_reception  # noqa: F401
 from . import res_company_caryvil  # noqa: F401
 from . import caryvil_medicine  # noqa: F401
 from . import stock_lot_medicine  # noqa: F401
+from . import stock_removal_fefo  # noqa: F401
 from . import purchase_order_abono  # noqa: F401
+from . import stock_reordering_rules  # noqa: F401
+from . import stock_inventory_adjustment  # noqa: F401
+from . import caryvil_dashboard  # noqa: F401
+from . import stock_scrap_medicine  # noqa: F401
 from . import sale_order_medicine  # noqa: F401
+from . import account_move_invoice  # noqa: F401
+from . import ir_actions_report  # noqa: F401
+from . import spreadsheet_dashboard_fix  # noqa: F401

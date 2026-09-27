@@ -1,0 +1,815 @@
+/* ==========================================================================
+   Dashboard de KPIs de Ventas & Alertas - Farmacia Caryvil ERP
+   SPEC-4.1.1 & SPEC-4.2.1: Estilos visuales modernos y responsivos
+   ========================================================================== */
+
+.o_caryvil_dashboard {
+    background-color: #f8fafc;
+    height: 100%;
+    min-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1.5rem 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    box-sizing: border-box;
+
+    /* Encabezado Principal */
+    .o_caryvil_dashboard_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        background: #ffffff;
+        padding: 1.25rem 1.75rem;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+        border: 1px solid #e2e8f0;
+
+        .header_title_block {
+            .dashboard_badge {
+                display: inline-block;
+                background: linear-gradient(135deg, #005b60 0%, #00a896 100%);
+                color: #ffffff;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                padding: 0.25rem 0.65rem;
+                border-radius: 9999px;
+                margin-bottom: 0.35rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #0f172a;
+                margin: 0;
+            }
+
+            p {
+                font-size: 0.875rem;
+                color: #64748b;
+                margin: 0.25rem 0 0 0;
+            }
+        }
+
+        .header_actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .btn_refresh {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                background-color: #005b60;
+                color: #ffffff;
+                border: none;
+                font-weight: 600;
+                font-size: 0.875rem;
+                padding: 0.6rem 1.25rem;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 4px rgba(0, 91, 96, 0.2);
+
+                &:hover {
+                    background-color: #00474b;
+                    box-shadow: 0 4px 6px rgba(0, 91, 96, 0.3);
+                    transform: translateY(-1px);
+                }
+
+                &:active {
+                    transform: translateY(0);
+                }
+
+                &.is_loading {
+                    opacity: 0.8;
+                    cursor: not-allowed;
+
+                    i {
+                        animation: spin 1s infinite linear;
+                    }
+                }
+            }
+        }
+    }
+
+    /* Cuadrícula de Tarjetas KPI */
+    .kpi_grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+
+        .kpi_card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s ease;
+
+            &:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+                border-color: #cbd5e1;
+            }
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: #005b60;
+            }
+
+            &.card_sales_today::before {
+                background: linear-gradient(to bottom, #005b60, #00a896);
+            }
+
+            &.card_transactions::before {
+                background: linear-gradient(to bottom, #028090, #00a896);
+            }
+
+            &.card_avg_ticket::before {
+                background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+            }
+
+            &.card_month_sales::before {
+                background: linear-gradient(to bottom, #10b981, #34d399);
+            }
+
+            .card_top {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 0.75rem;
+
+                .card_label {
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    color: #64748b;
+                    text-transform: uppercase;
+                    letter-spacing: 0.025em;
+                }
+
+                .card_icon_wrap {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.15rem;
+
+                    &.teal {
+                        background-color: #e6f6f5;
+                        color: #005b60;
+                    }
+
+                    &.blue {
+                        background-color: #eff6ff;
+                        color: #2563eb;
+                    }
+
+                    &.indigo {
+                        background-color: #eef2ff;
+                        color: #4f46e5;
+                    }
+
+                    &.green {
+                        background-color: #ecfdf5;
+                        color: #059669;
+                    }
+                }
+            }
+
+            .card_value {
+                font-size: 2rem;
+                font-weight: 800;
+                color: #0f172a;
+                line-height: 1.1;
+                margin-bottom: 0.5rem;
+            }
+
+            .card_footer {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.8125rem;
+
+                .growth_pill {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.25rem;
+                    padding: 0.15rem 0.5rem;
+                    border-radius: 9999px;
+                    font-weight: 600;
+                    font-size: 0.75rem;
+
+                    &.positive {
+                        background-color: #dcfce7;
+                        color: #15803d;
+                    }
+
+                    &.negative {
+                        background-color: #fee2e2;
+                        color: #b91c1c;
+                    }
+                }
+
+                .footer_subtext {
+                    color: #64748b;
+                }
+            }
+        }
+    }
+
+    /* Paneles Generales */
+    .dashboard_panel {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+        .panel_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
+
+            .panel_title_group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+
+                .panel_title {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    color: #0f172a;
+
+                    i {
+                        color: #005b60;
+                    }
+                }
+
+                .panel_subtitle {
+                    font-size: 0.8125rem;
+                    color: #64748b;
+                }
+            }
+
+            .panel_title {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #0f172a;
+
+                i {
+                    color: #005b60;
+                }
+            }
+
+            .panel_subtitle {
+                font-size: 0.8125rem;
+                color: #64748b;
+            }
+        }
+
+        .chart_container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        /* Tabla de Ranking */
+        .ranking_table {
+            width: 100%;
+            border-collapse: collapse;
+
+            thead {
+                th {
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    color: #64748b;
+                    padding: 0.5rem 0.75rem;
+                    border-bottom: 2px solid #e2e8f0;
+                    text-align: left;
+
+                    &.text_end {
+                        text-align: right;
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    border-bottom: 1px solid #f1f5f9;
+                    transition: background-color 0.15s ease;
+
+                    &:hover {
+                        background-color: #f8fafc;
+                    }
+
+                    td {
+                        padding: 0.75rem;
+                        font-size: 0.875rem;
+                        vertical-align: middle;
+
+                        &.text_end {
+                            text-align: right;
+                        }
+
+                        .rank_badge {
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 26px;
+                            height: 26px;
+                            border-radius: 50%;
+                            font-weight: 700;
+                            font-size: 0.75rem;
+
+                            &.rank_1 {
+                                background: #fef3c7;
+                                color: #b45309;
+                            }
+
+                            &.rank_2 {
+                                background: #e2e8f0;
+                                color: #475569;
+                            }
+
+                            &.rank_3 {
+                                background: #fed7aa;
+                                color: #c2410c;
+                            }
+
+                            &.rank_other {
+                                background: #f1f5f9;
+                                color: #64748b;
+                            }
+                        }
+
+                        .med_info {
+                            .med_name {
+                                font-weight: 600;
+                                color: #0f172a;
+                                line-height: 1.2;
+                            }
+
+                            .med_code {
+                                font-size: 0.75rem;
+                                color: #94a3b8;
+                            }
+                        }
+
+                        .units_badge {
+                            display: inline-block;
+                            padding: 0.2rem 0.5rem;
+                            border-radius: 6px;
+                            background-color: #f1f5f9;
+                            font-weight: 600;
+                            color: #334155;
+                            font-size: 0.8125rem;
+                        }
+
+                        .amount_strong {
+                            font-weight: 700;
+                            color: #005b60;
+                        }
+                    }
+                }
+            }
+        }
+
+        .empty_state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1rem;
+            color: #94a3b8;
+            text-align: center;
+
+            i {
+                font-size: 2.5rem;
+                margin-bottom: 0.75rem;
+                color: #cbd5e1;
+            }
+
+            p {
+                margin: 0;
+                font-size: 0.875rem;
+            }
+
+            &.success_state {
+                i {
+                    color: #10b981;
+                }
+            }
+        }
+
+        /* Estilos específicos para la sección de Stock Crítico */
+        &.panel_critical_stock {
+            border-left: 4px solid #dc3545;
+
+            .panel_header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .panel_title_group {
+                    .panel_title {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+
+                        .critical_badge_pulse {
+                            background-color: #dc3545;
+                            color: #ffffff;
+                            font-size: 0.75rem;
+                            font-weight: 700;
+                            padding: 0.2rem 0.6rem;
+                            border-radius: 9999px;
+                            animation: pulse_critical 2s infinite;
+                            margin-left: 0.5rem;
+                        }
+                    }
+                }
+
+                .btn_view_all {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    background: transparent;
+                    border: 1px solid #cbd5e1;
+                    color: #475569;
+                    padding: 0.35rem 0.75rem;
+                    border-radius: 6px;
+                    font-size: 0.8125rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        background-color: #f1f5f9;
+                        color: #0f172a;
+                        border-color: #94a3b8;
+                    }
+                }
+            }
+
+            .table_responsive {
+                overflow-x: auto;
+                width: 100%;
+            }
+
+            .critical_stock_table {
+                width: 100%;
+                border-collapse: collapse;
+
+                th {
+                    background-color: #f8fafc;
+                    color: #475569;
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    padding: 0.75rem;
+                    border-bottom: 2px solid #e2e8f0;
+                    text-align: left;
+
+                    &.text_center {
+                        text-align: center;
+                    }
+
+                    &.text_end {
+                        text-align: right;
+                    }
+                }
+
+                tbody {
+                    tr {
+                        border-bottom: 1px solid #f1f5f9;
+                        transition: background-color 0.15s ease;
+
+                        &:hover {
+                            background-color: #fff5f5;
+                        }
+
+                        td {
+                            padding: 0.75rem;
+                            font-size: 0.875rem;
+                            vertical-align: middle;
+
+                            &.text_center {
+                                text-align: center;
+                            }
+
+                            &.text_end {
+                                text-align: right;
+                            }
+
+                            .category_badge {
+                                display: inline-block;
+                                padding: 0.2rem 0.5rem;
+                                background-color: #e0f2fe;
+                                color: #0369a1;
+                                border-radius: 4px;
+                                font-size: 0.75rem;
+                                font-weight: 600;
+                            }
+
+                            .stock_badge {
+                                display: inline-block;
+                                padding: 0.25rem 0.55rem;
+                                border-radius: 6px;
+                                font-weight: 700;
+                                font-size: 0.8125rem;
+
+                                &.badge_danger {
+                                    background-color: #fee2e2;
+                                    color: #dc3545;
+                                }
+
+                                &.badge_secondary {
+                                    background-color: #f1f5f9;
+                                    color: #64748b;
+                                }
+                            }
+
+                            .deficit_badge {
+                                display: inline-block;
+                                padding: 0.25rem 0.55rem;
+                                background-color: #7f1d1d;
+                                color: #ffffff;
+                                border-radius: 6px;
+                                font-weight: 700;
+                                font-size: 0.8125rem;
+                            }
+
+                            .btn_reorder {
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 0.4rem;
+                                background-color: #10b981;
+                                color: #ffffff;
+                                border: none;
+                                padding: 0.4rem 0.75rem;
+                                border-radius: 6px;
+                                font-size: 0.8125rem;
+                                font-weight: 600;
+                                cursor: pointer;
+                                box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+                                transition: all 0.2s ease;
+
+                                &:hover {
+                                    background-color: #059669;
+                                    transform: translateY(-1px);
+                                    box-shadow: 0 3px 6px rgba(16, 185, 129, 0.4);
+                                }
+
+                                &:active {
+                                    transform: translateY(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Panel de Alertas de Vencimiento de Lotes (SPEC-4.2.2) */
+    .panel_expiring_lots {
+        .expiring_cards_grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+            }
+
+            .expiring_card {
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+                }
+
+                &.active {
+                    border-width: 2px;
+                }
+
+                &.critical_card {
+                    &.active {
+                        border-color: #dc2626;
+                        background-color: #fef2f2;
+                    }
+                    .badge_dot { background-color: #dc2626; }
+                }
+
+                &.warning_card {
+                    &.active {
+                        border-color: #d97706;
+                        background-color: #fffbeb;
+                    }
+                    .badge_dot { background-color: #d97706; }
+                }
+
+                &.notice_card {
+                    &.active {
+                        border-color: #2563eb;
+                        background-color: #eff6ff;
+                    }
+                    .badge_dot { background-color: #2563eb; }
+                }
+
+                .exp_card_header {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+
+                    .badge_dot {
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 50%;
+                    }
+
+                    .exp_card_label {
+                        font-size: 0.8125rem;
+                        font-weight: 600;
+                        color: #475569;
+                    }
+                }
+
+                .exp_card_value {
+                    font-size: 1.75rem;
+                    font-weight: 800;
+                    line-height: 1;
+                    margin-bottom: 0.35rem;
+                }
+
+                .exp_card_sub {
+                    font-size: 0.75rem;
+                    color: #64748b;
+                }
+            }
+        }
+
+        .expiring_lots_table {
+            width: 100%;
+            border-collapse: collapse;
+
+            th {
+                background-color: #f8fafc;
+                color: #475569;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                padding: 0.75rem 1rem;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            td {
+                padding: 0.85rem 1rem;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+                font-size: 0.875rem;
+
+                .lot_badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.35rem;
+                    background-color: #f1f5f9;
+                    color: #334155;
+                    font-family: monospace;
+                    font-size: 0.8125rem;
+                    font-weight: 600;
+                    padding: 0.25rem 0.6rem;
+                    border-radius: 6px;
+                    border: 1px solid #cbd5e1;
+                }
+
+                .location_tag {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.35rem;
+                    color: #64748b;
+                    font-size: 0.8125rem;
+                }
+
+                .badge_warning {
+                    background-color: #fef3c7;
+                    color: #92400e;
+                }
+
+                .badge_info {
+                    background-color: #dbeafe;
+                    color: #1e40af;
+                }
+
+                .btn_action_group {
+                    display: inline-flex;
+                    gap: 0.5rem;
+
+                    .btn_lot_trace {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.35rem;
+                        background-color: #0284c7;
+                        color: #ffffff;
+                        border: none;
+                        padding: 0.35rem 0.65rem;
+                        border-radius: 6px;
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+
+                        &:hover {
+                            background-color: #0369a1;
+                        }
+                    }
+
+                    .btn_quarantine {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.35rem;
+                        background-color: #dc2626;
+                        color: #ffffff;
+                        border: none;
+                        padding: 0.35rem 0.65rem;
+                        border-radius: 6px;
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+
+                        &:hover {
+                            background-color: #b91c1c;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Sección de Contenido Inferior (Gráfico + Ranking) */
+    .dashboard_content_grid {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: 1.5rem;
+
+        @media (max-width: 992px) {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse_critical {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}

@@ -13,6 +13,17 @@ Valida el cumplimiento de criterios de aceptación y Definition of Done:
 import os
 import subprocess
 import urllib.request
+import pytest
+
+
+def _is_docker_available():
+    """Retorna True si Docker Daemon y los contenedores de Caryvil ERP están disponibles."""
+    try:
+        cmd = ["docker", "compose", "-f", "infra/compose/docker-compose.yml", "ps"]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+        return result.returncode == 0
+    except Exception:
+        return False
 
 
 def test_odoo_conf_files_exist_locally():
@@ -29,6 +40,46 @@ def test_odoo_conf_files_exist_locally():
     assert "$DB_HOST" in template_content or "$HOST" in template_content
 
 
+def test_odoo_conf_static_content():
+    """Valida estáticamente los parámetros requeridos por SPEC-1.1.2 en odoo.conf."""
+    infra_conf = os.path.join("infra", "config", "odoo.conf")
+    with open(infra_conf, "r", encoding="utf-8") as f:
+        conf_text = f.read()
+
+    assert "addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons" in conf_text
+    assert "proxy_mode = True" in conf_text
+    assert "workers = 0" in conf_text
+    assert "max_cron_threads = 1" in conf_text
+    assert "limit_time_cpu = 120" in conf_text
+    assert "limit_time_real = 240" in conf_text
+    assert "limit_memory_soft = 671088640" in conf_text
+    assert "limit_memory_hard = 805306368" in conf_text
+    assert "log_level = info" in conf_text
+    assert "log_handler = :INFO" in conf_text
+
+
+def test_requirements_txt_content():
+    """Valida que requirements.txt contenga todas las dependencias Python requeridas."""
+    req_file = "requirements.txt"
+    assert os.path.exists(req_file), f"No se encontró {req_file}"
+
+    with open(req_file, "r", encoding="utf-8") as f:
+        req_text = f.read()
+
+    assert "num2words" in req_text
+    assert "phonenumbers" in req_text
+    assert "qrcode" in req_text
+    assert "psycopg2-binary" in req_text
+    assert "python-dotenv" in req_text
+
+
+def test_custom_module_manifest_exists_locally():
+    """Valida que el manifiesto del módulo caryvil_erp exista localmente en custom_addons."""
+    manifest_path = os.path.join("custom_addons", "caryvil_erp", "__manifest__.py")
+    assert os.path.exists(manifest_path), f"Manifiesto no encontrado en {manifest_path}"
+
+
+@pytest.mark.skipif(not _is_docker_available(), reason="Entorno Docker no disponible")
 def test_odoo_conf_mounted_in_container():
     """Valida que /etc/odoo/odoo.conf exista dentro del contenedor caryvil-web."""
     cmd = [
@@ -51,6 +102,7 @@ def test_odoo_conf_mounted_in_container():
     assert "workers = 0" in conf_content
 
 
+@pytest.mark.skipif(not _is_docker_available(), reason="Entorno Docker no disponible")
 def test_odoo_conf_addons_path_includes_extra_addons():
     """Valida que la directiva addons_path incluya la ruta de módulos personalizados /mnt/extra-addons."""
     cmd = [
@@ -74,6 +126,7 @@ def test_odoo_conf_addons_path_includes_extra_addons():
     assert "/usr/lib/python3/dist-packages/odoo/addons" in addons_line
 
 
+@pytest.mark.skipif(not _is_docker_available(), reason="Entorno Docker no disponible")
 def test_odoo_conf_resource_and_worker_limits():
     """Valida las directivas de consumo de memoria, límites de tiempo de CPU y trabajadores."""
     cmd = [
@@ -100,6 +153,7 @@ def test_odoo_conf_resource_and_worker_limits():
     assert "log_level = info" in conf_text
 
 
+@pytest.mark.skipif(not _is_docker_available(), reason="Entorno Docker no disponible")
 def test_python_dependencies_import_and_execution():
     """Valida que las librerías num2words, phonenumbers, qrcode, psycopg2 y dotenv funcionen en el runtime."""
     python_eval_script = (
@@ -133,6 +187,7 @@ def test_python_dependencies_import_and_execution():
     assert "PYTHON_DEPS_OK" in result.stdout
 
 
+@pytest.mark.skipif(not _is_docker_available(), reason="Entorno Docker no disponible")
 def test_http_proxy_mode_reverse_proxy_headers():
     """Valida que Odoo procese peticiones HTTP simulando el proxy inverso de Render (HTTPS / Forwarded).
 
@@ -174,6 +229,7 @@ def test_http_proxy_mode_reverse_proxy_headers():
         ), f"El encabezado Location ({location}) no respeta el esquema HTTPS del proxy inverso"
 
 
+@pytest.mark.skipif(not _is_docker_available(), reason="Entorno Docker no disponible")
 def test_custom_module_caryvil_erp_discoverable():
     """Valida que el módulo custom caryvil_erp sea accesible dentro del path /mnt/extra-addons."""
     cmd = [

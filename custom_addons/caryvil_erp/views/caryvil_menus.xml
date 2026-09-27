@@ -16,7 +16,8 @@
                   name="Dashboard"
                   parent="menu_caryvil_root"
                   sequence="10"
-                  groups="caryvil_erp.group_caryvil_manager"/>
+                  action="action_caryvil_sales_dashboard"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_ventas"
                   name="Ventas y Caja"
@@ -69,6 +70,13 @@
                   action="action_caryvil_medicamentos"
                   sequence="10"/>
 
+        <menuitem id="menu_caryvil_lotes_medicamentos"
+                  name="Lotes y Caducidades"
+                  parent="menu_caryvil_inventario"
+                  action="stock.action_production_lot_form"
+                  sequence="15"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
+
         <menuitem id="menu_caryvil_principios_activos"
                   name="Principios Activos"
                   parent="menu_caryvil_inventario"
@@ -82,6 +90,20 @@
                   action="action_caryvil_therapeutic_category"
                   sequence="30"
                   groups="caryvil_erp.group_caryvil_cashier"/>
+
+        <menuitem id="menu_caryvil_reordering_rules"
+                  name="Reglas de Reabastecimiento"
+                  parent="menu_caryvil_inventario"
+                  action="stock.action_orderpoint"
+                  sequence="18"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
+
+        <menuitem id="menu_caryvil_compras_reabastecimiento"
+                  name="Planificador de Reabastecimiento"
+                  parent="menu_caryvil_compras"
+                  action="stock.action_orderpoint_replenish"
+                  sequence="15"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
 
         <!-- Submenús de Configuración Farmacológica -->
         <menuitem id="menu_caryvil_config_farmacologia"
@@ -101,5 +123,34 @@
                   parent="menu_caryvil_config_farmacologia"
                   action="action_caryvil_therapeutic_category"
                   sequence="20"/>
+
+        <!-- ================================================================ -->
+        <!-- Ocultamiento de Menús Raíz Nativos de Odoo (Modo Desarrollador)  -->
+        <!-- Mantiene solo visible el menú unificado de Farmacia Caryvil      -->
+        <!-- ================================================================ -->
+        <record id="spreadsheet_dashboard.spreadsheet_dashboard_menu_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+
+        <record id="sale.sale_menu_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+
+        <record id="stock.menu_stock_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+
+        <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+
+        <record id="account.menu_finance" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+
+        <record id="contacts.menu_contacts" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
     </data>
 </odoo>
+

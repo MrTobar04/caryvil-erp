@@ -100,12 +100,23 @@ Diseñar, implementar y controlar el proceso formal de descarte, desincorporaci�
   * **Mitigation:** Identificar físicamente el área de cuarentena en la farmacia y registrar inmediatamente en el ERP la transferencia virtual.
 
 ## 10. Deliverables & Config as Code
-* Archivo `custom_addons/caryvil_erp/models/stock_scrap_medicine.py`.
-* Extensión de vista en `views/stock_scrap_views.xml`.
+* Modelo Python: `custom_addons/caryvil_erp/models/stock_scrap_medicine.py`.
+* Extensión de vista: `custom_addons/caryvil_erp/views/stock_scrap_views.xml`.
+* Configuración de ubicación virtual: `custom_addons/caryvil_erp/data/stock_scrap_location.xml`.
+* Plantilla y acción de reporte PDF:
+  * `custom_addons/caryvil_erp/reports/stock_scrap_report.xml`.
+  * `custom_addons/caryvil_erp/reports/stock_scrap_report_action.xml`.
+* Suite de pruebas automatizadas: `custom_addons/caryvil_erp/tests/test_stock_scrap_medicine.py`.
+* Guion de pruebas manuales: `docs/guias/guion-pruebas-manuales.md` (Flujo 7.6).
 
 ## 11. Definition of Done (DoD)
-* [ ] Modelo `stock.scrap` extendido con causas farmacéuticas y cálculo de costo.
-* [ ] Obligatoriedad de asignación de lote validada.
-* [ ] Ubicación virtual de desecho configurada.
-* [ ] Pruebas unitarias aprobadas al 100%.
-* [ ] Aprobación del procedimiento de bajas por la administración de Farmacia Caryvil.
+* [x] Modelo `stock.scrap` extendido con causas farmacéuticas y cálculo de costo con conversión de UdM.
+* [x] Obligatoriedad de asignación de lote validada para productos con trazabilidad.
+* [x] Restricción de existencia física disponible validada contra el inventario del lote.
+* [x] Bloqueo transaccional contra bypass de autorización en llamadas directas a `do_scrap()`.
+* [x] Ubicación virtual de desecho configurada e integrada en el flujo operativo.
+* [x] Registro inmutable del usuario autorizador y fecha/hora de autorización.
+* [x] Emisión del Acta de Merma y Destrucción Farmacéutica en formato PDF.
+* [x] Pruebas unitarias ampliadas y aprobadas al 100% (8/8 tests).
+* [x] Flujo de verificación manual incorporado en el guion de pruebas manuales.
+
