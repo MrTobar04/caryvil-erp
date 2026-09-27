@@ -97,8 +97,8 @@ Diseñar e implementar el componente visual de monitoreo y alerta de **Stock Cr�
 * Componente XML en `views/caryvil_dashboard_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Widget de stock crítico implementado y visible en el Dashboard.
-* [ ] Contador y listado de productos en alerta vinculados con el stock real.
-* [ ] Botón de acción rápida "Reabastecer" funcionando y precargando la Orden de Compra.
-* [ ] Pruebas unitarias ejecutadas y aprobadas.
-* [ ] Validación funcional con el encargado de inventario de Caryvil.
+* [x] Widget de stock crítico implementado y visible en el Dashboard.
+* [x] Contador y listado de productos en alerta vinculados con el stock real.
+* [x] Botón de acción rápida "Reabastecer" funcionando y precargando la Orden de Compra.
+* [x] Pruebas unitarias ejecutadas y aprobadas.
+* [x] Validación funcional con el encargado de inventario de Caryvil.
