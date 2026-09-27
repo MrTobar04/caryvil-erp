@@ -27,6 +27,7 @@
         "sale_management",
         "account",
         "uom",
+        "spreadsheet_dashboard",
     ],
     "data": [
         "security/caryvil_security.xml",
