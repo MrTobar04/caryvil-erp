@@ -190,6 +190,142 @@
                 </div>
             </t>
 
+            <!-- Sección de Alertas de Vencimiento de Lotes (Visibles para Inventario & Manager) -->
+            <t t-if="state.hasExpiringAccess">
+                <div class="dashboard_panel panel_expiring_lots mb-4">
+                    <div class="panel_header">
+                        <div class="panel_title_group">
+                            <div class="panel_title">
+                                <i class="fa fa-clock-o text-warning"/>
+                                <span>Alertas Tempranas de Vencimiento de Lotes</span>
+                            </div>
+                            <span class="panel_subtitle">Monitoreo preventivo FEFO de caducidad en 3 horizontes estratégicos (30, 60 y 90 días)</span>
+                        </div>
+                    </div>
+
+                    <!-- Tarjetas de Conteo por Nivel de Urgencia -->
+                    <div class="expiring_cards_grid mb-3">
+                        <div class="expiring_card critical_card" t-att-class="{ 'active': state.activeLotTab === 'critical' }" t-on-click="() => this.onSelectLotTab('critical')">
+                            <div class="exp_card_header">
+                                <span class="badge_dot dot_critical"/>
+                                <span class="exp_card_label">Nivel Crítico (&lt; 30 días)</span>
+                            </div>
+                            <div class="exp_card_value text-danger">
+                                <t t-esc="state.expiringLotsData.count_critical_30 || 0"/>
+                            </div>
+                            <div class="exp_card_sub">Lote(s) para retiro / devolución urgente</div>
+                        </div>
+
+                        <div class="expiring_card warning_card" t-att-class="{ 'active': state.activeLotTab === 'warning' }" t-on-click="() => this.onSelectLotTab('warning')">
+                            <div class="exp_card_header">
+                                <span class="badge_dot dot_warning"/>
+                                <span class="exp_card_label">Nivel Alerta (31 a 60 días)</span>
+                            </div>
+                            <div class="exp_card_value text-warning">
+                                <t t-esc="state.expiringLotsData.count_warning_60 || 0"/>
+                            </div>
+                            <div class="exp_card_sub">Lote(s) a priorizar rotación (FEFO)</div>
+                        </div>
+
+                        <div class="expiring_card notice_card" t-att-class="{ 'active': state.activeLotTab === 'notice' }" t-on-click="() => this.onSelectLotTab('notice')">
+                            <div class="exp_card_header">
+                                <span class="badge_dot dot_notice"/>
+                                <span class="exp_card_label">Nivel Seguimiento (61 a 90 días)</span>
+                            </div>
+                            <div class="exp_card_value text-info">
+                                <t t-esc="state.expiringLotsData.count_notice_90 || 0"/>
+                            </div>
+                            <div class="exp_card_sub">Lote(s) en monitoreo de demanda</div>
+                        </div>
+                    </div>
+
+                    <!-- Pestañas e Histórico de Lotes -->
+                    <t t-set="active_lots" t-value="state.activeLotTab === 'critical' ? state.expiringLotsData.critical_lots : (state.activeLotTab === 'warning' ? state.expiringLotsData.warning_lots : state.expiringLotsData.notice_lots)"/>
+
+                    <t t-if="active_lots and active_lots.length > 0">
+                        <div class="table_responsive">
+                            <table class="expiring_lots_table">
+                                <thead>
+                                    <tr>
+                                        <th>Medicamento</th>
+                                        <th>Número de Lote</th>
+                                        <th class="text_center">Fecha Caducidad</th>
+                                        <th class="text_center">Días Restantes</th>
+                                        <th class="text_center">Cantidad</th>
+                                        <th>Ubicación</th>
+                                        <th class="text_end">Acciones Directas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="active_lots" t-as="lot" t-key="lot.lot_id">
+                                        <tr>
+                                            <td>
+                                                <div class="med_info">
+                                                    <div class="med_name"><t t-esc="lot.product_name"/></div>
+                                                    <t t-if="lot.default_code">
+                                                        <div class="med_code">Ref: <t t-esc="lot.default_code"/></div>
+                                                    </t>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="lot_badge"><i class="fa fa-barcode"/> <t t-esc="lot.lot_name"/></span>
+                                            </td>
+                                            <td class="text_center">
+                                                <span class="text_muted"><t t-esc="lot.expiration_date_formatted || lot.expiration_date"/></span>
+                                            </td>
+                                            <td class="text_center">
+                                                <t t-if="lot.days_left &lt;= 30">
+                                                    <span class="stock_badge badge_danger">
+                                                        <i class="fa fa-exclamation-circle"/> <t t-esc="lot.days_left"/> días restantes
+                                                    </span>
+                                                </t>
+                                                <t t-elif="lot.days_left &lt;= 60">
+                                                    <span class="stock_badge badge_warning">
+                                                        <i class="fa fa-clock-o"/> <t t-esc="lot.days_left"/> días restantes
+                                                    </span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="stock_badge badge_info">
+                                                        <i class="fa fa-info-circle"/> <t t-esc="lot.days_left"/> días restantes
+                                                    </span>
+                                                </t>
+                                            </td>
+                                            <td class="text_center">
+                                                <span class="stock_badge badge_secondary">
+                                                    <t t-esc="lot.qty"/> <t t-esc="lot.uom"/>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="location_tag"><i class="fa fa-map-marker"/> <t t-esc="lot.location_name"/></span>
+                                            </td>
+                                            <td class="text_end">
+                                                <div class="btn_action_group">
+                                                    <button class="btn_lot_trace" t-on-click="() => this.onViewLotTraceability(lot.lot_id)" title="Ver Trazabilidad de Lote">
+                                                        <i class="fa fa-search"/>
+                                                        <span>Trazabilidad</span>
+                                                    </button>
+                                                    <button class="btn_quarantine" t-on-click="() => this.onTransferToQuarantine(lot.lot_id)" title="Transferir a Cuarentena / Baja">
+                                                        <i class="fa fa-ban"/>
+                                                        <span>Cuarentena</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="empty_state success_state">
+                            <i class="fa fa-check-circle text-success"/>
+                            <p>No se registran lotes en existencia física dentro de este horizonte temporal de vencimiento.</p>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+
             <!-- Cuadrícula Inferior: Gráfico de Tendencia + Ranking Top 5 (Manager) -->
             <t t-if="state.hasSalesAccess">
                 <div class="dashboard_content_grid">
