@@ -21,3 +21,4 @@ from . import test_sale_order_medicine  # noqa: F401
 from . import test_account_move_invoice  # noqa: F401
 from . import test_report_invoice_ticket  # noqa: F401
 from . import test_sale_order_stock_deduction  # noqa: F401
+from . import test_sale_order_fefo  # noqa: F401
