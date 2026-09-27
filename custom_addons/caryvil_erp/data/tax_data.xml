@@ -9,7 +9,6 @@
             <field name="type_tax_use">sale</field>
             <field name="price_include" eval="False"/>
             <field name="description">IVA 13%</field>
-            <field name="company_id" ref="base.main_company"/>
         </record>
     </data>
 </odoo>
