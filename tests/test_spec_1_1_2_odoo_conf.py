@@ -248,4 +248,3 @@ def test_custom_module_caryvil_erp_discoverable():
     assert (
         result.returncode == 0
     ), f"El manifiesto de caryvil_erp no está presente en /mnt/extra-addons: {result.stderr}"
-

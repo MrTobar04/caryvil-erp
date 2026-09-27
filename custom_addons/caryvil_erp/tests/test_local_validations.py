@@ -13,7 +13,8 @@ class TestLocalValidations(TransactionCase):
     2. Rechazo con ValidationError ante formatos de DUI inválidos (letras, longitud incorrecta, caracteres especiales).
     3. Restricción de unicidad de DUI a nivel de base de datos / modelo.
     4. Búsqueda rápida multicampo (_name_search) por DUI (con/sin guion), teléfono y nombres/apellidos.
-    5. Restricciones de seguridad por rol RBAC (Cajero sin permisos para modificar facturas publicadas o eliminar medicamentos).
+    5. Restricciones de seguridad por rol RBAC (Cajero sin permisos para
+       modificar facturas publicadas o eliminar medicamentos).
     """
 
     def setUp(self):
@@ -71,7 +72,8 @@ class TestLocalValidations(TransactionCase):
         self.assertEqual(client2.name, "Ana García")
 
     def test_dui_invalid_formats_raise_validation_error(self):
-        """Test 2: Comprobación de que cadenas inválidas (longitud corta, letras, caracteres especiales) disparen ValidationError."""
+        """Test 2: Comprobación de que cadenas inválidas (longitud corta, letras,
+        caracteres especiales) disparen ValidationError."""
         # Longitud corta (< 9 dígitos)
         with self.assertRaises(ValidationError):
             self.partner_model.create(
@@ -118,7 +120,8 @@ class TestLocalValidations(TransactionCase):
 
     @mute_logger("odoo.sql_db")
     def test_dui_uniqueness_sql_constraint(self):
-        """Test 3: Creación de un segundo cliente con un DUI ya existente -> Comprobación de bloqueo por violación de unicidad."""
+        """Test 3: Creación de un segundo cliente con un DUI ya existente ->
+        Comprobación de bloqueo por violación de unicidad."""
         self.partner_model.create(
             {
                 "first_name": "Cliente",
@@ -141,7 +144,8 @@ class TestLocalValidations(TransactionCase):
                 )
 
     def test_customer_name_search_multicampo(self):
-        """Test 4: Verificación de que el método _name_search retorne el registro correcto al buscar por fragmentos de DUI, teléfono o apellidos."""
+        """Test 4: Verificación de que el método _name_search retorne el registro correcto
+        al buscar por fragmentos de DUI, teléfono o apellidos."""
         client = self.partner_model.create(
             {
                 "first_name": "Roberto",
@@ -169,7 +173,8 @@ class TestLocalValidations(TransactionCase):
         self.assertIn(client.id, [r[0] for r in results_lastname])
 
     def test_security_rbac_restrictions(self):
-        """Test 5: Verificación de privilegios por rol (Cajero no puede eliminar medicamentos ni modificar facturas emitidas)."""
+        """Test 5: Verificación de privilegios por rol (Cajero no puede eliminar medicamentos
+        ni modificar facturas emitidas)."""
         category = self.env["product.category"].create({"name": "Categoría Validaciones Local"})
 
         medicine = self.product_model.create(
