@@ -10,21 +10,13 @@ class TestAccountMoveInvoice(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.company = cls.env.ref(
-            "caryvil_erp.company_farmacia_caryvil"
-        )
+        cls.company = cls.env.ref("caryvil_erp.company_farmacia_caryvil")
 
-        cls.tax = cls.env.ref(
-            "caryvil_erp.tax_caryvil_iva_ventas_13"
-        )
+        cls.tax = cls.env.ref("caryvil_erp.tax_caryvil_iva_ventas_13")
 
-        cls.sales_account = cls.env.ref(
-            "caryvil_erp.account_caryvil_ventas_medicamentos"
-        )
+        cls.sales_account = cls.env.ref("caryvil_erp.account_caryvil_ventas_medicamentos")
 
-        cls.tax_account = cls.env.ref(
-            "caryvil_erp.account_caryvil_iva_debito_fiscal"
-        )
+        cls.tax_account = cls.env.ref("caryvil_erp.account_caryvil_iva_debito_fiscal")
 
         cls.sale_journal = cls.env["account.journal"].search(
             [
@@ -119,13 +111,9 @@ class TestAccountMoveInvoice(TransactionCase):
         invoice_2 = self._create_invoice()
         invoice_2.action_post()
 
-        number_1 = int(
-            invoice_1.simple_invoice_number[-5:]
-        )
+        number_1 = int(invoice_1.simple_invoice_number[-5:])
 
-        number_2 = int(
-            invoice_2.simple_invoice_number[-5:]
-        )
+        number_2 = int(invoice_2.simple_invoice_number[-5:])
 
         self.assertEqual(
             number_2,
@@ -175,18 +163,14 @@ class TestAccountMoveInvoice(TransactionCase):
 
         invoice.action_post()
 
-        income_lines = invoice.invoice_line_ids.filtered(
-            lambda line: line.display_type == "product"
-        )
+        income_lines = invoice.invoice_line_ids.filtered(lambda line: line.display_type == "product")
 
         self.assertIn(
             self.sales_account.id,
             income_lines.mapped("account_id").ids,
         )
 
-        tax_lines = invoice.line_ids.filtered(
-            lambda line: line.tax_line_id == self.tax
-        )
+        tax_lines = invoice.line_ids.filtered(lambda line: line.tax_line_id == self.tax)
 
         self.assertTrue(
             tax_lines,
@@ -207,9 +191,7 @@ class TestAccountMoveInvoice(TransactionCase):
 
         invoice.action_post()
 
-        invoice._register_caryvil_payment(
-            "efectivo"
-        )
+        invoice._register_caryvil_payment("efectivo")
 
         invoice.invalidate_recordset()
 

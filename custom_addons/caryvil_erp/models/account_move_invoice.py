@@ -60,9 +60,7 @@ class AccountMoveInvoice(models.Model):
 
             entero = int(amount)
 
-            decimales = int(
-                round((amount - entero) * 100)
-            )
+            decimales = int(round((amount - entero) * 100))
 
             if decimales == 100:
                 entero += 1
@@ -73,28 +71,17 @@ class AccountMoveInvoice(models.Model):
                 lang="es",
             ).upper()
 
-            move.amount_in_words = (
-                f"{texto} DÓLARES CON "
-                f"{decimales:02d}/100 USD"
-            )
-
+            move.amount_in_words = f"{texto} DÓLARES CON " f"{decimales:02d}/100 USD"
 
     def action_post(self):
         result = super().action_post()
 
         invoice_sequence = self.env["ir.sequence"]
 
-        for move in self.filtered(
-            lambda move: (
-                move.move_type == "out_invoice"
-                and move.state == "posted"
-            )
-        ):
+        for move in self.filtered(lambda move: (move.move_type == "out_invoice" and move.state == "posted")):
             if not move.simple_invoice_number or move.simple_invoice_number == "/":
                 move.simple_invoice_number = (
-                    invoice_sequence.with_company(
-                        move.company_id
-                    ).next_by_code(
+                    invoice_sequence.with_company(move.company_id).next_by_code(
                         "caryvil.simple.invoice.sequence",
                         sequence_date=move.invoice_date or move.date,
                     )
@@ -102,6 +89,7 @@ class AccountMoveInvoice(models.Model):
                 )
 
         return result
+
 
 class ProductTemplateCaryvilAccounting(models.Model):
     _inherit = "product.template"
@@ -125,13 +113,12 @@ class ProductTemplateCaryvilAccounting(models.Model):
 
         return accounts
 
+
 class SaleOrderLineCaryvilInvoice(models.Model):
     _inherit = "sale.order.line"
 
     def _prepare_invoice_line(self, **optional_values):
-        values = super()._prepare_invoice_line(
-            **optional_values
-        )
+        values = super()._prepare_invoice_line(**optional_values)
 
         account = self.env.ref(
             "caryvil_erp.account_caryvil_ventas_medicamentos",
@@ -140,10 +127,7 @@ class SaleOrderLineCaryvilInvoice(models.Model):
 
         if account:
             for line in self:
-                if (
-                    line.product_id
-                    and line.product_id.active_ingredient_id
-                ):
+                if line.product_id and line.product_id.active_ingredient_id:
                     values["account_id"] = account.id
 
         return values
@@ -153,24 +137,17 @@ class SaleOrderCaryvilInvoice(models.Model):
     _inherit = "sale.order"
 
     def action_confirm_and_invoice(self):
-        #Mantiene el flujo de SPEC-9.1.1
+        # Mantiene el flujo de SPEC-9.1.1
 
         result = super().action_confirm_and_invoice()
 
         for order in self:
             invoices = order.invoice_ids.filtered(
-                lambda move: (
-                    move.move_type == "out_invoice"
-                    and move.state == "posted"
-                )
+                lambda move: (move.move_type == "out_invoice" and move.state == "posted")
             )
 
-            for invoice in invoices.filtered(
-                lambda move: move.payment_state != "paid"
-            ):
-                invoice._register_caryvil_payment(
-                    order.payment_method
-                )
+            for invoice in invoices.filtered(lambda move: move.payment_state != "paid"):
+                invoice._register_caryvil_payment(order.payment_method)
 
         return result
 
@@ -179,7 +156,7 @@ class AccountMoveCaryvilPayment(models.Model):
     _inherit = "account.move"
 
     def _register_caryvil_payment(self, payment_method):
-        #Registra automáticamente el pago completo de la factura utilizando el diario de caja o banco.
+        # Registra automáticamente el pago completo de la factura utilizando el diario de caja o banco.
 
         self.ensure_one()
 
@@ -187,24 +164,15 @@ class AccountMoveCaryvilPayment(models.Model):
             return False
 
         if self.state != "posted":
-            raise UserError(
-                _(
-                    "La factura debe estar publicada antes "
-                    "de registrar el pago."
-                )
-            )
+            raise UserError(_("La factura debe estar publicada antes " "de registrar el pago."))
 
         if self.payment_state == "paid":
             return True
 
         if payment_method == "efectivo":
-            journal_ref = (
-                "caryvil_erp.journal_caryvil_cash"
-            )
+            journal_ref = "caryvil_erp.journal_caryvil_cash"
         else:
-            journal_ref = (
-                "caryvil_erp.journal_caryvil_bank"
-            )
+            journal_ref = "caryvil_erp.journal_caryvil_bank"
 
         journal = self.env.ref(
             journal_ref,
@@ -212,12 +180,7 @@ class AccountMoveCaryvilPayment(models.Model):
         )
 
         if not journal:
-            raise UserError(
-                _(
-                    "No está configurado el diario "
-                    "de cobro de Caryvil."
-                )
-            )
+            raise UserError(_("No está configurado el diario " "de cobro de Caryvil."))
 
         if self.amount_residual <= 0:
             return True
@@ -233,9 +196,7 @@ class AccountMoveCaryvilPayment(models.Model):
                 {
                     "journal_id": journal.id,
                     "amount": self.amount_residual,
-                    "payment_date": fields.Date.context_today(
-                        self
-                    ),
+                    "payment_date": fields.Date.context_today(self),
                 }
             )
         )
