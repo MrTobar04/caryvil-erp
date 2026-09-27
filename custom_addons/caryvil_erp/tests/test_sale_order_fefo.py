@@ -10,13 +10,9 @@ class TestSaleOrderFEFO(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.company = cls.env.ref(
-            "caryvil_erp.company_farmacia_caryvil"
-        )
+        cls.company = cls.env.ref("caryvil_erp.company_farmacia_caryvil")
 
-        cls.tax = cls.env.ref(
-            "caryvil_erp.tax_caryvil_iva_ventas_13"
-        )
+        cls.tax = cls.env.ref("caryvil_erp.tax_caryvil_iva_ventas_13")
 
         cls.partner = cls.env["res.partner"].create(
             {
@@ -26,21 +22,15 @@ class TestSaleOrderFEFO(TransactionCase):
             }
         )
 
-        cls.ingredient = cls.env[
-            "caryvil.active.ingredient"
-        ].create(
+        cls.ingredient = cls.env["caryvil.active.ingredient"].create(
             {
                 "name": "Principio Activo FEFO Test",
             }
         )
 
-        cls.category = cls.env.ref(
-            "caryvil_erp.cat_analgesicos"
-        )
+        cls.category = cls.env.ref("caryvil_erp.cat_analgesicos")
 
-        cls.fefo = cls.env.ref(
-            "product_expiry.removal_fefo"
-        )
+        cls.fefo = cls.env.ref("product_expiry.removal_fefo")
 
         cls.product = cls.env["product.product"].create(
             {
@@ -69,9 +59,7 @@ class TestSaleOrderFEFO(TransactionCase):
         )
 
         if not cls.warehouse:
-            raise AssertionError(
-                "La compañía Caryvil debe tener un almacén configurado."
-            )
+            raise AssertionError("La compañía Caryvil debe tener un almacén configurado.")
 
         cls.stock_location = cls.warehouse.lot_stock_id
 
@@ -116,21 +104,12 @@ class TestSaleOrderFEFO(TransactionCase):
     def _get_done_lot_quantities(self, order):
         quantities = {}
 
-        move_lines = order.picking_ids.mapped(
-            "move_line_ids"
-        ).filtered(
-            lambda line: (
-                line.state == "done"
-                and line.product_id == self.product
-                and line.lot_id
-            )
+        move_lines = order.picking_ids.mapped("move_line_ids").filtered(
+            lambda line: (line.state == "done" and line.product_id == self.product and line.lot_id)
         )
 
         for move_line in move_lines:
-            quantities[move_line.lot_id.name] = (
-                quantities.get(move_line.lot_id.name, 0.0)
-                + move_line.quantity
-            )
+            quantities[move_line.lot_id.name] = quantities.get(move_line.lot_id.name, 0.0) + move_line.quantity
 
         return quantities
 
