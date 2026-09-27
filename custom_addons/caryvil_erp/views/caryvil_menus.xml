@@ -68,5 +68,38 @@
                   parent="menu_caryvil_inventario"
                   action="action_caryvil_medicamentos"
                   sequence="10"/>
+
+        <menuitem id="menu_caryvil_principios_activos"
+                  name="Principios Activos"
+                  parent="menu_caryvil_inventario"
+                  action="action_caryvil_active_ingredient"
+                  sequence="20"
+                  groups="caryvil_erp.group_caryvil_cashier"/>
+
+        <menuitem id="menu_caryvil_categorias_terapeuticas"
+                  name="Categorías Terapéuticas"
+                  parent="menu_caryvil_inventario"
+                  action="action_caryvil_therapeutic_category"
+                  sequence="30"
+                  groups="caryvil_erp.group_caryvil_cashier"/>
+
+        <!-- Submenús de Configuración Farmacológica -->
+        <menuitem id="menu_caryvil_config_farmacologia"
+                  name="Catálogo Farmacológico"
+                  parent="menu_caryvil_configuracion"
+                  sequence="20"
+                  groups="caryvil_erp.group_caryvil_manager"/>
+
+        <menuitem id="menu_caryvil_config_active_ingredient"
+                  name="Principios Activos"
+                  parent="menu_caryvil_config_farmacologia"
+                  action="action_caryvil_active_ingredient"
+                  sequence="10"/>
+
+        <menuitem id="menu_caryvil_config_therapeutic_category"
+                  name="Categorías Terapéuticas"
+                  parent="menu_caryvil_config_farmacologia"
+                  action="action_caryvil_therapeutic_category"
+                  sequence="20"/>
     </data>
 </odoo>

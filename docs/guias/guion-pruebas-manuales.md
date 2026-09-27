@@ -19,6 +19,8 @@ Guía operativa para la ejecución, validación y verificación funcional manual
   - [Flujo 3.2: Personalización de Pantalla de Autenticación (SPEC-3.1.2)](#flujo-32-personalización-de-pantalla-de-autenticación-spec-312)
   - [Flujo 6.1: Directorio y Gestión de Proveedores Farmacéuticos (SPEC-6.1.1)](#flujo-61-directorio-y-gestión-de-proveedores-farmacéuticos-spec-611)
   - [Flujo 6.2: Catálogo de Precios y Condiciones de Proveedores (SPEC-6.2.1)](#flujo-62-catálogo-de-precios-y-condiciones-de-proveedores-spec-621)
+  - [Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)](#flujo-71-catálogo-y-categorización-de-medicamentos-spec-711)
+  - [Flujo 7.2: Gestión de Unidades de Medida Farmacéuticas (SPEC-7.1.2)](#flujo-72-gestión-de-unidades-de-medida-farmacéuticas-spec-712)
   - [Flujo 8.1: Visibilidad de Abonos y Estado de Pago a Proveedores (SPEC-8.1.2)](#flujo-81-visibilidad-de-abonos-y-estado-de-pago-a-proveedores-spec-812)
   - [Flujo 8.2: Recepción de Mercadería y Captura Obligatoria de Lotes (SPEC-8.2.1)](#flujo-82-recepción-de-mercadería-y-captura-obligatoria-de-lotes-spec-821)
   - [Flujo 8.3: Actualización Automática de Stock y Cierre de Compras (SPEC-8.2.2)](#flujo-83-actualización-automática-de-stock-y-cierre-de-compras-spec-822)
@@ -534,6 +536,125 @@ Para ejecutar las pruebas manuales localmente, asegúrate de contar con:
 
 9. **Verificación en dispositivos móviles:** En las DevTools del navegador (`F12`), activar el modo responsive y simular una pantalla de dispositivo móvil (ej. ancho 375px - 414px). Comprobar que la tarjeta de inicio de sesión se adapta de forma fluida manteniendo márgenes laterales limpios, el logotipo escala proporcionalmente y los campos de entrada conservan total legibilidad y ergonomía táctil.
 10. **Cumplimiento de contraste:** Ejecutar el análisis de accesibilidad Lighthouse en la página `/web/login`, verificando que todos los textos (títulos, subtítulos, etiquetas y botón primario) cumplen el ratio de contraste mínimo de 4.5:1 (WCAG AA).
+
+---
+
+### Flujo 7.1: Catálogo y Categorización de Medicamentos (SPEC-7.1.1)
+
+#### Fase A: Gestión y Verificación de Maestros Farmacológicos
+
+1. **Acceso y verificación del catálogo de Categorías Terapéuticas:** Iniciar sesión con la cuenta de Administradora (`admin` / `admin`) o Encargado de Compras e Inventario (`compras@caryvil.com` / `compras123`), hacer clic en el menú superior **Farmacia Caryvil** → **Medicamentos e Inventario** → **Categorías Terapéuticas** (o en **Configuración** → **Catálogo Farmacológico** → **Categorías Terapéuticas**), debes observar la vista de lista con las columnas `Código ATC / Clave`, `Categoría` y `Descripción / Uso Terapéutico`, conteniendo registros iniciales como `Analgésicos y Antipiréticos`, `Antibióticos` y `Antihistamínicos`.
+2. **Creación de nueva categoría terapéutica:** En la misma vista de Categorías Terapéuticas, presionar el botón **Nuevo**, ingresar en el título `Antiinflamatorios No Esteroides`, en el campo Código ATC escribir `M01A` y en el campo de texto de descripción escribir `Fármacos analgésicos, antipiréticos y antiinflamatorios indicados en inflamación y dolor agudo`, presionar el icono de nube/guardar, debes observar que el registro se guarda correctamente y la miga de pan superior muestra el nuevo nombre.
+3. **Acceso y verificación del catálogo de Principios Activos:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Principios Activos**, debes observar la vista de lista con las columnas `Nombre del Principio Activo` y `Acción Farmacológica`, conteniendo fármacos estándar como `Paracetamol`, `Amoxicilina`, `Ibuprofeno` y `Loratadina`.
+4. **Registro de un nuevo principio activo:** Presionar el botón **Nuevo**, en el campo Nombre escribir `Diclofenaco Sódico` y en Acción Farmacológica escribir `Inhibidor de la síntesis de prostaglandinas por inhibición de la ciclooxigenasa`, presionar **Guardar**, debes verificar que el principio activo queda almacenado y listo para ser referenciado por productos farmacéuticos.
+
+#### Fase B: Creación Completa de Medicamento con Atributos Médicos
+
+5. **Apertura de la ficha técnica de producto:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos** y hacer clic en **Nuevo**, debes observar el formulario de producto de Odoo con el campo de título principal y la pestaña adicional **Información Farmacéutica** ubicada inmediatamente después de *Información General*.
+6. **Ingreso de datos comerciales y médicos requeridos:** En el campo nombre de producto escribir `Amoxicilina Vijosa 500mg`, conmutar a la pestaña **Información Farmacéutica** y completar los siguientes valores:
+   - **Principio Activo:** Seleccionar `Amoxicilina` desde el menú desplegable.
+   - **Concentración:** Digitar `500 mg`.
+   - **Forma Farmacéutica:** Seleccionar `Cápsula` en la lista de opciones.
+   - **Categoría Terapéutica:** Seleccionar `Antibióticos`.
+   - **Requiere Receta Médica:** Activar el interruptor (toggle) dejándolo encendido (`True`).
+   - **Código de Barras:** Digitar el código EAN-13 `7412345678901`.
+   - **Precio de Venta:** Ingresar `$0.25`.
+7. **Guardado y validación de valores por defecto automáticos:** Presionar el botón **Guardar** (o icono de nube en la barra superior), debes comprobar que:
+   - En la pestaña **Información General**, el campo **Tipo de Producto** está configurado de forma predeterminada como **Almacenable** (`product`).
+   - En la pestaña **Inventario**, la sección de **Trazabilidad** tiene activada automáticamente la opción **Por Lotes Únicos** (`lot`).
+   - En la pestaña **Información Farmacéutica**, todos los datos médicos registrados permanecen consistentes y guardados.
+
+#### Fase C: Búsqueda Multicriterio por Principio Activo y Filtros
+
+8. **Búsqueda rápida por Principio Activo desde el catálogo:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**, situar el cursor en la barra de búsqueda superior, escribir `Amoxicilina` y presionar Enter, debes observar en los resultados de la vista Kanban o Lista el producto `Amoxicilina Vijosa 500mg`, demostrando que la búsqueda indexa dinámicamente el principio activo independientemente del nombre comercial.
+9. **Búsqueda por sustancia activa común (Paracetamol):** En la misma barra de búsqueda, limpiar el filtro y escribir `Paracetamol`, debes ver listadas todas las marcas comerciales que comparten este componente (ej. `Panadol 500mg`, `Acetaminofén MK`, `Winasorb`).
+10. **Filtrado por medicamentos bajo receta y venta libre:** Hacer clic en el desplegable de **Filtros** en la barra de búsqueda y seleccionar **Requiere Receta Médica**, debes ver únicamente los fármacos que exigen prescripción; posteriormente desmarcar ese filtro y seleccionar **Venta Libre**, debes ver únicamente los productos de dispensación abierta sin receta médica.
+11. **Agrupación por Categoría Terapéutica y Forma Farmacéutica:** En la barra de búsqueda, hacer clic en **Agrupar por** y seleccionar **Categoría Terapéutica**, debes observar los productos organizados en acordeones por familias farmacológicas (Analgésicos, Antibióticos, etc.); alternar con el agrupador **Principio Activo**, comprobando la visualización jerárquica por fármaco base.
+
+#### Fase D: Alerta Visual Inmediata y Distintivos de Medicamentos Bajo Receta
+
+12. **Alerta visual prominente en la ficha del producto:** Abrir el medicamento `Amoxicilina Vijosa 500mg` (el cual tiene `prescription_required = True`), debes verificar inmediatamente que en la parte superior del formulario, por encima del nombre comercial y visible sin importar en qué pestaña esté situado el usuario, se despliega un banner de advertencia destacado con fondo rojo suave, borde rojo oscuro e icono de advertencia indicando: `⚠ MEDICAMENTO BAJO RECETA MÉDICA OBLIGATORIA — Exigir y verificar la prescripción médica original antes de autorizar la dispensación en mostrador o venta.`
+13. **Distintivo contextual en la vista de lista / árbol:** Cambiar la visualización del catálogo a modo **Lista** (icono de lista en el extremo superior derecho), debes observar que en la tabla aparecen las columnas `Principio Activo`, `Concentración`, `Forma Farmacéutica` y la columna `Receta` exhibe una píldora o badge en color rojo para los medicamentos controlados y un badge verde tenue para los medicamentos de venta libre.
+14. **Insignia visual en la vista Kanban:** Cambiar a la vista **Kanban** (icono de tarjetas), debes observar que las tarjetas de los medicamentos controlados exhiben una insignia roja redondeada con el texto `⚠ Requiere Receta` en la esquina o pie de la tarjeta, permitiendo al cajero o dependiente identificar la restricción regulatoria de inmediato en mostrador.
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Intento de registro con Código de Barras duplicado:** En **Farmacia Caryvil** → **Medicamentos**, crear un nuevo producto con nombre `Amoxicilina Genérica 500mg`, ir a la pestaña **Información Farmacéutica** e ingresar en el campo Código de Barras el mismo código asignado previamente (`7412345678901`), presionar **Guardar**, debes verificar que el sistema detiene la transacción y despliega un cuadro de diálogo modal de error indicando: *"El código de barras debe ser único por producto."*, impidiendo duplicidades en el lector óptico de caja.
+2. **Acceso de solo lectura para el rol de Cajero / Dependiente:** Cerrar sesión e ingresar al sistema con las credenciales de Cajero (`cajero@caryvil.com` / `cajero123`), navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos**:
+   - Abrir cualquier producto médico; debes observar que los botones **Guardar**, **Descartar** y la edición de campos están bloqueados o invisibles (modo solo lectura).
+   - Navegar a **Categorías Terapéuticas** o **Principios Activos**; debes poder consultar y buscar todos los registros del catálogo médico, pero el botón **Nuevo** no debe estar disponible o cualquier intento de mutación debe ser rechazado por las reglas de acceso del sistema.
+
+---
+
+### Flujo 7.2: Gestión de Unidades de Medida Farmacéuticas (SPEC-7.1.2)
+
+> **Prerrequisito:** Módulo `caryvil_erp` instalado, base de datos `caryvil_dev` inicializada con datos semilla y modo desarrollador activo para consultas técnicas.
+
+#### Fase A: Verificación de Parámetros y Categorías de UdM en Base de Datos (DoD 1)
+
+1. **Inspección de la categoría de sólidos farmacéuticos:** Iniciar sesión con el usuario Administrador (`admin` / `admin`). Navegar a **Ajustes** → **Técnico** → **Categorías de Unidades de Medida**. Localizar el registro **Presentaciones Farmacéuticas** (`caryvil_erp.uom_category_pharmacy_units`). Verificar que contiene las siguientes unidades de medida:
+   - **Unidad / Pastilla** (`uom_unit_pill`): Tipo *Unidad de Referencia de esta categoría*, Factor = `1.0`, Precisión de redondeo = `1.00000`.
+   - **Blíster x 4 unidades** (`uom_blister_4`): Tipo *Mayor que la unidad de medida de referencia*, Ratio = `4.0`, Precisión = `0.01000`.
+   - **Blíster x 10 unidades** (`uom_blister_10`): Tipo *Mayor*, Ratio = `10.0`, Precisión = `0.01000`.
+   - **Caja x 20 unidades** (`uom_box_20`): Tipo *Mayor*, Ratio = `20.0`, Precisión = `0.01000`.
+   - **Caja x 50 unidades** (`uom_box_50`): Tipo *Mayor*, Ratio = `50.0`, Precisión = `0.01000`.
+   - **Caja x 100 unidades** (`uom_box_100`): Tipo *Mayor*, Ratio = `100.0`, Precisión = `0.01000`.
+2. **Inspección de la categoría de envases y líquidos/semisólidos:** En la misma vista técnica, localizar la categoría **Envases y Presentaciones Farmacéuticas** (`caryvil_erp.uom_category_pharmacy_packaging`). Verificar que contiene:
+   - **Unidad / Envase** (`uom_unit_container`): Tipo *Unidad de Referencia*, Factor = `1.0`.
+   - **Frasco 60ml** (`uom_bottle_60ml`): Ratio = `1.0`.
+   - **Frasco 120ml** (`uom_bottle_120ml`): Ratio = `1.0`.
+   - **Tubo / Pomada** (`uom_tube_ointment`): Ratio = `1.0`.
+   - **Ampolla / Vial** (`uom_ampoule_vial`): Ratio = `1.0`.
+   - **Caja x 5 Ampollas** (`uom_box_5_ampoules`): Ratio = `5.0`.
+   - **Caja x 12 Frascos** (`uom_box_12_bottles`): Ratio = `12.0`.
+
+#### Fase B: Configuración de Fármaco con Selección Dual de UdM (Escenario 1)
+
+3. **Creación de producto farmacéutico:** Navegar a **Farmacia Caryvil** → **Medicamentos e Inventario** → **Medicamentos** y hacer clic en **Nuevo**.
+4. **Configuración de unidades:** Ingresar:
+   - Nombre: `Acetaminofén Caryvil 500mg (Prueba UdM Dual)`
+   - Pestaña **Información Farmacéutica**:
+     - Principio Activo: `Paracetamol`
+     - Forma Farmacéutica: `Tableta`
+     - Concentración: `500 mg`
+     - **Unidad de Medida (Venta/Inventario):** Seleccionar `Unidad / Pastilla`.
+     - **Unidad de Medida de Compra:** Seleccionar `Caja x 100 unidades`.
+     - Precio de Venta: `$0.10`.
+5. **Guardado y validación de compatibilidad:** Hacer clic en **Guardar**. Comprobar que ambas unidades pertenecen a la categoría *Presentaciones Farmacéuticas* y que el formulario se almacena sin inconsistencias.
+
+#### Fase C: Compra en Cajas y Conversión Automática en Recepción Física (Escenario 2)
+
+6. **Emisión de Orden de Compra en Cajas:** Iniciar sesión con `compras@caryvil.com`. Navegar a **Compras y Proveedores** → **Órdenes de Compra** y presionar **Nuevo**.
+   - Proveedor: `Laboratorios Vijosa S.A. de C.V.`
+   - Agregar línea de producto: `Acetaminofén Caryvil 500mg (Prueba UdM Dual)`.
+   - Comprobar que en la columna **UdM** se asigna automáticamente `Caja x 100 unidades`.
+   - Cantidad: `2.0`.
+   - Precio Unitario: `$8.00`.
+   - Presionar **Confirmar Orden**.
+7. **Validación de Albarán de Recepción y Lote Obligatorio:** En la orden confirmada, ingresar a la **Recepción** (icono de camión en la barra superior).
+   - En las líneas de movimiento, comprobar que la cantidad a recibir se muestra convertida matemáticamente a **200 Unidades / Pastillas** (o 2 Cajas con demanda de 200 pastillas en el movimiento interno de stock).
+   - Asignar cantidad realizada: `200.0`.
+   - Registrar Lote: `LOT-ACT-UOM-2028`.
+   - Registrar Fecha de Vencimiento: fecha futura válida (ej. `31/12/2028`).
+   - Hacer clic en **Validar**.
+8. **Verificación de existencias en mostrador:** Navegar a la ficha del medicamento; verificar en el botón inteligente **A mano** que el stock físico se incrementó en exactamente **200 Unidades / Pastillas**.
+
+#### Fase D: Venta al Menudeo y Deducción de Stock por Blíster (Escenario 3)
+
+9. **Creación del pedido de venta por blíster:** Iniciar sesión con `cajero@caryvil.com`. Navegar a **Farmacia Caryvil** → **Ventas y Caja** → **Presupuestos / Pedidos** y hacer clic en **Nuevo**.
+   - Seleccionar un cliente.
+   - Agregar el producto `Acetaminofén Caryvil 500mg (Prueba UdM Dual)`.
+   - En la columna **Unidad de Medida**, cambiar la unidad a `Blíster x 10 unidades`.
+   - Cantidad: `1.0`.
+   - Precio Unitario: `$1.50`.
+   - Hacer clic en **Confirmar**.
+10. **Entrega física y comprobación de balance de inventario:** Validar el albarán de entrega saliente correspondiente. Regresar a la ficha del medicamento con usuario administrador o compras y verificar que el stock disponible restante es de exactamente **190 Unidades / Pastillas** (200 iniciales menos 10 deducidas por el blíster).
+
+#### Casos Límite / Rutas de Excepción:
+
+1. **Intento de modificación de factores de conversión por rol no autorizado (Sección 8):** Iniciar sesión con `cajero@caryvil.com`. Intentar modificar cualquier registro en `uom.uom` mediante la interfaz o API. Verificar que el sistema responde con una excepción `AccessError` (Acceso Denegado), impidiendo que personal operativo altere las equivalencias contables de inventario.
+2. **Restricción de fraccionamiento menor a 1 pastilla (Sección 3):** Al registrar una venta con `uom_unit_pill`, verificar que la precisión de redondeo (`rounding=1.0`) impide fraccionar medias pastillas (0.5), preservando la integridad de unidades enteras no divisibles.
+
 
 
 

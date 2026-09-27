@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+
+        <!-- Vista primaria de venta rápida para el módulo "Ventas y Caja" de Farmacia Caryvil. -->
+        <record id="view_caryvil_sale_order_form_counter" model="ir.ui.view">
+            <field name="name">sale.order.form.caryvil.counter</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="mode">primary</field>
+            <field name="priority">50</field>
+
+            <field name="arch" type="xml">
+
+                <!-- Selector de cliente: muestra únicamente clientes de farmacia. -->
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="domain">
+                        [('is_pharmacy_customer', '=', True)]
+                    </attribute>
+                    <attribute name="context">
+                        {
+                            'res_partner_search_mode': 'customer',
+                            'show_address': 0,
+                            'show_vat': 0
+                        }
+                    </attribute>
+                </xpath>
+
+                <!-- Barra de entrada rápida para lector EAN-13. -->
+                <xpath expr="//page[@name='order_lines']/field[@name='order_line']"
+                       position="before">
+
+                    <group
+                        name="caryvil_quick_scan"
+                        string="Venta rápida"
+                        colspan="4">
+
+                        <field
+                            name="caryvil_barcode_input"
+                            placeholder="Escanee o escriba el código EAN-13..."
+                            class="oe_inline"
+                        />
+
+                    </group>
+
+                </xpath>
+
+                <!-- Bloque de cobro. -->
+                <xpath expr="//page[@name='order_lines']/field[@name='order_line']"
+                       position="after">
+
+                    <group
+                        name="caryvil_payment"
+                        string="Cobro en mostrador"
+                        colspan="4">
+
+                        <group>
+                            <field name="payment_method"/>
+                            <field
+                                name="amount_tendered"
+                                invisible="payment_method != 'efectivo'"
+                            />
+                        </group>
+
+                        <group>
+                            <field
+                                name="amount_change"
+                                readonly="1"
+                                invisible="payment_method != 'efectivo'"
+                            />
+                        </group>
+
+                    </group>
+
+                </xpath>
+
+                <!-- Botón principal del flujo de caja. -->
+                <xpath expr="//header" position="inside">
+
+                    <button
+                        name="action_confirm_and_invoice"
+                        type="object"
+                        string="Cobrar y Facturar"
+                        class="btn-primary"
+                        groups="caryvil_erp.group_caryvil_cashier"
+                        invisible="state not in ['draft', 'sent']"
+                    />
+
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <!-- Acción exclusiva para ventas de mostrador -->
+        <record id="action_caryvil_sales_counter" model="ir.actions.act_window">
+
+            <field name="name">Venta de Mostrador</field>
+
+            <field name="res_model">sale.order</field>
+
+            <field name="view_mode">form,tree</field>
+
+            <field name="view_id"
+                   ref="view_caryvil_sale_order_form_counter"/>
+
+            <field name="context">
+                {
+                    'default_payment_method': 'efectivo'
+                }
+            </field>
+
+        </record>
+
+
+        <!-- Menú para cajeros -->
+        <menuitem
+            id="menu_caryvil_sales_counter"
+            name="Venta de Mostrador"
+            parent="caryvil_erp.menu_caryvil_ventas"
+            action="action_caryvil_sales_counter"
+            sequence="10"
+            groups="caryvil_erp.group_caryvil_cashier"
+        />
+
+    </data>
+</odoo>

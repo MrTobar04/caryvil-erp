@@ -10,3 +10,7 @@ from . import test_demo_data  # noqa: F401
 from . import test_caryvil_security  # noqa: F401
 from . import test_caryvil_security_rules  # noqa: F401
 from . import test_scaffolding  # noqa: F401
+from . import test_medicine_catalog  # noqa: F401
+from . import test_pharmacy_uom  # noqa: F401
+from . import test_stock_lot_medicine  # noqa: F401
+from . import test_sale_order_medicine  # noqa: F401

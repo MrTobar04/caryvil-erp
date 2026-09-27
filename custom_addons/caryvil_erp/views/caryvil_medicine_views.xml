@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================ -->
+        <!-- Categorías Terapéuticas Farmacéuticas                             -->
+        <!-- ================================================================ -->
+
+        <!-- Vista Árbol / Lista -->
+        <record id="view_caryvil_therapeutic_category_tree" model="ir.ui.view">
+            <field name="name">caryvil.therapeutic.category.tree</field>
+            <field name="model">caryvil.therapeutic.category</field>
+            <field name="arch" type="xml">
+                <tree string="Categorías Terapéuticas">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario -->
+        <record id="view_caryvil_therapeutic_category_form" model="ir.ui.view">
+            <field name="name">caryvil.therapeutic.category.form</field>
+            <field name="model">caryvil.therapeutic.category</field>
+            <field name="arch" type="xml">
+                <form string="Categoría Terapéutica">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" string="Nombre de la Categoría"/>
+                            <h1>
+                                <field name="name" placeholder="Ej: Analgésicos y Antipiréticos"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code" placeholder="Ej: N02B / ATC"/>
+                            </group>
+                        </group>
+                        <group string="Descripción / Uso Terapéutico">
+                            <field name="description" nolabel="1" placeholder="Descripción de las indicaciones clínicas y familias farmacológicas comprendidas..."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Búsqueda -->
+        <record id="view_caryvil_therapeutic_category_search" model="ir.ui.view">
+            <field name="name">caryvil.therapeutic.category.search</field>
+            <field name="model">caryvil.therapeutic.category</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Categorías Terapéuticas">
+                    <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                    <field name="code"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción de Ventana Categorías Terapéuticas -->
+        <record id="action_caryvil_therapeutic_category" model="ir.actions.act_window">
+            <field name="name">Categorías Terapéuticas</field>
+            <field name="res_model">caryvil.therapeutic.category</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_caryvil_therapeutic_category_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Registra una nueva categoría terapéutica farmacológica
+                </p>
+                <p>
+                    Las categorías permiten agrupar los medicamentos por familia farmacológica o código ATC.
+                </p>
+            </field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- Principios Activos Farmacéuticos                                 -->
+        <!-- ================================================================ -->
+
+        <!-- Vista Árbol / Lista -->
+        <record id="view_caryvil_active_ingredient_tree" model="ir.ui.view">
+            <field name="name">caryvil.active.ingredient.tree</field>
+            <field name="model">caryvil.active.ingredient</field>
+            <field name="arch" type="xml">
+                <tree string="Principios Activos">
+                    <field name="name"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista Formulario -->
+        <record id="view_caryvil_active_ingredient_form" model="ir.ui.view">
+            <field name="name">caryvil.active.ingredient.form</field>
+            <field name="model">caryvil.active.ingredient</field>
+            <field name="arch" type="xml">
+                <form string="Principio Activo">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" string="Nombre del Principio Activo"/>
+                            <h1>
+                                <field name="name" placeholder="Ej: Paracetamol, Amoxicilina..."/>
+                            </h1>
+                        </div>
+                        <group string="Acción Farmacológica / Descripción">
+                            <field name="description" nolabel="1" placeholder="Descripción de la acción farmacológica, mecanismo de acción o advertencias generales..."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista Búsqueda -->
+        <record id="view_caryvil_active_ingredient_search" model="ir.ui.view">
+            <field name="name">caryvil.active.ingredient.search</field>
+            <field name="model">caryvil.active.ingredient</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Principios Activos">
+                    <field name="name"/>
+                    <field name="description"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción de Ventana Principios Activos -->
+        <record id="action_caryvil_active_ingredient" model="ir.actions.act_window">
+            <field name="name">Principios Activos</field>
+            <field name="res_model">caryvil.active.ingredient</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_caryvil_active_ingredient_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Registra un nuevo principio activo (fármaco)
+                </p>
+                <p>
+                    Permite normalizar las búsquedas en mostrador por sustancia activa independiente de la marca comercial.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
