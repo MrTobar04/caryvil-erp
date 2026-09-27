@@ -69,18 +69,9 @@ class SaleOrderLineCaryvilTax(models.Model):
         if not caryvil_tax:
             return
 
-        for line in self.filtered(
-            lambda line: (
-                line.product_id
-                and line.product_id.active_ingredient_id
-            )
-        ):
+        for line in self.filtered(lambda line: (line.product_id and line.product_id.active_ingredient_id)):
             tax = caryvil_tax.filtered(
-                lambda tax: (
-                    not tax.company_id
-                    or not line.company_id
-                    or tax.company_id == line.company_id
-                )
+                lambda tax: (not tax.company_id or not line.company_id or tax.company_id == line.company_id)
             )
 
             if not tax:
@@ -130,10 +121,7 @@ class SaleOrderMedicine(models.Model):
     caryvil_barcode_input = fields.Char(
         string="Escanear EAN-13",
         copy=False,
-        help=(
-            "Campo de entrada rápida para lectores de código de barras "
-            "compatibles con entrada de teclado."
-        ),
+        help=("Campo de entrada rápida para lectores de código de barras " "compatibles con entrada de teclado."),
     )
 
     @api.model
@@ -188,11 +176,7 @@ class SaleOrderMedicine(models.Model):
                 0.0,
             )
 
-            order.amount_change = (
-                order.currency_id.round(change)
-                if order.currency_id
-                else change
-            )
+            order.amount_change = order.currency_id.round(change) if order.currency_id else change
 
     def _check_caryvil_payment(self):
         # Valida las reglas del cobro en mostrador.
@@ -204,10 +188,7 @@ class SaleOrderMedicine(models.Model):
 
             if amount_received < total:
                 raise UserError(
-                    _(
-                        "El monto en efectivo recibido ($%(received).2f) "
-                        "es menor al total a pagar ($%(total).2f)."
-                    )
+                    _("El monto en efectivo recibido ($%(received).2f) " "es menor al total a pagar ($%(total).2f).")
                     % {
                         "received": amount_received,
                         "total": total,
@@ -220,9 +201,7 @@ class SaleOrderMedicine(models.Model):
 
         requested = {}
 
-        for line in self.order_line.filtered(
-            lambda line: not line.display_type and line.product_id
-        ):
+        for line in self.order_line.filtered(lambda line: not line.display_type and line.product_id):
             product = line.product_id
 
             if product.detailed_type != "product":
@@ -247,11 +226,14 @@ class SaleOrderMedicine(models.Model):
             product = self.env["product.product"].browse(product_id)
             available_qty = product.qty_available
 
-            if float_compare(
-                requested_qty,
-                available_qty,
-                precision_rounding=product.uom_id.rounding,
-            ) > 0:
+            if (
+                float_compare(
+                    requested_qty,
+                    available_qty,
+                    precision_rounding=product.uom_id.rounding,
+                )
+                > 0
+            ):
                 raise UserError(
                     _(
                         'Stock insuficiente para "%(product)s".\n'
@@ -286,19 +268,10 @@ class SaleOrderMedicine(models.Model):
         )
 
         if not caryvil_tax:
-            raise UserError(
-                _(
-                    "No está configurado el impuesto "
-                    "'IVA 13% Ventas Bienes Farmacéuticos'."
-                )
-            )
+            raise UserError(_("No está configurado el impuesto " "'IVA 13% Ventas Bienes Farmacéuticos'."))
 
         taxes = caryvil_tax.filtered(
-            lambda tax: (
-                not tax.company_id
-                or not self.company_id
-                or tax.company_id == self.company_id
-            )
+            lambda tax: (not tax.company_id or not self.company_id or tax.company_id == self.company_id)
         )
 
         if not taxes:
@@ -323,11 +296,7 @@ class SaleOrderMedicine(models.Model):
         self.ensure_one()
 
         existing_line = self.order_line.filtered(
-            lambda line: (
-                not line.display_type
-                and line.product_id == product
-                and line.product_uom == product.uom_id
-            )
+            lambda line: (not line.display_type and line.product_id == product and line.product_uom == product.uom_id)
         )[:1]
 
         if existing_line:
@@ -362,10 +331,7 @@ class SaleOrderMedicine(models.Model):
             return {
                 "warning": {
                     "title": _("Código inválido"),
-                    "message": _(
-                        "El código de barras debe contener exactamente "
-                        "13 dígitos (EAN-13)."
-                    ),
+                    "message": _("El código de barras debe contener exactamente " "13 dígitos (EAN-13)."),
                 }
             }
 
@@ -382,11 +348,7 @@ class SaleOrderMedicine(models.Model):
             return {
                 "warning": {
                     "title": _("Producto no encontrado"),
-                    "message": _(
-                        'No se encontró un medicamento activo con el '
-                        'código de barras "%s".'
-                    )
-                    % code,
+                    "message": _("No se encontró un medicamento activo con el " 'código de barras "%s".') % code,
                 }
             }
 
@@ -425,16 +387,10 @@ class SaleOrderMedicine(models.Model):
         self.ensure_one()
 
         if self.state not in ("draft", "sent"):
-            raise UserError(
-                _("Solo se pueden cobrar ventas en estado borrador.")
-            )
+            raise UserError(_("Solo se pueden cobrar ventas en estado borrador."))
 
-        if not self.order_line.filtered(
-            lambda line: not line.display_type
-        ):
-            raise UserError(
-                _("Debe agregar al menos un medicamento a la venta.")
-            )
+        if not self.order_line.filtered(lambda line: not line.display_type):
+            raise UserError(_("Debe agregar al menos un medicamento a la venta."))
 
         self._check_caryvil_payment()
         self._check_caryvil_stock_availability()
@@ -445,9 +401,7 @@ class SaleOrderMedicine(models.Model):
         invoices = self._create_invoices()
 
         if not invoices:
-            raise UserError(
-                _("No se pudo generar la factura de la venta.")
-            )
+            raise UserError(_("No se pudo generar la factura de la venta."))
 
         invoices.action_post()
 

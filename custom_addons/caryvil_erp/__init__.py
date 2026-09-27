@@ -25,27 +25,39 @@ def post_init_hook(env):
             "city": "Soyapango",
             "phone": "2270-1234",
             "email": "contacto@farmaciacaryvil.com",
-            "economic_activity": (
-                "Venta al por menor de productos farmacéuticos y medicinales"
-            ),
+            "economic_activity": ("Venta al por menor de productos farmacéuticos y medicinales"),
         }
         if tax_13:
             company_vals["account_sale_tax_id"] = tax_13.id
         company.sudo().write(company_vals)
 
         # Garantizar que los usuarios clave tengan asignada la compañía principal
-        users = env["res.users"].sudo().search([
-            ("login", "in", [
-                "cajero@caryvil.com",
-                "compras@caryvil.com",
-                "admin_caryvil@caryvil.com",
-                "admin",
-            ])
-        ])
+        users = (
+            env["res.users"]
+            .sudo()
+            .search(
+                [
+                    (
+                        "login",
+                        "in",
+                        [
+                            "cajero@caryvil.com",
+                            "compras@caryvil.com",
+                            "admin_caryvil@caryvil.com",
+                            "admin",
+                        ],
+                    )
+                ]
+            )
+        )
         for user in users:
-            user.write({
-                "company_ids": [Command.link(company.id)],
-            })
-            user.write({
-                "company_id": company.id,
-            })
+            user.write(
+                {
+                    "company_ids": [Command.link(company.id)],
+                }
+            )
+            user.write(
+                {
+                    "company_id": company.id,
+                }
+            )
