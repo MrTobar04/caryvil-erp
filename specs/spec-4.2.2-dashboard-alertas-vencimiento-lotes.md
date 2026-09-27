@@ -117,8 +117,9 @@ Diseñar e implementar el componente analítico y visual de **Alertas Tempranas 
 * Vistas XML de alertas de vencimiento en `views/caryvil_dashboard_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Clasificación tripartita de vencimiento (30/60/90 días) implementada.
-* [ ] Visualización en tarjetas y tabla de detalle en el Dashboard.
-* [ ] Filtro estricto de saldo positivo (`product_qty > 0`) validado.
-* [ ] Pruebas unitarias de cálculo de días restantes aprobadas.
-* [ ] Validación de la interfaz completada por la administración de la farmacia.
+* [x] Clasificación tripartita de vencimiento (30/60/90 días) implementada.
+* [x] Visualización en tarjetas y tabla de detalle en el Dashboard.
+* [x] Filtro estricto de saldo positivo (`product_qty > 0`) validado.
+* [x] Pruebas unitarias de cálculo de días restantes aprobadas.
+* [x] Validación de la interfaz completada por la administración de la farmacia.
+

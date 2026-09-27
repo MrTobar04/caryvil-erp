@@ -356,3 +356,117 @@ class TestCaryvilDashboardSales(TransactionCase):
         dashboard_inventory = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
         result = dashboard_inventory.get_critical_stock_data()
         self.assertIsInstance(result, dict)
+
+    def _create_lot_with_stock(self, product, lot_name, days_to_expire, qty):
+        """Helper para crear un lote con fecha de vencimiento y existencias físicas."""
+        exp_date = fields.Datetime.now() + timedelta(days=days_to_expire)
+        lot = self.env["stock.lot"].with_context(bypass_expiration_check=True).create(
+            {
+                "name": lot_name,
+                "product_id": product.id,
+                "company_id": self.env.company.id,
+                "expiration_date": exp_date,
+            }
+        )
+        if qty > 0:
+            location = self.warehouse.lot_stock_id
+            quant = self.env["stock.quant"].create(
+                {
+                    "product_id": product.id,
+                    "location_id": location.id,
+                    "lot_id": lot.id,
+                    "inventory_quantity": qty,
+                }
+            )
+            quant.action_apply_inventory()
+        return lot
+
+    def test_11_expiring_lots_tripartite_classification(self):
+        """Valida la clasificación tripartita de vencimiento en 30, 60 y 90 días (SPEC-4.2.2)."""
+        # Lote 1: Vence en 10 días (<30d) -> Critical 30
+        self._create_lot_with_stock(self.product_b, "LOT-CRIT-10D", 10, 15.0)
+        # Lote 2: Vence en 45 días (31-60d) -> Warning 60
+        self._create_lot_with_stock(self.product_a, "LOT-WARN-45D", 45, 20.0)
+        # Lote 3: Vence en 75 días (61-90d) -> Notice 90
+        self._create_lot_with_stock(self.product_b, "LOT-NOTI-75D", 75, 30.0)
+
+        dashboard_service = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
+        expiring_data = dashboard_service.get_expiring_lots_data()
+
+        self.assertGreaterEqual(expiring_data["count_critical_30"], 1)
+        self.assertGreaterEqual(expiring_data["count_warning_60"], 1)
+        self.assertGreaterEqual(expiring_data["count_notice_90"], 1)
+
+        crit_names = [lot_item["lot_name"] for lot_item in expiring_data["critical_lots"]]
+        warn_names = [lot_item["lot_name"] for lot_item in expiring_data["warning_lots"]]
+        noti_names = [lot_item["lot_name"] for lot_item in expiring_data["notice_lots"]]
+
+        self.assertIn("LOT-CRIT-10D", crit_names, "Lote de 10 días debe estar en lista crítica")
+        self.assertIn("LOT-WARN-45D", warn_names, "Lote de 45 días debe estar en lista advertencia")
+        self.assertIn("LOT-NOTI-75D", noti_names, "Lote de 75 días debe estar en lista seguimiento")
+
+    def test_12_scenario_1_critical_expiring_lot(self):
+        """Escenario 1 de SPEC-4.2.2: Detección y clasificación de lote próximo a vencer (<30 días).
+
+        Ibuprofeno 400mg Lote #IBU-2024 vencimiento a 15 días y existencia de 12 cajas.
+        Verifica incremento de contador y presencia con badge de 15 días restantes.
+        """
+        lot = self._create_lot_with_stock(self.product_b, "IBU-2024", 15, 12.0)
+
+        dashboard_service = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
+        expiring_data = dashboard_service.get_expiring_lots_data()
+
+        self.assertGreater(expiring_data["count_critical_30"], 0)
+        item = next((lot_item for lot_item in expiring_data["critical_lots"] if lot_item["lot_id"] == lot.id), None)
+        self.assertIsNotNone(item, "Lote #IBU-2024 debe figurar en el listado crítico")
+        self.assertEqual(item["product_name"], self.product_b.display_name)
+        self.assertEqual(item["qty"], 12.0)
+        self.assertEqual(item["days_left"], 15)
+
+    def test_13_scenario_2_exclusion_of_depleted_lots(self):
+        """Escenario 2 de SPEC-4.2.2: Exclusión automática de lotes agotados (product_qty <= 0).
+
+        Un lote vence en 10 días pero tiene existencia física 0. No debe figurar en el widget.
+        """
+        lot_depleted = self._create_lot_with_stock(self.product_a, "LOT-ZERO-QTY", 10, 0.0)
+
+        dashboard_service = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
+        expiring_data = dashboard_service.get_expiring_lots_data()
+
+        all_lot_ids = (
+            [lot_item["lot_id"] for lot_item in expiring_data["critical_lots"]]
+            + [lot_item["lot_id"] for lot_item in expiring_data["warning_lots"]]
+            + [lot_item["lot_id"] for lot_item in expiring_data["notice_lots"]]
+        )
+        self.assertNotIn(lot_depleted.id, all_lot_ids, "Lote con stock 0 no debe figurar en el dashboard")
+
+    def test_14_scenario_3_transfer_to_quarantine_action(self):
+        """Escenario 3 de SPEC-4.2.2: Transferencia directa a cuarentena/baja desde la alerta.
+
+        Verifica que al presionar 'Transferir a Cuarentena' se retorne la acción de stock.scrap precargada.
+        """
+        lot = self._create_lot_with_stock(self.product_b, "IBU-2024-QUAR", 15, 10.0)
+
+        dashboard_service = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
+        action = dashboard_service.action_transfer_to_quarantine(lot.id)
+
+        self.assertEqual(action["type"], "ir.actions.act_window")
+        self.assertEqual(action["res_model"], "stock.scrap")
+        ctx = action["context"]
+        self.assertEqual(ctx["default_product_id"], self.product_b.id)
+        self.assertEqual(ctx["default_lot_id"], lot.id)
+        self.assertEqual(ctx["default_scrap_qty"], 10.0)
+        self.assertEqual(ctx["default_scrap_reason"], "medicamento_vencido")
+
+    def test_15_expiring_lots_access_control(self):
+        """Valida que los usuarios con rol Cajero tengan el acceso restringido a alertas de vencimiento."""
+        dashboard_cashier = self.env["caryvil.dashboard.sales"].with_user(self.user_cashier)
+
+        with self.assertRaises(AccessError):
+            dashboard_cashier.get_expiring_lots_data()
+
+        with self.assertRaises(AccessError):
+            dashboard_cashier.action_transfer_to_quarantine(1)
+
+        with self.assertRaises(AccessError):
+            dashboard_cashier.action_view_lot_traceability(1)
