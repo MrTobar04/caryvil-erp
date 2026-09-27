@@ -25,6 +25,7 @@ Este directorio contiene los **Architecture Decision Records (ADR)** que formali
 | [ADR-0015](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0015-jerarquia-roles-y-grupos-seguridad-rbac.md) | Jerarquía de Roles de Usuario y Grupos de Seguridad RBAC en Farmacia Caryvil | `Accepted` | 2026-09-21 | `spec-2.2.1`, `spec-2.2.2` |
 | [ADR-0016](file:///d:/UDB/CICLO-10-2026/DES/PROYECTO/caryvil-erp/docs/adr/ADR-0016-reglas-acceso-y-seguridad-a-nivel-de-modelo-y-registro.md) | Reglas de Acceso Granular y Seguridad a Nivel de Modelo y Registro en Farmacia Caryvil | `Accepted` | 2026-09-21 | `spec-2.2.2`, `spec-2.2.1` |
 | [ADR-0017](ADR-0017-estrategia-venta-mostrador-caryvil.md) | Estrategia de Venta de Mostrador y Cobro Unificado | `Accepted` | 2026-09-24 | `spec-9.1.1`, `spec-9.2.1`, `spec-9.3.1`, `spec-9.3.2`, `spec-11.1.2` |
+| [ADR-0018](ADR-0018-integracion-facturacion-cobro-caryvil.md) | Integración de Facturación Simple, Contabilización y Cobro en Caryvil | `Accepted` | 2026-09-25 | `spec-9.1.1`, `spec-9.2.1`, `spec-3.3.1`, `spec-9.3.1`, `spec-9.3.2`, `spec-11.1.2`, `spec-11.1.3` |
 
 
 ---

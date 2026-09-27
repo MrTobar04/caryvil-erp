@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Catálogo contable -->
+
+        <!-- 1101 - Caja/Banco -->
+        <record id="account_caryvil_caja_banco" model="account.account">
+            <field name="name">Caja/Banco Caryvil</field>
+            <field name="code">1101</field>
+            <field name="account_type">asset_cash</field>
+            <field name="reconcile" eval="True"/>
+            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+        </record>
+
+        <!-- 4101 - Ingresos por ventas -->
+        <record id="account_caryvil_ventas_medicamentos" model="account.account">
+            <field name="name">Ingresos por Ventas de Medicamentos</field>
+            <field name="code">4101</field>
+            <field name="account_type">income</field>
+            <field name="reconcile" eval="False"/>
+            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+        </record>
+
+        <!-- 2107 - IVA Débito Fiscal -->
+        <record id="account_caryvil_iva_debito_fiscal" model="account.account">
+            <field name="name">IVA Débito Fiscal</field>
+            <field name="code">2107</field>
+            <field name="account_type">liability_current</field>
+            <field name="reconcile" eval="False"/>
+            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+        </record>
+
+        <!-- Cuenta necesaria para las líneas de cuentas por cobrar de las facturas -->
+        <record id="account_caryvil_receivable" model="account.account">
+            <field name="code">1201</field>
+            <field name="name">Cuentas por Cobrar Caryvil</field>
+            <field name="account_type">asset_receivable</field>
+            <field name="reconcile">True</field>
+            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+        </record>
+
+        <!-- Cuenta por cobrar predeterminada para los clientes de Farmacia Caryvil -->
+        <record id="property_account_receivable_caryvil" model="ir.property">
+            <field name="name">property_account_receivable_id</field>
+            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+            <field name="fields_id" search="[('model', '=', 'res.partner'), ('name', '=', 'property_account_receivable_id')]"/>
+            <field name="value_reference" eval="'account.account,%s' % ref('caryvil_erp.account_caryvil_receivable')"/>
+        </record>
+
+        <!-- Diario de caja para cobros en efectivo -->
+        <record id="journal_caryvil_cash" model="account.journal">
+            <field name="name">Caja Caryvil</field>
+            <field name="code">CCAJ</field>
+            <field name="type">cash</field>
+            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+            <field name="default_account_id" ref="caryvil_erp.account_caryvil_caja_banco"/>
+        </record>
+
+        <!-- Diario bancario para tarjetas y transferencias -->
+        <record id="journal_caryvil_bank" model="account.journal">
+            <field name="name">Banco Caryvil</field>
+            <field name="code">CBNK</field>
+            <field name="type">bank</field>
+            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+            <field name="default_account_id" ref="caryvil_erp.account_caryvil_caja_banco"/>
+        </record>
+
+        <!-- Diario de ventas para facturas -->
+         <record id="journal_caryvil_sales" model="account.journal">
+            <field name="name">Facturación Caryvil</field>
+            <field name="code">FV01</field>
+            <field name="type">sale</field>
+            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+        </record>
+    </data>
+</odoo>
