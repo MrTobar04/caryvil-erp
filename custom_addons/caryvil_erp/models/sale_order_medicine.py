@@ -71,18 +71,18 @@ class SaleOrderLineCaryvilTax(models.Model):
             lambda line: (
                 line.product_id
                 and line.product_id.active_ingredient_id
-                and line.company_id
             )
         ):
             tax = caryvil_tax.filtered(
                 lambda tax: (
                     not tax.company_id
+                    or not line.company_id
                     or tax.company_id == line.company_id
                 )
             )
 
             if not tax:
-                continue
+                tax = caryvil_tax[:1]
 
             if line.order_id.fiscal_position_id:
                 tax = line.order_id.fiscal_position_id.map_tax(tax)
@@ -298,9 +298,13 @@ class SaleOrderMedicine(models.Model):
         taxes = caryvil_tax.filtered(
             lambda tax: (
                 not tax.company_id
+                or not self.company_id
                 or tax.company_id == self.company_id
             )
         )
+
+        if not taxes:
+            taxes = caryvil_tax[:1]
         
         if self.fiscal_position_id:
             taxes = self.fiscal_position_id.map_tax(taxes)
