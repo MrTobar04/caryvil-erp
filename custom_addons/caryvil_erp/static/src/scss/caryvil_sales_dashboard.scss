@@ -597,6 +597,190 @@
         }
     }
 
+    /* Panel de Alertas de Vencimiento de Lotes (SPEC-4.2.2) */
+    .panel_expiring_lots {
+        .expiring_cards_grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+            }
+
+            .expiring_card {
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                cursor: pointer;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+                }
+
+                &.active {
+                    border-width: 2px;
+                }
+
+                &.critical_card {
+                    &.active {
+                        border-color: #dc2626;
+                        background-color: #fef2f2;
+                    }
+                    .badge_dot { background-color: #dc2626; }
+                }
+
+                &.warning_card {
+                    &.active {
+                        border-color: #d97706;
+                        background-color: #fffbeb;
+                    }
+                    .badge_dot { background-color: #d97706; }
+                }
+
+                &.notice_card {
+                    &.active {
+                        border-color: #2563eb;
+                        background-color: #eff6ff;
+                    }
+                    .badge_dot { background-color: #2563eb; }
+                }
+
+                .exp_card_header {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+
+                    .badge_dot {
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 50%;
+                    }
+
+                    .exp_card_label {
+                        font-size: 0.8125rem;
+                        font-weight: 600;
+                        color: #475569;
+                    }
+                }
+
+                .exp_card_value {
+                    font-size: 1.75rem;
+                    font-weight: 800;
+                    line-height: 1;
+                    margin-bottom: 0.35rem;
+                }
+
+                .exp_card_sub {
+                    font-size: 0.75rem;
+                    color: #64748b;
+                }
+            }
+        }
+
+        .expiring_lots_table {
+            width: 100%;
+            border-collapse: collapse;
+
+            th {
+                background-color: #f8fafc;
+                color: #475569;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                padding: 0.75rem 1rem;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            td {
+                padding: 0.85rem 1rem;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+                font-size: 0.875rem;
+
+                .lot_badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.35rem;
+                    background-color: #f1f5f9;
+                    color: #334155;
+                    font-family: monospace;
+                    font-size: 0.8125rem;
+                    font-weight: 600;
+                    padding: 0.25rem 0.6rem;
+                    border-radius: 6px;
+                    border: 1px solid #cbd5e1;
+                }
+
+                .location_tag {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.35rem;
+                    color: #64748b;
+                    font-size: 0.8125rem;
+                }
+
+                .badge_warning {
+                    background-color: #fef3c7;
+                    color: #92400e;
+                }
+
+                .badge_info {
+                    background-color: #dbeafe;
+                    color: #1e40af;
+                }
+
+                .btn_action_group {
+                    display: inline-flex;
+                    gap: 0.5rem;
+
+                    .btn_lot_trace {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.35rem;
+                        background-color: #0284c7;
+                        color: #ffffff;
+                        border: none;
+                        padding: 0.35rem 0.65rem;
+                        border-radius: 6px;
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+
+                        &:hover {
+                            background-color: #0369a1;
+                        }
+                    }
+
+                    .btn_quarantine {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.35rem;
+                        background-color: #dc2626;
+                        color: #ffffff;
+                        border: none;
+                        padding: 0.35rem 0.65rem;
+                        border-radius: 6px;
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+
+                        &:hover {
+                            background-color: #b91c1c;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /* Sección de Contenido Inferior (Gráfico + Ranking) */
     .dashboard_content_grid {
         display: grid;

@@ -212,11 +212,17 @@ class CaryvilSalesDashboard(models.TransientModel):
         """
         self._check_inventory_access()
 
-        critical_products = self.env["product.product"].search([
-            ("detailed_type", "=", "product"),
-            ("active", "=", True),
-            ("orderpoint_min_qty", ">", 0),
-        ]).filtered(lambda p: p.qty_available <= p.orderpoint_min_qty)
+        critical_products = (
+            self.env["product.product"]
+            .search(
+                [
+                    ("detailed_type", "=", "product"),
+                    ("active", "=", True),
+                    ("orderpoint_min_qty", ">", 0),
+                ]
+            )
+            .filtered(lambda p: p.qty_available <= p.orderpoint_min_qty)
+        )
 
         sorted_critical = sorted(
             critical_products,
@@ -386,3 +392,127 @@ class CaryvilSalesDashboard(models.TransientModel):
         action = self.env.ref("stock.action_orderpoint").read()[0]
         action["name"] = _("Productos con Reglas de Reabastecimiento")
         return action
+
+    @api.model
+    def get_expiring_lots_data(self):
+        """Retorna la clasificación tripartita de lotes activos próximos a vencer (<30d, 31-60d, 61-90d).
+        Excluye lotes con saldo cero o nulo (product_qty <= 0) o sin fecha de expiración.
+        """
+        self._check_inventory_access()
+
+        today = fields.Date.context_today(self)
+        date_30 = today + timedelta(days=30)
+        date_60 = today + timedelta(days=60)
+        date_90 = today + timedelta(days=90)
+
+        lots = self.env["stock.lot"].search(
+            [
+                ("product_qty", ">", 0),
+                ("expiration_date", "!=", False),
+                ("expiration_date", "<=", fields.Datetime.to_datetime(date_90)),
+            ],
+            order="expiration_date asc",
+        )
+
+        critical_30 = []
+        warning_60 = []
+        notice_90 = []
+
+        for lot in lots:
+            exp_date = fields.Date.to_date(lot.expiration_date)
+            days_left = (exp_date - today).days
+
+            quant = self.env["stock.quant"].search(
+                [
+                    ("lot_id", "=", lot.id),
+                    ("quantity", ">", 0),
+                    ("location_id.usage", "=", "internal"),
+                ],
+                limit=1,
+            )
+            location_name = quant.location_id.display_name if quant and quant.location_id else _("Bodega Principal")
+
+            has_uom = hasattr(lot, "product_uom_id") and lot.product_uom_id
+            lot_uom = lot.product_uom_id.name if has_uom else lot.product_id.uom_id.name
+            lot_info = {
+                "lot_id": lot.id,
+                "lot_name": lot.name,
+                "product_id": lot.product_id.id,
+                "product_name": lot.product_id.display_name,
+                "default_code": lot.product_id.default_code or "",
+                "expiration_date": str(exp_date),
+                "expiration_date_formatted": exp_date.strftime("%d/%m/%Y"),
+                "days_left": days_left,
+                "qty": lot.product_qty,
+                "uom": lot_uom or "",
+                "location_name": location_name,
+            }
+
+            if exp_date <= date_30:
+                critical_30.append(lot_info)
+            elif exp_date <= date_60:
+                warning_60.append(lot_info)
+            else:
+                notice_90.append(lot_info)
+
+        return {
+            "count_critical_30": len(critical_30),
+            "count_warning_60": len(warning_60),
+            "count_notice_90": len(notice_90),
+            "critical_lots": critical_30[:8],
+            "warning_lots": warning_60[:8],
+            "notice_lots": notice_90[:8],
+        }
+
+    @api.model
+    def action_view_lot_traceability(self, lot_id):
+        """Retorna la vista de detalle de trazabilidad del lote seleccionado."""
+        self._check_inventory_access()
+        lot = self.env["stock.lot"].browse(lot_id)
+        if not lot.exists():
+            raise ValidationError(_("El lote seleccionado no existe."))
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Trazabilidad de Lote: %s") % lot.name,
+            "res_model": "stock.lot",
+            "res_id": lot.id,
+            "view_mode": "form",
+            "target": "current",
+        }
+
+    @api.model
+    def action_transfer_to_quarantine(self, lot_id):
+        """Abre un borrador de movimiento de merma / baja de stock para transferir
+        el lote a la ubicación de cuarentena con los datos del lote precargados.
+        """
+        self._check_inventory_access()
+        lot = self.env["stock.lot"].browse(lot_id)
+        if not lot.exists():
+            raise ValidationError(_("El lote seleccionado no existe."))
+
+        quant = self.env["stock.quant"].search(
+            [
+                ("lot_id", "=", lot.id),
+                ("quantity", ">", 0),
+                ("location_id.usage", "=", "internal"),
+            ],
+            limit=1,
+        )
+        location_id = quant.location_id.id if quant else False
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Transferir a Cuarentena / Baja"),
+            "res_model": "stock.scrap",
+            "view_mode": "form",
+            "views": [(False, "form")],
+            "target": "current",
+            "context": {
+                "default_product_id": lot.product_id.id,
+                "default_lot_id": lot.id,
+                "default_scrap_qty": lot.product_qty,
+                "default_product_uom_id": lot.product_id.uom_id.id,
+                "default_location_id": location_id,
+                "default_scrap_reason": "medicamento_vencido",
+            },
+        }

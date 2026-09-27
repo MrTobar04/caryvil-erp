@@ -39,8 +39,18 @@ export class CaryvilSalesDashboard extends Component {
                 critical_count: 0,
                 critical_list: [],
             },
+            expiringLotsData: {
+                count_critical_30: 0,
+                count_warning_60: 0,
+                count_notice_90: 0,
+                critical_lots: [],
+                warning_lots: [],
+                notice_lots: [],
+            },
+            activeLotTab: "critical",
             hasSalesAccess: true,
             hasCriticalAccess: true,
+            hasExpiringAccess: true,
             loading: true,
         });
 
@@ -74,7 +84,7 @@ export class CaryvilSalesDashboard extends Component {
     }
 
     /**
-     * Carga de datos de KPIs y alertas de stock llamando al servicio backend caryvil.dashboard.sales.
+     * Carga de datos de KPIs, alertas de stock y alertas de vencimiento de lotes.
      */
     async loadDashboardData() {
         this.state.loading = true;
@@ -99,8 +109,68 @@ export class CaryvilSalesDashboard extends Component {
             }
         } catch (error) {
             this.state.hasCriticalAccess = false;
+        }
+
+        // Carga de Alertas de Vencimiento de Lotes (Inventario / Manager)
+        try {
+            const expiringData = await this.orm.call("caryvil.dashboard.sales", "get_expiring_lots_data", []);
+            if (expiringData) {
+                Object.assign(this.state.expiringLotsData, expiringData);
+                this.state.hasExpiringAccess = true;
+            }
+        } catch (error) {
+            this.state.hasExpiringAccess = false;
         } finally {
             this.state.loading = false;
+        }
+    }
+
+    /**
+     * Alterna la pestaña activa entre lotes críticos (<30d), en advertencia (31-60d) y en seguimiento (61-90d).
+     */
+    onSelectLotTab(tabName) {
+        this.state.activeLotTab = tabName;
+    }
+
+    /**
+     * Navega a la vista de trazabilidad del lote seleccionado.
+     */
+    async onViewLotTraceability(lotId) {
+        try {
+            const action = await this.orm.call(
+                "caryvil.dashboard.sales",
+                "action_view_lot_traceability",
+                [lotId]
+            );
+            if (action) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Error al abrir trazabilidad del lote:", error);
+            this.notification.add("No se pudo abrir la trazabilidad del lote.", {
+                type: "danger",
+            });
+        }
+    }
+
+    /**
+     * Abre el formulario precargado de merma / baja para transferir el lote a cuarentena.
+     */
+    async onTransferToQuarantine(lotId) {
+        try {
+            const action = await this.orm.call(
+                "caryvil.dashboard.sales",
+                "action_transfer_to_quarantine",
+                [lotId]
+            );
+            if (action) {
+                await this.actionService.doAction(action);
+            }
+        } catch (error) {
+            console.error("Error al iniciar transferencia a cuarentena:", error);
+            this.notification.add("No se pudo iniciar la transferencia a cuarentena.", {
+                type: "danger",
+            });
         }
     }
 

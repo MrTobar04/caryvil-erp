@@ -98,7 +98,5 @@ class ProductProductMedicine(models.Model):
             prod.orderpoint_min_qty = sum(prod.orderpoint_ids.mapped("product_min_qty"))
 
     def _search_orderpoint_min_qty(self, operator, value):
-        orderpoints = self.env["stock.warehouse.orderpoint"].search([
-            ("product_min_qty", operator, value)
-        ])
+        orderpoints = self.env["stock.warehouse.orderpoint"].search([("product_min_qty", operator, value)])
         return [("id", "in", orderpoints.mapped("product_id").ids)]
