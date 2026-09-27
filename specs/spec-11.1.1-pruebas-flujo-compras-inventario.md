@@ -139,7 +139,8 @@ Diseñar, implementar y automatizar la suite de pruebas de integración en Pytho
 * Archivo `custom_addons/caryvil_erp/tests/test_purchase_inventory_flow.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Suite de pruebas de compras e inventario implementada en Python.
-* [ ] Cobertura de pruebas de las funciones críticas de abastecimiento > 85%.
-* [ ] Ejecución exitosa en el entorno local y en el pipeline de GitHub Actions.
-* [ ] Revisión de código y asserts aprobada por el líder de QA.
+* [x] Suite de pruebas de compras e inventario implementada en Python.
+* [x] Cobertura de pruebas de las funciones críticas de abastecimiento > 85%.
+* [x] Ejecución exitosa en el entorno local y en el pipeline de GitHub Actions.
+* [x] Revisión de código y asserts aprobada por el líder de QA.
+
