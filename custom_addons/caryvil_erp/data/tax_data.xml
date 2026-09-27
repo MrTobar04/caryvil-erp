@@ -5,24 +5,17 @@
         <!-- Grupo fiscal propio de Farmacia Caryvil. -->
         <record id="tax_group_caryvil_iva_13" model="account.tax.group">
             <field name="name">IVA 13%</field>
-
-            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+            <field name="company_id" ref="base.main_company"/>
         </record>
 
         <!-- Impuesto IVA 13% para ventas de bienes farmacéuticos. -->
         <record id="tax_caryvil_iva_ventas_13" model="account.tax">
             <field name="name">IVA 13% Ventas Bienes Farmacéuticos</field>
-
             <field name="tax_group_id" ref="caryvil_erp.tax_group_caryvil_iva_13"/>
-
             <field name="amount">13.0</field>
             <field name="amount_type">percent</field>
             <field name="type_tax_use">sale</field>
-
             <field name="price_include" eval="False"/>
-
-            <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
-
             <field name="description">IVA 13%</field>
             <field name="company_id" ref="base.main_company"/>
         </record>

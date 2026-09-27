@@ -11,7 +11,7 @@ class TestSaleOrderStockDeduction(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.company = cls.env.ref("caryvil_erp.company_farmacia_caryvil")
+        cls.company = cls.env.ref("base.main_company")
 
         cls.tax = cls.env.ref("caryvil_erp.tax_caryvil_iva_ventas_13")
 

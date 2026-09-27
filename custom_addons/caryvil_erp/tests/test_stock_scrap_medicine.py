@@ -9,7 +9,7 @@ class TestStockScrapMedicine(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.company = cls.env.ref("caryvil_erp.company_farmacia_caryvil")
+        cls.company = cls.env.ref("base.main_company")
         cls.warehouse = cls.env["stock.warehouse"].search(
             [("company_id", "=", cls.company.id)],
             limit=1,

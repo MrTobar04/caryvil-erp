@@ -5,6 +5,6 @@
         <field name="location_id" ref="stock.stock_location_locations_virtual"/>
         <field name="usage">inventory</field>
         <field name="scrap_location">True</field>
-        <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
+        <field name="company_id" ref="base.main_company"/>
     </record>
 </odoo>
