@@ -11,16 +11,16 @@ Cumple con SPEC-4.1.1:
 
 from datetime import timedelta
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, ValidationError
 
 
 class CaryvilSalesDashboard(models.TransientModel):
-    """Modelo transaccional y servicio de agregación para el Dashboard de Ventas."""
+    """Modelo transaccional y servicio de agregación para el Dashboard de Ventas e Inventario."""
 
     _name = "caryvil.dashboard.sales"
-    _description = "Dashboard Analítico de Ventas Caryvil"
+    _description = "Dashboard Analítico y Alertas Caryvil"
 
-    name = fields.Char(string="Nombre", default="Dashboard de Ventas Caryvil", readonly=True)
+    name = fields.Char(string="Nombre", default="Dashboard de Ventas y Alertas", readonly=True)
     total_sales_today = fields.Float(string="Ventas del Día ($)", readonly=True)
     tx_count_today = fields.Integer(string="Transacciones de Hoy", readonly=True)
     avg_ticket = fields.Float(string="Ticket Promedio ($)", readonly=True)
@@ -39,6 +39,19 @@ class CaryvilSalesDashboard(models.TransientModel):
         if not self.env.user.has_group("caryvil_erp.group_caryvil_manager"):
             raise AccessError(
                 _("No tiene permisos para acceder al dashboard de ventas. Se requiere rol de Administrador.")
+            )
+
+    def _check_inventory_access(self):
+        """Verifica que el usuario posea el rol de Compras/Inventario o Administrador."""
+        user = self.env.user
+        is_inventory = user.has_group("caryvil_erp.group_caryvil_inventory_purchases")
+        is_manager = user.has_group("caryvil_erp.group_caryvil_manager")
+        if not (is_inventory or is_manager):
+            raise AccessError(
+                _(
+                    "No tiene permisos para acceder a las alertas de stock crítico. "
+                    "Se requiere rol de Compras e Inventario o Administrador."
+                )
             )
 
     def _get_today_sales_metrics(self, today):
@@ -191,3 +204,182 @@ class CaryvilSalesDashboard(models.TransientModel):
             "today_date": today.strftime("%Y-%m-%d"),
             "today_formatted": today.strftime("%d/%m/%Y"),
         }
+
+    @api.model
+    def get_critical_stock_data(self):
+        """Retorna el conteo total y listado de los productos almacenables en situación de stock crítico (qty_available <= orderpoint_min_qty)."""
+        self._check_inventory_access()
+
+        critical_products = self.env["product.product"].search([
+            ("detailed_type", "=", "product"),
+            ("active", "=", True),
+            ("orderpoint_min_qty", ">", 0),
+        ]).filtered(lambda p: p.qty_available <= p.orderpoint_min_qty)
+
+        sorted_critical = sorted(
+            critical_products,
+            key=lambda p: (p.orderpoint_min_qty - p.qty_available),
+            reverse=True,
+        )
+
+        results = []
+        for prod in sorted_critical[:10]:
+            active_ingredient = (
+                getattr(prod, "active_ingredient_id", False)
+                and prod.active_ingredient_id.name
+                or (
+                    getattr(prod.product_tmpl_id, "active_ingredient_id", False)
+                    and prod.product_tmpl_id.active_ingredient_id.name
+                    or "N/A"
+                )
+            )
+            therapeutic_category = (
+                getattr(prod, "therapeutic_category_id", False)
+                and prod.therapeutic_category_id.name
+                or (
+                    getattr(prod.product_tmpl_id, "therapeutic_category_id", False)
+                    and prod.product_tmpl_id.therapeutic_category_id.name
+                    or "N/A"
+                )
+            )
+
+            supplier_name = "Sin Asignar"
+            supplier_id = False
+            if prod.seller_ids:
+                supplier_name = prod.seller_ids[0].partner_id.name
+                supplier_id = prod.seller_ids[0].partner_id.id
+            elif prod.product_tmpl_id.seller_ids:
+                supplier_name = prod.product_tmpl_id.seller_ids[0].partner_id.name
+                supplier_id = prod.product_tmpl_id.seller_ids[0].partner_id.id
+
+            min_qty = prod.orderpoint_min_qty
+            qty_available = prod.qty_available
+            deficit = max(min_qty - qty_available, 0.0)
+
+            results.append(
+                {
+                    "product_id": prod.id,
+                    "name": prod.name,
+                    "default_code": prod.default_code or "",
+                    "active_ingredient": active_ingredient,
+                    "therapeutic_category": therapeutic_category,
+                    "qty_available": qty_available,
+                    "min_qty": min_qty,
+                    "deficit": deficit,
+                    "uom": prod.uom_id.name or "",
+                    "supplier_name": supplier_name,
+                    "supplier_id": supplier_id,
+                }
+            )
+
+        return {
+            "critical_count": len(critical_products),
+            "critical_list": results,
+        }
+
+    @api.model
+    def action_reorder_product(self, product_id):
+        """Abre un borrador de Orden de Compra precargado con el proveedor, medicamento y cantidad sugerida de reposición."""
+        self._check_inventory_access()
+        product = self.env["product.product"].browse(product_id)
+        if not product.exists():
+            raise ValidationError(_("El medicamento seleccionado no existe."))
+
+        orderpoint = product.orderpoint_ids[:1]
+        if orderpoint and orderpoint.suggested_replenishment_qty > 0:
+            qty_to_order = orderpoint.suggested_replenishment_qty
+        else:
+            qty_to_order = max(product.orderpoint_min_qty - product.qty_available, 1.0)
+
+        vendor = False
+        seller = False
+        if orderpoint and orderpoint.supplier_id:
+            vendor = orderpoint.supplier_id
+        elif product.seller_ids:
+            seller = product.seller_ids[0]
+            vendor = seller.partner_id
+        elif product.product_tmpl_id.seller_ids:
+            seller = product.product_tmpl_id.seller_ids[0]
+            vendor = seller.partner_id
+
+        vendor_id = vendor.id if vendor else False
+
+        domain = [("state", "=", "draft")]
+        if vendor_id:
+            domain.append(("partner_id", "=", vendor_id))
+
+        po = self.env["purchase.order"].search(domain, limit=1)
+        if not po and vendor_id:
+            po = self.env["purchase.order"].create(
+                {
+                    "partner_id": vendor_id,
+                    "origin": "Reabastecimiento Caryvil - Dashboard",
+                    "company_id": self.env.company.id,
+                }
+            )
+
+        price_unit = seller.price if seller else (product.standard_price or 0.0)
+        po_uom = product.uom_po_id or product.uom_id
+
+        if po:
+            line = po.order_line.filtered(lambda l: l.product_id == product)
+            if line:
+                line.write({"product_qty": qty_to_order})
+            else:
+                self.env["purchase.order.line"].create(
+                    {
+                        "order_id": po.id,
+                        "product_id": product.id,
+                        "name": product.display_name,
+                        "product_qty": qty_to_order,
+                        "product_uom": po_uom.id,
+                        "price_unit": price_unit,
+                        "date_planned": fields.Datetime.now(),
+                    }
+                )
+
+            return {
+                "type": "ir.actions.act_window",
+                "name": _("Orden de Compra"),
+                "res_model": "purchase.order",
+                "res_id": po.id,
+                "view_mode": "form",
+                "views": [(False, "form")],
+                "target": "current",
+            }
+        else:
+            return {
+                "type": "ir.actions.act_window",
+                "name": _("Solicitud de Presupuesto"),
+                "res_model": "purchase.order",
+                "view_mode": "form",
+                "views": [(False, "form")],
+                "target": "current",
+                "context": {
+                    "default_partner_id": vendor_id,
+                    "default_origin": "Reabastecimiento Caryvil - Dashboard",
+                    "default_order_line": [
+                        (
+                            0,
+                            0,
+                            {
+                                "product_id": product.id,
+                                "name": product.display_name,
+                                "product_qty": qty_to_order,
+                                "product_uom": po_uom.id,
+                                "price_unit": price_unit,
+                                "date_planned": fields.Datetime.now(),
+                            },
+                        )
+                    ],
+                },
+            }
+
+    @api.model
+    def action_get_orderpoint_view(self):
+        """Retorna la acción de ventana para ver el catálogo completo de reglas de reabastecimiento."""
+        self._check_inventory_access()
+        action = self.env.ref("stock.action_orderpoint").read()[0]
+        action["name"] = _("Productos con Reglas de Reabastecimiento")
+        return action
+

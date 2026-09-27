@@ -17,7 +17,7 @@
                   parent="menu_caryvil_root"
                   sequence="10"
                   action="action_caryvil_sales_dashboard"
-                  groups="caryvil_erp.group_caryvil_manager"/>
+                  groups="caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_ventas"
                   name="Ventas y Caja"
