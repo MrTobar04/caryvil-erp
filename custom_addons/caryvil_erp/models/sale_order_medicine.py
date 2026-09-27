@@ -255,37 +255,29 @@ class SaleOrderMedicine(models.Model):
         warehouse = self.warehouse_id
 
         if not warehouse:
-            raise UserError(
-                _(
-                    "La venta no tiene un almacén configurado."
-                )
-            )
+            raise UserError(_("La venta no tiene un almacén configurado."))
 
         picking_type = warehouse.out_type_id
 
-        location = (
-            picking_type.default_location_src_id
-            or warehouse.lot_stock_id
-        )
+        location = picking_type.default_location_src_id or warehouse.lot_stock_id
 
         if not location:
-            raise UserError(
-                _(
-                    "No se encontró una ubicación de salida "
-                    "configurada para el almacén."
-                )
-            )
+            raise UserError(_("No se encontró una ubicación de salida " "configurada para el almacén."))
 
         return location
 
     def _caryvil_lock_stock_quants(self, product, location):
         # Bloquea los quants del producto durante la validación de stock.
 
-        location_ids = self.env["stock.location"].search(
-            [
-                ("id", "child_of", location.id),
-            ]
-        ).ids
+        location_ids = (
+            self.env["stock.location"]
+            .search(
+                [
+                    ("id", "child_of", location.id),
+                ]
+            )
+            .ids
+        )
 
         if not location_ids:
             return
@@ -309,9 +301,7 @@ class SaleOrderMedicine(models.Model):
 
         self.ensure_one()
 
-        requested_quantities = (
-            self._get_caryvil_requested_quantities()
-        )
+        requested_quantities = self._get_caryvil_requested_quantities()
 
         if not requested_quantities:
             return
@@ -321,11 +311,7 @@ class SaleOrderMedicine(models.Model):
 
         for product_id in sorted(requested_quantities):
             requested_qty = requested_quantities[product_id]
-            product = (
-                self.env["product.product"]
-                .browse(product_id)
-                .exists()
-            )
+            product = self.env["product.product"].browse(product_id).exists()
 
             if not product:
                 continue
@@ -335,19 +321,20 @@ class SaleOrderMedicine(models.Model):
                 location,
             )
 
-            available_qty = (
-                quant_model._get_available_quantity(
-                    product,
-                    location,
-                    strict=False,
-                )
+            available_qty = quant_model._get_available_quantity(
+                product,
+                location,
+                strict=False,
             )
 
-            if float_compare(
-                requested_qty,
-                available_qty,
-                precision_rounding=product.uom_id.rounding,
-            ) > 0:
+            if (
+                float_compare(
+                    requested_qty,
+                    available_qty,
+                    precision_rounding=product.uom_id.rounding,
+                )
+                > 0
+            ):
                 raise UserError(
                     _(
                         'Stock insuficiente para "%(product)s".\n'
@@ -366,23 +353,13 @@ class SaleOrderMedicine(models.Model):
     def _caryvil_validate_outgoing_pickings(self):
         # Reserva y valida automáticamente las entregas de la venta.
 
-        pickings = self.mapped(
-            "picking_ids"
-        ).filtered(
-            lambda picking: (
-                picking.picking_type_code == "outgoing"
-                and picking.state not in ("done", "cancel")
-            )
+        pickings = self.mapped("picking_ids").filtered(
+            lambda picking: (picking.picking_type_code == "outgoing" and picking.state not in ("done", "cancel"))
         )
 
         if not pickings:
             if self._get_caryvil_requested_quantities():
-                raise UserError(
-                    _(
-                        "No se generó el albarán de salida "
-                        "para la venta."
-                    )
-                )
+                raise UserError(_("No se generó el albarán de salida " "para la venta."))
             return
 
         for picking in pickings:
@@ -396,24 +373,15 @@ class SaleOrderMedicine(models.Model):
                         move.quantity,
                         move.product_uom_qty,
                         precision_rounding=move.product_uom.rounding,
-                    ) < 0
+                    )
+                    < 0
                 )
             )
 
             if incomplete_moves:
-                products = ", ".join(
-                    incomplete_moves.mapped(
-                        "product_id.display_name"
-                    )
-                )
+                products = ", ".join(incomplete_moves.mapped("product_id.display_name"))
 
-                raise UserError(
-                    _(
-                        "No fue posible reservar completamente "
-                        "el stock para: %s"
-                    )
-                    % products
-                )
+                raise UserError(_("No fue posible reservar completamente " "el stock para: %s") % products)
 
             picking.with_context(
                 skip_backorder=True,
@@ -422,20 +390,12 @@ class SaleOrderMedicine(models.Model):
             ).button_validate()
 
             if picking.state != "done":
-                raise UserError(
-                    _(
-                        "No fue posible completar el albarán "
-                        "de salida %s."
-                    )
-                    % picking.name
-                )
+                raise UserError(_("No fue posible completar el albarán " "de salida %s.") % picking.name)
 
     def _action_confirm(self):
         # Confirma la venta y, cuando corresponde, descuenta el stock.
 
-        auto_stock_deduction = self.env.context.get(
-            "caryvil_auto_stock_deduction"
-        )
+        auto_stock_deduction = self.env.context.get("caryvil_auto_stock_deduction")
 
         if auto_stock_deduction:
             for order in self:
@@ -595,9 +555,7 @@ class SaleOrderMedicine(models.Model):
         self._check_caryvil_payment()
 
         # Activa el flujo transaccional de stock.
-        self.with_context(
-            caryvil_auto_stock_deduction=True
-        ).action_confirm()
+        self.with_context(caryvil_auto_stock_deduction=True).action_confirm()
 
         invoices = self._create_invoices()
 

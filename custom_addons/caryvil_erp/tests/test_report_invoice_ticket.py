@@ -11,17 +11,11 @@ class TestReportInvoiceTicket(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.company = cls.env.ref(
-            "caryvil_erp.company_farmacia_caryvil"
-        )
+        cls.company = cls.env.ref("caryvil_erp.company_farmacia_caryvil")
 
-        cls.tax = cls.env.ref(
-            "caryvil_erp.tax_caryvil_iva_ventas_13"
-        )
+        cls.tax = cls.env.ref("caryvil_erp.tax_caryvil_iva_ventas_13")
 
-        cls.sales_account = cls.env.ref(
-            "caryvil_erp.account_caryvil_ventas_medicamentos"
-        )
+        cls.sales_account = cls.env.ref("caryvil_erp.account_caryvil_ventas_medicamentos")
 
         cls.sale_journal = cls.env["account.journal"].search(
             [
@@ -31,9 +25,7 @@ class TestReportInvoiceTicket(TransactionCase):
             limit=1,
         )
 
-        cls.ingredient = cls.env[
-            "caryvil.active.ingredient"
-        ].create(
+        cls.ingredient = cls.env["caryvil.active.ingredient"].create(
             {
                 "name": "Principio Activo Reporte Test",
             }
@@ -48,9 +40,7 @@ class TestReportInvoiceTicket(TransactionCase):
             }
         )
 
-        cls.consumer = cls.env.ref(
-            "caryvil_erp.partner_consumidor_final"
-        )
+        cls.consumer = cls.env.ref("caryvil_erp.partner_consumidor_final")
 
         cls.product_template_1 = cls.env["product.template"].create(
             {
@@ -129,9 +119,7 @@ class TestReportInvoiceTicket(TransactionCase):
         return order, invoice
 
     def _render_report(self, invoice):
-        return self.env[
-            "ir.actions.report"
-        ]._render_qweb_pdf(
+        return self.env["ir.actions.report"]._render_qweb_pdf(
             "caryvil_erp.report_invoice_ticket_template",
             invoice.ids,
         )
@@ -197,13 +185,9 @@ class TestReportInvoiceTicket(TransactionCase):
             amount_tendered=3.00,
         )
 
-        self.assertFalse(
-            invoice.partner_id.dui
-        )
+        self.assertFalse(invoice.partner_id.dui)
 
-        content, _report_type = self._render_report(
-            invoice
-        )
+        content, _report_type = self._render_report(invoice)
 
         self.assertIn(
             b"Consumidor Final",
@@ -253,9 +237,7 @@ class TestReportInvoiceTicket(TransactionCase):
             places=2,
         )
 
-        content, _report_type = self._render_report(
-            invoice
-        )
+        content, _report_type = self._render_report(invoice)
 
         self.assertIn(
             b"Descuento",
@@ -265,4 +247,4 @@ class TestReportInvoiceTicket(TransactionCase):
         self.assertIn(
             b"IVA (13%)",
             content,
-        )
+        )
