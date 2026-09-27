@@ -144,8 +144,8 @@ class TestLocalValidations(TransactionCase):
                 )
 
     def test_customer_name_search_multicampo(self):
-        """Test 4: Verificación de que el método _name_search retorne el registro
-        correcto al buscar por fragmentos de DUI, teléfono o apellidos."""
+        """Test 4: Verificación de que el método _name_search retorne el registro correcto
+        al buscar por fragmentos de DUI, teléfono o apellidos."""
         client = self.partner_model.create(
             {
                 "first_name": "Roberto",
@@ -173,8 +173,8 @@ class TestLocalValidations(TransactionCase):
         self.assertIn(client.id, [r[0] for r in results_lastname])
 
     def test_security_rbac_restrictions(self):
-        """Test 5: Verificación de privilegios por rol (Cajero no puede eliminar
-        medicamentos ni modificar facturas emitidas)."""
+        """Test 5: Verificación de privilegios por rol (Cajero no puede eliminar medicamentos
+        ni modificar facturas emitidas)."""
         category = self.env["product.category"].create({"name": "Categoría Validaciones Local"})
 
         medicine = self.product_model.create(
