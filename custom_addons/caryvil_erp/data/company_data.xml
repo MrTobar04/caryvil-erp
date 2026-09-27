@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <record id="company_farmacia_caryvil" model="res.company">
+        <!-- Actualización de la compañía principal nativa de Odoo a Farmacia Caryvil -->
+        <record id="base.main_company" model="res.company">
             <field name="name">Farmacia Caryvil</field>
             <field name="legal_name">Farmacia Caryvil S.A. de C.V.</field>
             <field name="street">Colonia San Antonio, Calle Principal #12</field>
