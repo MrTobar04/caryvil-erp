@@ -265,4 +265,4 @@ class TestReportInvoiceTicket(TransactionCase):
         self.assertIn(
             b"IVA (13%)",
             content,
-        )
+        )

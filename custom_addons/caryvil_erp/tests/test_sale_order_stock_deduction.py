@@ -249,4 +249,4 @@ class TestSaleOrderStockDeduction(TransactionCase):
             self._get_lot_quantity(lot),
             40.0,
             places=2,
-        )
+        )
