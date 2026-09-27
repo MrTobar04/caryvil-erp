@@ -139,8 +139,8 @@ Diseñar, estructurar e implementar la suite de pruebas unitarias y de integrida
 * Inclusión en `custom_addons/caryvil_erp/tests/__init__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Suite de pruebas de validaciones locales implementada en Python.
-* [ ] Autocorrección, unicidad y rechazo de DUIs mal formados comprobada.
-* [ ] Cobertura de pruebas de las funciones de validación > 95%.
-* [ ] Pruebas aprobadas en el pipeline de CI/CD de GitHub Actions.
-* [ ] Revisión técnica aprobada por el equipo de desarrollo.
+* [x] Suite de pruebas de validaciones locales implementada en Python.
+* [x] Autocorrección, unicidad y rechazo de DUIs mal formados comprobada.
+* [x] Cobertura de pruebas de las funciones de validación > 95%.
+* [x] Pruebas aprobadas en el pipeline de CI/CD de GitHub Actions.
+* [x] Revisión técnica aprobada por el equipo de desarrollo.
