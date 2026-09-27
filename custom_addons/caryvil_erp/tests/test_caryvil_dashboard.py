@@ -23,6 +23,7 @@ class TestCaryvilDashboardSales(TransactionCase):
 
         self.group_manager = self.env.ref("caryvil_erp.group_caryvil_manager")
         self.group_cashier = self.env.ref("caryvil_erp.group_caryvil_cashier")
+        self.group_inventory = self.env.ref("caryvil_erp.group_caryvil_inventory_purchases")
 
         # Usuario Administrador
         self.user_manager = self.env["res.users"].create(
@@ -44,6 +45,25 @@ class TestCaryvilDashboardSales(TransactionCase):
             }
         )
 
+        # Usuario Encargado de Compras e Inventario
+        self.user_inventory = self.env["res.users"].create(
+            {
+                "name": "Encargado Inventario Test",
+                "login": "inventory_test_dashboard",
+                "email": "inventory_dashboard@caryvil.test",
+                "groups_id": [(6, 0, [self.group_inventory.id])],
+            }
+        )
+
+        # Proveedor farmacéutico habitual
+        self.vendor = self.env["res.partner"].create(
+            {
+                "name": "Laboratorios Farmacéuticos Caryvil S.A.",
+                "is_pharmacy_vendor": True,
+                "email": "ventas@labcaryvil.test",
+            }
+        )
+
         # Cliente farmacéutico
         self.customer = self.env["res.partner"].create(
             {
@@ -55,25 +75,76 @@ class TestCaryvilDashboardSales(TransactionCase):
             }
         )
 
+        # Categoría y principio activo para pruebas
+        self.active_ingredient = self.env["caryvil.active.ingredient"].create(
+            {"name": "Amoxicilina Trihidrato", "description": "Antibiótico de amplio espectro"}
+        )
+        self.therapeutic_category = self.env["caryvil.therapeutic.category"].create(
+            {"name": "Antibióticos System", "code": "J01CA04"}
+        )
+
         # Productos farmacéuticos para pruebas
         self.product_a = self.env["product.product"].create(
             {
                 "name": "Amoxicilina 500mg",
                 "default_code": "MED-AMX-500",
+                "detailed_type": "product",
                 "list_price": 10.0,
+                "active_ingredient_id": self.active_ingredient.id,
+                "therapeutic_category_id": self.therapeutic_category.id,
+                "seller_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "partner_id": self.vendor.id,
+                            "price": 6.50,
+                            "min_qty": 1.0,
+                        },
+                    )
+                ],
             }
         )
         self.product_b = self.env["product.product"].create(
             {
                 "name": "Ibuprofeno 400mg",
                 "default_code": "MED-IBU-400",
+                "detailed_type": "product",
                 "list_price": 5.0,
             }
+        )
+
+        self.warehouse = self.env["stock.warehouse"].search(
+            [("company_id", "=", self.env.company.id)], limit=1
         )
 
         # Asegurar un diario de ventas para facturas
         self.journal_sale = self.env["account.journal"].search(
             [("type", "=", "sale"), ("company_id", "=", self.env.company.id)], limit=1
+        )
+
+    def _set_product_stock(self, product, qty):
+        """Ajusta la existencia física del producto en el almacén principal."""
+        location = self.warehouse.lot_stock_id
+        quant = self.env["stock.quant"].create(
+            {
+                "product_id": product.id,
+                "location_id": location.id,
+                "inventory_quantity": qty,
+            }
+        )
+        quant.action_apply_inventory()
+
+    def _create_orderpoint(self, product, min_qty=20.0, max_qty=50.0):
+        """Crea una regla de reabastecimiento para el producto."""
+        return self.env["stock.warehouse.orderpoint"].create(
+            {
+                "product_id": product.id,
+                "location_id": self.warehouse.lot_stock_id.id,
+                "product_min_qty": min_qty,
+                "product_max_qty": max_qty,
+                "qty_multiple": 1.0,
+            }
         )
 
     def _create_posted_invoice(self, date_inv, amount, product=None, qty=1):
@@ -204,3 +275,81 @@ class TestCaryvilDashboardSales(TransactionCase):
         self.assertIsInstance(kpis["avg_ticket"], float)
         if kpis["tx_count_today"] == 0:
             self.assertEqual(kpis["avg_ticket"], 0.0)
+
+    def test_07_scenario_1_critical_stock_detection(self):
+        """Escenario 1 de SPEC-4.2.1: Amoxicilina 500mg con stock mín de 20 y stock actual de 5.
+
+        Verifica que aparezca en la lista de Alertas de Stock Crítico con stock: 5 / mín: 20 y Déficit: 15.
+        """
+        self._create_orderpoint(self.product_a, min_qty=20.0, max_qty=50.0)
+        self._set_product_stock(self.product_a, 5.0)
+
+        dashboard_service = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
+        critical_data = dashboard_service.get_critical_stock_data()
+
+        self.assertGreater(critical_data["critical_count"], 0, "Debe haber al menos 1 producto crítico")
+        item = next((p for p in critical_data["critical_list"] if p["product_id"] == self.product_a.id), None)
+        self.assertIsNotNone(item, "Amoxicilina 500mg debe figurar en la lista crítica")
+        self.assertEqual(item["qty_available"], 5.0, "Stock actual debe ser 5")
+        self.assertEqual(item["min_qty"], 20.0, "Stock mínimo debe ser 20")
+        self.assertEqual(item["deficit"], 15.0, "Déficit debe ser 15")
+        self.assertEqual(item["supplier_name"], self.vendor.name, "Proveedor habitual debe ser el configurado")
+
+    def test_08_scenario_2_quick_purchase_order_creation(self):
+        """Escenario 2 de SPEC-4.2.1: Creación rápida de orden de compra desde el dashboard.
+
+        Verifica que al presionar 'Reabastecer' se genere/abra una Orden de Compra precargada.
+        """
+        self._create_orderpoint(self.product_a, min_qty=20.0, max_qty=50.0)
+        self._set_product_stock(self.product_a, 5.0)
+
+        dashboard_service = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
+        action = dashboard_service.action_reorder_product(self.product_a.id)
+
+        self.assertEqual(action["type"], "ir.actions.act_window", "Debe retornar una acción de ventana")
+        self.assertEqual(action["res_model"], "purchase.order", "La acción debe abrir el modelo purchase.order")
+
+        # Verificar la orden de compra generada en la BD
+        po_id = action.get("res_id")
+        if po_id:
+            po = self.env["purchase.order"].browse(po_id)
+            self.assertEqual(po.partner_id, self.vendor, "El proveedor debe ser el habitual")
+            line = po.order_line.filtered(lambda l: l.product_id == self.product_a)
+            self.assertTrue(line, "Debe existir una línea para Amoxicilina 500mg")
+            self.assertEqual(line.product_qty, 45.0, "La cantidad sugerida debe ser max (50) - stock (5) = 45 o el déficit")
+
+    def test_09_scenario_3_alert_disappears_after_replenishment(self):
+        """Escenario 3 de SPEC-4.2.1: Desaparición de la alerta tras reabastecimiento.
+
+        Verifica que cuando el stock se eleva por encima del nivel mínimo, el producto desaparece automáticamente.
+        """
+        self._create_orderpoint(self.product_a, min_qty=20.0, max_qty=50.0)
+        self._set_product_stock(self.product_a, 5.0)
+
+        dashboard_service = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
+        initial_data = dashboard_service.get_critical_stock_data()
+        initial_ids = [p["product_id"] for p in initial_data["critical_list"]]
+        self.assertIn(self.product_a.id, initial_ids, "Producto debe estar en alerta inicialmente")
+
+        # Se recibe y valida pedido elevando el stock a 25.0 (superior a min=20)
+        self._set_product_stock(self.product_a, 25.0)
+
+        refreshed_data = dashboard_service.get_critical_stock_data()
+        refreshed_ids = [p["product_id"] for p in refreshed_data["critical_list"]]
+        self.assertNotIn(self.product_a.id, refreshed_ids, "Producto debe desaparecer automáticamente tras reabastecer")
+
+    def test_10_critical_stock_access_control(self):
+        """Valida que los usuarios sin permisos (Cajero) no puedan acceder al backend de stock crítico."""
+        dashboard_cashier = self.env["caryvil.dashboard.sales"].with_user(self.user_cashier)
+
+        with self.assertRaises(AccessError, msg="El rol Cajero debe ser bloqueado al consultar stock crítico"):
+            dashboard_cashier.get_critical_stock_data()
+
+        with self.assertRaises(AccessError, msg="El rol Cajero debe ser bloqueado al intentar reabastecer"):
+            dashboard_cashier.action_reorder_product(self.product_a.id)
+
+        # Usuario con rol Compras/Inventario sí puede acceder
+        dashboard_inventory = self.env["caryvil.dashboard.sales"].with_user(self.user_inventory)
+        result = dashboard_inventory.get_critical_stock_data()
+        self.assertIsInstance(result, dict)
+
