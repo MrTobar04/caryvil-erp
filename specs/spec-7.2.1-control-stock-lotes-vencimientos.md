@@ -96,8 +96,8 @@ Habilitar, parametrizar y hacer mandatorio el control de inventario por números
 * Archivo `custom_addons/caryvil_erp/views/stock_lot_medicine_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Modelo `stock.production.lot` extendido con cálculo de estado vencido.
-* [ ] Bloqueo de venta para lotes caducados probado y validado.
-* [ ] Trazabilidad de lotes desde compras hasta ventas verificada.
-* [ ] Pruebas unitarias aprobadas al 100%.
+* [x] Modelo `stock.production.lot` (`stock.lot`) extendido con cálculo de estado vencido, alertas automáticas y sincronización por cron.
+* [x] Bloqueo de venta para lotes caducados probado y validado.
+* [x] Trazabilidad de lotes desde compras hasta ventas verificada.
+* [x] Pruebas unitarias aprobadas al 100%.
 * [ ] Aprobación de la dirección técnica farmacéutica.

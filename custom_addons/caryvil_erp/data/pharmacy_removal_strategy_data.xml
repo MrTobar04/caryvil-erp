@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- FEFO obligatorio para las categorías farmacéuticas. -->
+
+        <function model="product.category" name="write">
+            <function model="product.category" name="search">
+                <value eval="[
+                    (
+                        'id',
+                        'in',
+                        [
+                            ref('caryvil_erp.cat_analgesicos'),
+                            ref('caryvil_erp.cat_antibioticos'),
+                            ref('caryvil_erp.cat_antihistaminicos'),
+                            ref('caryvil_erp.cat_antihipertensivos'),
+                            ref('caryvil_erp.cat_gastrointestinales'),
+                            ref('caryvil_erp.cat_antidiabeticos'),
+                            ref('caryvil_erp.cat_vitaminas'),
+                            ref('caryvil_erp.cat_dermatologicos'),
+                            ref('caryvil_erp.cat_respiratorios'),
+                            ref('caryvil_erp.cat_oftalmicos'),
+                        ],
+                    ),
+                ]"/>
+            </function>
+
+            <value eval="{
+                'removal_strategy_id': ref('product_expiry.removal_fefo')
+            }"/>
+        </function>
+
+    </data>
+</odoo>

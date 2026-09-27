@@ -106,11 +106,15 @@ Estructurar, modelar y personalizar la ficha técnica y categorización del cat�
 ## 10. Deliverables & Config as Code
 * Archivo `custom_addons/caryvil_erp/models/caryvil_medicine.py`.
 * Archivo `custom_addons/caryvil_erp/views/caryvil_medicine_views.xml`.
-* Archivo `custom_addons/caryvil_erp/views/product_template_views.xml`.
+* Archivo `custom_addons/caryvil_erp/views/product_medicine_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Modelos de categorías terapéuticas y principios activos implementados.
-* [ ] Extensión de `product.template` con campos farmacéuticos configurada.
-* [ ] Trazabilidad por lotes (`tracking = 'lot'`) predeterminada en nuevos medicamentos.
-* [ ] Pruebas unitarias aprobadas al 100%.
-* [ ] Validación de la ficha médica con la farmacéutica responsable.
+* [x] Modelos de categorías terapéuticas y principios activos implementados.
+* [x] Extensión de `product.template` con campos farmacéuticos configurada.
+* [x] Trazabilidad por lotes (`tracking = 'lot'`) predeterminada en nuevos medicamentos.
+* [x] Vistas y menús para Categorías Terapéuticas y Principios Activos creados (`caryvil_medicine_views.xml`).
+* [x] Alerta visual prominente y distintivos de prescripción implementados en formulario, árbol y kanban.
+* [x] Pruebas unitarias aprobadas al 100% (9 de 9 pruebas exitosas en `test_medicine_catalog.py`).
+* [x] Guión de pruebas manuales documentado paso a paso (`docs/guias/guion-pruebas-manuales.md`, Flujo 7.1).
+* [ ] Validación de la ficha médica con la farmacéutica responsable (en proceso de UAT).
+

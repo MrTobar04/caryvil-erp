@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Cuenta de cobros pendientes para el método Manual de entrada. -->
+        <function model="account.payment.method.line" name="write">
+            <function
+                model="account.payment.method.line"
+                name="search"
+                eval="[[
+                    ('journal_id', '=', ref('caryvil_erp.journal_caryvil_cash')),
+                    ('payment_method_id', '=', ref('account.account_payment_method_manual_in'))
+                ]]"
+            />
+            <value
+                eval="{
+                    'payment_account_id': ref(
+                        'caryvil_erp.account_caryvil_caja_banco'
+                    )
+                }"
+            />
+        </function>
+
+    </data>
+</odoo>

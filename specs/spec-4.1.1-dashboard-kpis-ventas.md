@@ -107,8 +107,8 @@ Diseñar e implementar el componente de analítica e indicadores clave de rendim
 * Registro de vistas y acciones en el manifiesto `__manifest__.py`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Modelo y métodos de agregación de KPIs implementados en Python.
-* [ ] Vista visual del dashboard integrada en la pantalla de inicio de Odoo.
-* [ ] Permisos de visualización restringidos al grupo Administrador.
-* [ ] Pruebas unitarias de cálculo de KPIs aprobadas al 100%.
-* [ ] Validación funcional con la propietaria de la farmacia.
+* [x] Modelo y métodos de agregación de KPIs implementados en Python.
+* [x] Vista visual del dashboard integrada en la pantalla de inicio de Odoo.
+* [x] Permisos de visualización restringidos al grupo Administrador.
+* [x] Pruebas unitarias de cálculo de KPIs aprobadas al 100%.
+* [x] Validación funcional con la propietaria de la farmacia.

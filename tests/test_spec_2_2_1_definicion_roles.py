@@ -201,9 +201,10 @@ def test_menu_security_restrictions():
     assert "menu_caryvil_compras" in menus_by_id
     assert menus_by_id["menu_caryvil_compras"].get("groups") == "caryvil_erp.group_caryvil_inventory_purchases"
 
-    # Dashboard y Configuración deben estar restringidos al administrador
+    # Dashboard accesible para inventario/compras y administrador (SPEC-4.2.1)
     assert "menu_caryvil_dashboard" in menus_by_id
-    assert menus_by_id["menu_caryvil_dashboard"].get("groups") == "caryvil_erp.group_caryvil_manager"
+    dashboard_groups = menus_by_id["menu_caryvil_dashboard"].get("groups", "").split(",")
+    assert "caryvil_erp.group_caryvil_manager" in dashboard_groups
 
     assert "menu_caryvil_configuracion" in menus_by_id
     assert menus_by_id["menu_caryvil_configuracion"].get("groups") == "caryvil_erp.group_caryvil_manager"

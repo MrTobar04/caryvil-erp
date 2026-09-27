@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Búsqueda de productos incluyendo principio activo -->
+        <record id="view_product_template_search_caryvil_medicine" model="ir.ui.view">
+            <field name="name">product.template.search.caryvil.medicine</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_search_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="filter_domain">
+                        ['|', '|', '|', '|',
+                        ('default_code', 'ilike', self),
+                        ('product_variant_ids.default_code', 'ilike', self),
+                        ('name', 'ilike', self),
+                        ('barcode', 'ilike', self),
+                        ('active_ingredient_id.name', 'ilike', self)]
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//filter[@name='filter_to_sell']" position="after">
+                    <separator/>
+                    <filter string="Requiere Receta Médica"
+                            name="filter_prescription_required"
+                            domain="[('prescription_required', '=', True)]"/>
+                    <filter string="Venta Libre"
+                            name="filter_over_the_counter"
+                            domain="[('prescription_required', '=', False)]"/>
+                </xpath>
+
+                <xpath expr="//group" position="inside">
+                    <filter string="Principio Activo"
+                            name="group_by_active_ingredient"
+                            context="{'group_by': 'active_ingredient_id'}"/>
+                    <filter string="Categoría Terapéutica"
+                            name="group_by_therapeutic_category"
+                            context="{'group_by': 'therapeutic_category_id'}"/>
+                    <filter string="Forma Farmacéutica"
+                            name="group_by_dosage_form"
+                            context="{'group_by': 'dosage_form'}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- Formulario de producto con alerta visible inmediata y pestaña médica -->
+        <record id="view_product_template_form_caryvil_medicine" model="ir.ui.view">
+            <field name="name">product.template.form.caryvil.medicine</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+
+                <!-- Alerta visual destacada en la parte superior de la ficha (visible en cualquier pestaña) -->
+                <xpath expr="//div[hasclass('oe_title')]" position="before">
+                    <div class="alert alert-danger mb-3 p-3"
+                         role="alert"
+                         invisible="not prescription_required"
+                         style="border-left: 6px solid #b91c1c;">
+                        <div class="d-flex align-items-center">
+                            <span class="fs-4 me-3">⚠</span>
+                            <div>
+                                <strong class="fs-6 d-block text-danger">MEDICAMENTO BAJO RECETA MÉDICA OBLIGATORIA</strong>
+                                <span class="text-muted">Exigir y verificar la prescripción médica original antes de autorizar la dispensación en mostrador o venta.</span>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+
+                <!-- Pestaña técnica Información Farmacéutica -->
+                <xpath expr="//page[@name='general_information']" position="after">
+                    <page string="Información Farmacéutica" name="pharma_information">
+                        <group>
+                            <group string="Composición y Dosificación">
+                                <field name="active_ingredient_id" options="{'no_open': False, 'no_create_edit': False}"/>
+                                <field name="concentration" placeholder="Ej: 500 mg, 125 mg/5ml, 1%"/>
+                                <field name="dosage_form"/>
+                                <field name="therapeutic_category_id" options="{'no_open': False, 'no_create_edit': False}"/>
+                            </group>
+
+                            <group string="Control Regulatorio y Comercial">
+                                <field name="prescription_required" widget="boolean_toggle"/>
+                                <field name="barcode" placeholder="Código EAN-13"/>
+                                <field name="list_price" widget="monetary"/>
+                                <field name="uom_id"/>
+                                <field name="uom_po_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- Vista Lista / Árbol con columnas farmacéuticas y badge de prescripción -->
+        <record id="view_product_template_tree_caryvil_medicine" model="ir.ui.view">
+            <field name="name">product.template.tree.caryvil.medicine</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="active_ingredient_id" optional="show"/>
+                    <field name="concentration" optional="show"/>
+                    <field name="dosage_form" optional="show"/>
+                    <field name="therapeutic_category_id" optional="hide"/>
+                    <field name="prescription_required"
+                           string="Receta"
+                           widget="badge"
+                           decoration-danger="prescription_required"
+                           decoration-success="not prescription_required"
+                           optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Vista Kanban con distintivo visual para medicamentos bajo receta -->
+        <record id="view_product_template_kanban_caryvil_medicine" model="ir.ui.view">
+            <field name="name">product.template.kanban.caryvil.medicine</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="inside">
+                    <field name="prescription_required"/>
+                </xpath>
+                <xpath expr="//div[hasclass('oe_kanban_details')]" position="inside">
+                    <div t-if="record.prescription_required.raw_value" class="mt-1">
+                        <span class="badge rounded-pill text-bg-danger" style="font-size: 0.75rem;">
+                            ⚠ Requiere Receta
+                        </span>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

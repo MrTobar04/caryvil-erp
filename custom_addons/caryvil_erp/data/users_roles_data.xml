@@ -7,6 +7,8 @@
             <field name="login">cajero@caryvil.com</field>
             <field name="email">cajero@caryvil.com</field>
             <field name="password">cajero123</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="company_ids" eval="[(4, ref('base.main_company'))]"/>
             <field name="groups_id" eval="[(6, 0, [ref('group_caryvil_cashier')])]"/>
         </record>
 
@@ -16,6 +18,8 @@
             <field name="login">compras@caryvil.com</field>
             <field name="email">compras@caryvil.com</field>
             <field name="password">compras123</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="company_ids" eval="[(4, ref('base.main_company'))]"/>
             <field name="groups_id" eval="[(6, 0, [ref('group_caryvil_inventory_purchases')])]"/>
         </record>
 
@@ -25,6 +29,8 @@
             <field name="login">admin_caryvil@caryvil.com</field>
             <field name="email">admin@caryvil.com</field>
             <field name="password">admin123</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="company_ids" eval="[(4, ref('base.main_company'))]"/>
             <field name="groups_id" eval="[(6, 0, [ref('group_caryvil_manager')])]"/>
         </record>
     </data>
