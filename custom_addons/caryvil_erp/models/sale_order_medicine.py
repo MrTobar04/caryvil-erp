@@ -8,7 +8,8 @@ from odoo.tools import float_compare
 
 class ProductProductCaryvilSearch(models.Model):
 
-    #Extiende la búsqueda de variantes de productos para que también permita localizar medicamentos mediante su principio activo.
+    # Extiende la búsqueda de variantes de productos para que también
+    # permita localizar medicamentos mediante su principio activo.
 
     _inherit = "product.product"
 
@@ -52,6 +53,7 @@ class ProductProductCaryvilSearch(models.Model):
             order=order,
         )
 
+
 class SaleOrderLineCaryvilTax(models.Model):
     _inherit = "sale.order.line"
 
@@ -67,30 +69,22 @@ class SaleOrderLineCaryvilTax(models.Model):
         if not caryvil_tax:
             return
 
-        for line in self.filtered(
-            lambda line: (
-                line.product_id
-                and line.product_id.active_ingredient_id
-                and line.company_id
-            )
-        ):
+        for line in self.filtered(lambda line: (line.product_id and line.product_id.active_ingredient_id)):
             tax = caryvil_tax.filtered(
-                lambda tax: (
-                    not tax.company_id
-                    or tax.company_id == line.company_id
-                )
+                lambda tax: (not tax.company_id or not line.company_id or tax.company_id == line.company_id)
             )
 
             if not tax:
-                continue
+                tax = caryvil_tax[:1]
 
             if line.order_id.fiscal_position_id:
                 tax = line.order_id.fiscal_position_id.map_tax(tax)
 
             line.tax_id = tax
 
+
 class SaleOrderMedicine(models.Model):
-    
+
     # Extensión del flujo estándar de sale.order para la operación de ventas rápidas.
 
     _inherit = "sale.order"
@@ -127,10 +121,7 @@ class SaleOrderMedicine(models.Model):
     caryvil_barcode_input = fields.Char(
         string="Escanear EAN-13",
         copy=False,
-        help=(
-            "Campo de entrada rápida para lectores de código de barras "
-            "compatibles con entrada de teclado."
-        ),
+        help=("Campo de entrada rápida para lectores de código de barras " "compatibles con entrada de teclado."),
     )
 
     @api.model
@@ -185,11 +176,7 @@ class SaleOrderMedicine(models.Model):
                 0.0,
             )
 
-            order.amount_change = (
-                order.currency_id.round(change)
-                if order.currency_id
-                else change
-            )
+            order.amount_change = order.currency_id.round(change) if order.currency_id else change
 
     def _check_caryvil_payment(self):
         # Valida las reglas del cobro en mostrador.
@@ -201,10 +188,7 @@ class SaleOrderMedicine(models.Model):
 
             if amount_received < total:
                 raise UserError(
-                    _(
-                        "El monto en efectivo recibido ($%(received).2f) "
-                        "es menor al total a pagar ($%(total).2f)."
-                    )
+                    _("El monto en efectivo recibido ($%(received).2f) " "es menor al total a pagar ($%(total).2f).")
                     % {
                         "received": amount_received,
                         "total": total,
@@ -212,15 +196,12 @@ class SaleOrderMedicine(models.Model):
                 )
 
     def _get_caryvil_requested_quantities(self):
-
         # Agrupa la cantidad solicitada por producto y la convierte a la unidad de medida base del producto.
         self.ensure_one()
 
         requested = {}
 
-        for line in self.order_line.filtered(
-            lambda line: not line.display_type and line.product_id
-        ):
+        for line in self.order_line.filtered(lambda line: not line.display_type and line.product_id):
             product = line.product_id
 
             if product.detailed_type != "product":
@@ -236,9 +217,7 @@ class SaleOrderMedicine(models.Model):
         return requested
 
     def _check_caryvil_stock_availability(self):
-        
         # Validación inicial de existencias.
-
         self.ensure_one()
 
         requested_quantities = self._get_caryvil_requested_quantities()
@@ -247,11 +226,14 @@ class SaleOrderMedicine(models.Model):
             product = self.env["product.product"].browse(product_id)
             available_qty = product.qty_available
 
-            if float_compare(
-                requested_qty,
-                available_qty,
-                precision_rounding=product.uom_id.rounding,
-            ) > 0:
+            if (
+                float_compare(
+                    requested_qty,
+                    available_qty,
+                    precision_rounding=product.uom_id.rounding,
+                )
+                > 0
+            ):
                 raise UserError(
                     _(
                         'Stock insuficiente para "%(product)s".\n'
@@ -273,37 +255,29 @@ class SaleOrderMedicine(models.Model):
         warehouse = self.warehouse_id
 
         if not warehouse:
-            raise UserError(
-                _(
-                    "La venta no tiene un almacén configurado."
-                )
-            )
+            raise UserError(_("La venta no tiene un almacén configurado."))
 
         picking_type = warehouse.out_type_id
 
-        location = (
-            picking_type.default_location_src_id
-            or warehouse.lot_stock_id
-        )
+        location = picking_type.default_location_src_id or warehouse.lot_stock_id
 
         if not location:
-            raise UserError(
-                _(
-                    "No se encontró una ubicación de salida "
-                    "configurada para el almacén."
-                )
-            )
+            raise UserError(_("No se encontró una ubicación de salida " "configurada para el almacén."))
 
         return location
 
     def _caryvil_lock_stock_quants(self, product, location):
         # Bloquea los quants del producto durante la validación de stock.
 
-        location_ids = self.env["stock.location"].search(
-            [
-                ("id", "child_of", location.id),
-            ]
-        ).ids
+        location_ids = (
+            self.env["stock.location"]
+            .search(
+                [
+                    ("id", "child_of", location.id),
+                ]
+            )
+            .ids
+        )
 
         if not location_ids:
             return
@@ -327,9 +301,7 @@ class SaleOrderMedicine(models.Model):
 
         self.ensure_one()
 
-        requested_quantities = (
-            self._get_caryvil_requested_quantities()
-        )
+        requested_quantities = self._get_caryvil_requested_quantities()
 
         if not requested_quantities:
             return
@@ -339,11 +311,7 @@ class SaleOrderMedicine(models.Model):
 
         for product_id in sorted(requested_quantities):
             requested_qty = requested_quantities[product_id]
-            product = (
-                self.env["product.product"]
-                .browse(product_id)
-                .exists()
-            )
+            product = self.env["product.product"].browse(product_id).exists()
 
             if not product:
                 continue
@@ -353,19 +321,20 @@ class SaleOrderMedicine(models.Model):
                 location,
             )
 
-            available_qty = (
-                quant_model._get_available_quantity(
-                    product,
-                    location,
-                    strict=False,
-                )
+            available_qty = quant_model._get_available_quantity(
+                product,
+                location,
+                strict=False,
             )
 
-            if float_compare(
-                requested_qty,
-                available_qty,
-                precision_rounding=product.uom_id.rounding,
-            ) > 0:
+            if (
+                float_compare(
+                    requested_qty,
+                    available_qty,
+                    precision_rounding=product.uom_id.rounding,
+                )
+                > 0
+            ):
                 raise UserError(
                     _(
                         'Stock insuficiente para "%(product)s".\n'
@@ -384,23 +353,13 @@ class SaleOrderMedicine(models.Model):
     def _caryvil_validate_outgoing_pickings(self):
         # Reserva y valida automáticamente las entregas de la venta.
 
-        pickings = self.mapped(
-            "picking_ids"
-        ).filtered(
-            lambda picking: (
-                picking.picking_type_code == "outgoing"
-                and picking.state not in ("done", "cancel")
-            )
+        pickings = self.mapped("picking_ids").filtered(
+            lambda picking: (picking.picking_type_code == "outgoing" and picking.state not in ("done", "cancel"))
         )
 
         if not pickings:
             if self._get_caryvil_requested_quantities():
-                raise UserError(
-                    _(
-                        "No se generó el albarán de salida "
-                        "para la venta."
-                    )
-                )
+                raise UserError(_("No se generó el albarán de salida " "para la venta."))
             return
 
         for picking in pickings:
@@ -414,24 +373,15 @@ class SaleOrderMedicine(models.Model):
                         move.quantity,
                         move.product_uom_qty,
                         precision_rounding=move.product_uom.rounding,
-                    ) < 0
+                    )
+                    < 0
                 )
             )
 
             if incomplete_moves:
-                products = ", ".join(
-                    incomplete_moves.mapped(
-                        "product_id.display_name"
-                    )
-                )
+                products = ", ".join(incomplete_moves.mapped("product_id.display_name"))
 
-                raise UserError(
-                    _(
-                        "No fue posible reservar completamente "
-                        "el stock para: %s"
-                    )
-                    % products
-                )
+                raise UserError(_("No fue posible reservar completamente " "el stock para: %s") % products)
 
             picking.with_context(
                 skip_backorder=True,
@@ -440,20 +390,12 @@ class SaleOrderMedicine(models.Model):
             ).button_validate()
 
             if picking.state != "done":
-                raise UserError(
-                    _(
-                        "No fue posible completar el albarán "
-                        "de salida %s."
-                    )
-                    % picking.name
-                )
+                raise UserError(_("No fue posible completar el albarán " "de salida %s.") % picking.name)
 
     def _action_confirm(self):
         # Confirma la venta y, cuando corresponde, descuenta el stock.
 
-        auto_stock_deduction = self.env.context.get(
-            "caryvil_auto_stock_deduction"
-        )
+        auto_stock_deduction = self.env.context.get("caryvil_auto_stock_deduction")
 
         if auto_stock_deduction:
             for order in self:
@@ -467,9 +409,7 @@ class SaleOrderMedicine(models.Model):
         return result
 
     def _prepare_caryvil_sale_line_values(self, product):
-        
         # Prepara una línea de venta.
-        
         self.ensure_one()
 
         if self.pricelist_id:
@@ -486,22 +426,17 @@ class SaleOrderMedicine(models.Model):
             "caryvil_erp.tax_caryvil_iva_ventas_13",
             raise_if_not_found=False,
         )
-        
+
         if not caryvil_tax:
-            raise UserError(
-                _(
-                    "No está configurado el impuesto "
-                    "'IVA 13% Ventas Bienes Farmacéuticos'."
-                )
-            )
-        
+            raise UserError(_("No está configurado el impuesto " "'IVA 13% Ventas Bienes Farmacéuticos'."))
+
         taxes = caryvil_tax.filtered(
-            lambda tax: (
-                not tax.company_id
-                or tax.company_id == self.company_id
-            )
+            lambda tax: (not tax.company_id or not self.company_id or tax.company_id == self.company_id)
         )
-        
+
+        if not taxes:
+            taxes = caryvil_tax[:1]
+
         if self.fiscal_position_id:
             taxes = self.fiscal_position_id.map_tax(taxes)
 
@@ -515,16 +450,13 @@ class SaleOrderMedicine(models.Model):
         }
 
     def _add_caryvil_scanned_product(self, product):
-        # Agrega el producto escaneado a la venta. Si ya existe, incrementa la cantidad en lugar de crear una línea duplicada.
-        
+        # Agrega el producto escaneado a la venta. Si ya existe,
+        # incrementa la cantidad en lugar de crear una línea duplicada.
+
         self.ensure_one()
 
         existing_line = self.order_line.filtered(
-            lambda line: (
-                not line.display_type
-                and line.product_id == product
-                and line.product_uom == product.uom_id
-            )
+            lambda line: (not line.display_type and line.product_id == product and line.product_uom == product.uom_id)
         )[:1]
 
         if existing_line:
@@ -543,10 +475,9 @@ class SaleOrderMedicine(models.Model):
 
     @api.onchange("caryvil_barcode_input")
     def _onchange_caryvil_barcode_input(self):
-        
         # Procesa automáticamente un EAN-13 cuando el lector termina de introducir el código.
-        # Los lectores USB configurados como teclado normalmente envían el código seguido de ENTER, lo que dispara el onchange.
-        
+        # Los lectores USB configurados como teclado normalmente envían el código seguido de ENTER.
+
         if not self.caryvil_barcode_input:
             return
 
@@ -560,10 +491,7 @@ class SaleOrderMedicine(models.Model):
             return {
                 "warning": {
                     "title": _("Código inválido"),
-                    "message": _(
-                        "El código de barras debe contener exactamente "
-                        "13 dígitos (EAN-13)."
-                    ),
+                    "message": _("El código de barras debe contener exactamente " "13 dígitos (EAN-13)."),
                 }
             }
 
@@ -580,11 +508,7 @@ class SaleOrderMedicine(models.Model):
             return {
                 "warning": {
                     "title": _("Producto no encontrado"),
-                    "message": _(
-                        'No se encontró un medicamento activo con el '
-                        'código de barras "%s".'
-                    )
-                    % code,
+                    "message": _("No se encontró un medicamento activo con el " 'código de barras "%s".') % code,
                 }
             }
 
@@ -594,7 +518,6 @@ class SaleOrderMedicine(models.Model):
         self.caryvil_barcode_input = False
 
     def _caryvil_get_invoice_action(self, invoices):
-        
         # Devuelve la acción de la factura.
 
         self.ensure_one()
@@ -619,36 +542,25 @@ class SaleOrderMedicine(models.Model):
         }
 
     def action_confirm_and_invoice(self):
-        
         # Flujo unificado para caja.
 
         self.ensure_one()
 
         if self.state not in ("draft", "sent"):
-            raise UserError(
-                _("Solo se pueden cobrar ventas en estado borrador.")
-            )
+            raise UserError(_("Solo se pueden cobrar ventas en estado borrador."))
 
-        if not self.order_line.filtered(
-            lambda line: not line.display_type
-        ):
-            raise UserError(
-                _("Debe agregar al menos un medicamento a la venta.")
-            )
+        if not self.order_line.filtered(lambda line: not line.display_type):
+            raise UserError(_("Debe agregar al menos un medicamento a la venta."))
 
         self._check_caryvil_payment()
 
         # Activa el flujo transaccional de stock.
-        self.with_context(
-            caryvil_auto_stock_deduction=True
-        ).action_confirm()
+        self.with_context(caryvil_auto_stock_deduction=True).action_confirm()
 
         invoices = self._create_invoices()
 
         if not invoices:
-            raise UserError(
-                _("No se pudo generar la factura de la venta.")
-            )
+            raise UserError(_("No se pudo generar la factura de la venta."))
 
         invoices.action_post()
 

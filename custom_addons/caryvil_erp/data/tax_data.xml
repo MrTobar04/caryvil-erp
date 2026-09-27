@@ -24,6 +24,7 @@
             <field name="company_id" ref="caryvil_erp.company_farmacia_caryvil"/>
 
             <field name="description">IVA 13%</field>
+            <field name="company_id" ref="base.main_company"/>
         </record>
 
     </data>

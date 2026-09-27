@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Vista de lista -->
+    <!-- Vista de lista con semáforo para lotes vencidos -->
     <record id="view_stock_lot_medicine_tree" model="ir.ui.view">
         <field name="name">stock.lot.medicine.tree</field>
         <field name="model">stock.lot</field>
@@ -23,7 +23,7 @@
         </field>
     </record>
 
-    <!-- Vista de formulario -->
+    <!-- Vista de formulario de control farmacéutico -->
     <record id="view_stock_lot_medicine_form" model="ir.ui.view">
         <field name="name">stock.lot.medicine.form</field>
         <field name="model">stock.lot</field>
@@ -31,18 +31,22 @@
         <field name="arch" type="xml">
 
             <xpath expr="//sheet" position="inside">
-                <group string="Control farmacéutico">
-                    <field name="expiration_date"/>
-                    <field name="alert_date"/>
-                    <field name="removal_date"/>
-                    <field name="is_expired"/>
+                <group string="Control Farmacéutico y Fechas Críticas" name="caryvil_pharmacy_control">
+                    <group>
+                        <field name="expiration_date"/>
+                        <field name="is_expired" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="alert_date"/>
+                        <field name="removal_date"/>
+                    </group>
                 </group>
             </xpath>
 
         </field>
     </record>
 
-    <!-- Filtros -->
+    <!-- Filtros de búsqueda (vigentes y vencidos) -->
     <record id="view_stock_lot_medicine_search" model="ir.ui.view">
         <field name="name">stock.lot.medicine.search</field>
         <field name="model">stock.lot</field>
@@ -64,6 +68,11 @@
             </xpath>
 
         </field>
+    </record>
+
+    <!-- Acción estándar de Odoo con filtro predeterminado [Lotes Vigentes] activo (SPEC-7.2.1 §5) -->
+    <record id="stock.action_production_lot_form" model="ir.actions.act_window">
+        <field name="context">{'search_default_vigentes': 1}</field>
     </record>
 
 </odoo>

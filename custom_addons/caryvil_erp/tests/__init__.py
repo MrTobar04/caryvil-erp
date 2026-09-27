@@ -13,6 +13,10 @@ from . import test_scaffolding  # noqa: F401
 from . import test_medicine_catalog  # noqa: F401
 from . import test_pharmacy_uom  # noqa: F401
 from . import test_stock_lot_medicine  # noqa: F401
+from . import test_stock_reordering_rules  # noqa: F401
+from . import test_stock_inventory_adjustment  # noqa: F401
+from . import test_caryvil_dashboard  # noqa: F401
+from . import test_stock_scrap_medicine  # noqa: F401
 from . import test_sale_order_medicine  # noqa: F401
 from . import test_account_move_invoice  # noqa: F401
 from . import test_report_invoice_ticket  # noqa: F401

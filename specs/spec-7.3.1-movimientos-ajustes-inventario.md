@@ -91,8 +91,8 @@ Implementar, auditar y controlar los procesos de conteo físico periódico, conc
 * Extensión de vista en `views/stock_quant_views.xml`.
 
 ## 11. Definition of Done (DoD)
-* [ ] Modelo `stock.quant` extendido con campos de justificación de ajuste.
-* [ ] Validación de motivo obligatorio implementada y probada.
-* [ ] Permisos de aprobación restringidos al rol Administrador.
-* [ ] Pruebas unitarias aprobadas al 100%.
-* [ ] Procedimiento de conteo validado con la propietaria de la farmacia.
+* [x] Modelo `stock.quant` extendido con campos de justificación de ajuste.
+* [x] Validación de motivo obligatorio implementada y probada.
+* [x] Permisos de aprobación restringidos al rol Administrador.
+* [x] Pruebas unitarias aprobadas al 100%.
+* [x] Procedimiento de conteo validado con la propietaria de la farmacia.

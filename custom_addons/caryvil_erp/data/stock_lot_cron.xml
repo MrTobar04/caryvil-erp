@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Acción planificada diaria: Sincronización del estado is_expired de lotes -->
+        <record id="ir_cron_update_expired_lots" model="ir.cron">
+            <field name="name">Caryvil ERP: Actualizar Estado de Lotes Vencidos</field>
+            <field name="model_id" ref="stock.model_stock_lot"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_update_expired_lots()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="priority">5</field>
+        </record>
+    </data>
+</odoo>

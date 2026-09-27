@@ -23,4 +23,4 @@ class IrActionsReport(models.Model):
         if self.report_name == "caryvil_erp.report_invoice_ticket_template":
             command_args.extend(["--encoding", "utf-8"])
 
-        return command_args
+        return command_args

@@ -11,17 +11,11 @@ class TestSaleOrderStockDeduction(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.company = cls.env.ref(
-            "caryvil_erp.company_farmacia_caryvil"
-        )
+        cls.company = cls.env.ref("caryvil_erp.company_farmacia_caryvil")
 
-        cls.tax = cls.env.ref(
-            "caryvil_erp.tax_caryvil_iva_ventas_13"
-        )
+        cls.tax = cls.env.ref("caryvil_erp.tax_caryvil_iva_ventas_13")
 
-        cls.sales_account = cls.env.ref(
-            "caryvil_erp.account_caryvil_ventas_medicamentos"
-        )
+        cls.sales_account = cls.env.ref("caryvil_erp.account_caryvil_ventas_medicamentos")
 
         cls.partner = cls.env["res.partner"].create(
             {
@@ -31,9 +25,7 @@ class TestSaleOrderStockDeduction(TransactionCase):
             }
         )
 
-        cls.ingredient = cls.env[
-            "caryvil.active.ingredient"
-        ].create(
+        cls.ingredient = cls.env["caryvil.active.ingredient"].create(
             {
                 "name": "Principio Activo Stock Test",
             }
@@ -65,14 +57,10 @@ class TestSaleOrderStockDeduction(TransactionCase):
         )
 
         if not cls.warehouse:
-            raise AssertionError(
-                "La compañía Caryvil debe tener un almacén configurado."
-            )
+            raise AssertionError("La compañía Caryvil debe tener un almacén configurado.")
 
         cls.stock_location = cls.warehouse.lot_stock_id
-        cls.customer_location = cls.env.ref(
-            "stock.stock_location_customers"
-        )
+        cls.customer_location = cls.env.ref("stock.stock_location_customers")
 
     def _create_lot(self, name):
         return self.env["stock.lot"].create(

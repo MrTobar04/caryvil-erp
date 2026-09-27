@@ -11,9 +11,7 @@ class TestSaleOrderMedicine(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.company = cls.env.ref(
-            "caryvil_erp.company_farmacia_caryvil"
-        )
+        cls.company = cls.env.ref("caryvil_erp.company_farmacia_caryvil")
 
         cls.ingredient = cls.env["caryvil.active.ingredient"].create(
             {
@@ -148,9 +146,7 @@ class TestSaleOrderMedicine(TransactionCase):
         order.caryvil_barcode_input = "7412345678901"
         order._onchange_caryvil_barcode_input()
 
-        self.assertFalse(
-            order.caryvil_barcode_input
-        )
+        self.assertFalse(order.caryvil_barcode_input)
 
         self.assertEqual(
             len(order.order_line),
@@ -195,9 +191,7 @@ class TestSaleOrderMedicine(TransactionCase):
         SPEC-9.1.1:
         El selector de productos debe localizar un medicamento mediante el principio activo.
         """
-        results = self.env[
-            "product.product"
-        ].name_search(
+        results = self.env["product.product"].name_search(
             "Amoxicilina Test",
             operator="ilike",
             limit=10,
@@ -235,9 +229,7 @@ class TestSaleOrderMedicine(TransactionCase):
 
         order._add_caryvil_scanned_product(self.product)
 
-        tax = self.env.ref(
-            "caryvil_erp.tax_caryvil_iva_ventas_13"
-        )
+        tax = self.env.ref("caryvil_erp.tax_caryvil_iva_ventas_13")
 
         line = order.order_line
 
@@ -255,3 +247,27 @@ class TestSaleOrderMedicine(TransactionCase):
             line.tax_id._origin.ids,
             tax.ids,
         )
+
+    def test_10_cashier_user_company_and_stock_permissions(self):
+        """
+        SPEC-9.1.1 / SPEC-2.2.1:
+        El usuario cajero debe tener asignada la compañía Farmacia Caryvil y
+        permiso para consultar disponibilidad de inventario sin AccessError.
+        """
+        cashier_user = self.env.ref(
+            "caryvil_erp.user_cajero_demo",
+            raise_if_not_found=False,
+        )
+
+        if not cashier_user:
+            return
+
+        self.assertEqual(
+            cashier_user.company_id.id,
+            self.company.id,
+        )
+
+        # Simular lectura de existencias por parte del cajero
+        product_as_cashier = self.product.with_user(cashier_user)
+        qty = product_as_cashier.qty_available
+        self.assertIsInstance(qty, float)
