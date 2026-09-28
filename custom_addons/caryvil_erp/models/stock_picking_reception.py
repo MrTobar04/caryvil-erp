@@ -35,19 +35,14 @@ class StockPickingReception(models.Model):
 
     def _find_expiration_date_from_siblings_or_db(self, line):
         """Busca fecha de vencimiento en líneas hermanas, backorders o lotes existentes."""
-        siblings = (line.move_id.move_line_ids | line.picking_id.move_line_ids).filtered(
-            lambda ml: ml.expiration_date
-        )
+        siblings = (line.move_id.move_line_ids | line.picking_id.move_line_ids).filtered(lambda ml: ml.expiration_date)
         if siblings:
             return siblings[0].expiration_date
 
         if line.picking_id.backorder_id:
             backorder_lines = line.picking_id.backorder_id.move_line_ids
             bo_siblings = backorder_lines.filtered(
-                lambda ml: (
-                    ml.lot_name == line.lot_name
-                    or (ml.lot_id and ml.lot_id.name == line.lot_name)
-                )
+                lambda ml: (ml.lot_name == line.lot_name or (ml.lot_id and ml.lot_id.name == line.lot_name))
                 and ml.expiration_date
             )
             if bo_siblings:
@@ -131,8 +126,7 @@ class StockPickingReception(models.Model):
             if picking.has_discrepancy:
                 picking.message_post(
                     body=_(
-                        "Discrepancia detectada en la recepción %s: la cantidad recibida es menor "
-                        "a la ordenada. %s"
+                        "Discrepancia detectada en la recepción %s: la cantidad recibida es menor " "a la ordenada. %s"
                     )
                     % (picking.name, picking.discrepancy_notes or "Sin notas adicionales.")
                 )

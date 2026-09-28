@@ -66,9 +66,7 @@ def _purge_generic_demo_data(env):
     try:
         # 0. Eliminar reglas de reabastecimiento (orderpoints) genéricas
         # de Odoo demo (ej. Office Lamp FURN_8888, Desk Pad, etc.)
-        env["stock.warehouse.orderpoint"].sudo().search(
-            [("product_id.active_ingredient_id", "=", False)]
-        ).unlink()
+        env["stock.warehouse.orderpoint"].sudo().search([("product_id.active_ingredient_id", "=", False)]).unlink()
 
         # 1. Eliminar órdenes de venta y compra genéricas nativas de Odoo demo
         env["sale.order"].sudo().search([("partner_id.is_pharmacy_customer", "=", False)]).unlink()
@@ -80,11 +78,15 @@ def _purge_generic_demo_data(env):
         ).unlink()
 
         # 2. Eliminar plantillas de producto genéricas que no son medicamentos de Caryvil
-        generic_tmpls = env["product.template"].sudo().search(
-            [
-                ("active_ingredient_id", "=", False),
-                ("therapeutic_category_id", "=", False),
-            ]
+        generic_tmpls = (
+            env["product.template"]
+            .sudo()
+            .search(
+                [
+                    ("active_ingredient_id", "=", False),
+                    ("therapeutic_category_id", "=", False),
+                ]
+            )
         )
         if generic_tmpls:
             generic_prods = generic_tmpls.product_variant_ids
@@ -103,13 +105,17 @@ def _purge_generic_demo_data(env):
         if root_partner:
             protected_partner_ids.append(root_partner.id)
 
-        generic_partners = env["res.partner"].sudo().search(
-            [
-                ("is_pharmacy_customer", "=", False),
-                ("is_pharmacy_vendor", "=", False),
-                ("id", "not in", protected_partner_ids),
-                ("is_company", "=", True),
-            ]
+        generic_partners = (
+            env["res.partner"]
+            .sudo()
+            .search(
+                [
+                    ("is_pharmacy_customer", "=", False),
+                    ("is_pharmacy_vendor", "=", False),
+                    ("id", "not in", protected_partner_ids),
+                    ("is_company", "=", True),
+                ]
+            )
         )
         if generic_partners:
             generic_partners.unlink()
