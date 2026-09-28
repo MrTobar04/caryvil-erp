@@ -7,8 +7,8 @@
                     <!-- Encabezado de Marca Corporativo -->
                     <div class="caryvil-login-header">
                         <div class="caryvil-logo-badge">
-                            <img src="/caryvil_erp/static/src/img/caryvil_logo_full.png" 
-                                 alt="Farmacia Caryvil" 
+                            <img src="/caryvil_erp/static/src/img/caryvil_logo_full.png"
+                                 alt="Farmacia Caryvil"
                                  class="caryvil-login-logo"/>
                         </div>
                         <h2 class="caryvil-brand-title">ERP FARMACIA</h2>
@@ -27,5 +27,12 @@
                 </div>
             </div>
         </xpath>
+    </template>
+
+    <!-- ISSUE-66: Quita el enlace "Don't have an account?" (autorregistro) de la -->
+    <!-- pantalla de login. Los usuarios de la farmacia se crean desde Ajustes,   -->
+    <!-- no deben poder registrarse por su cuenta.                                -->
+    <template id="caryvil_hide_signup_link" inherit_id="auth_signup.login" name="Farmacia Caryvil - Ocultar Autorregistro">
+        <xpath expr="//a[@t-if='signup_enabled']" position="replace"/>
     </template>
 </odoo>

@@ -46,8 +46,7 @@
         <menuitem id="menu_caryvil_configuracion"
                   name="Configuración"
                   parent="menu_caryvil_root"
-                  sequence="100"
-                  groups="caryvil_erp.group_caryvil_manager"/>
+                  sequence="100"/>
 
         <!-- ================================================================ -->
         <!-- Acciones de Ventana y Submenús de Medicamentos e Inventario      -->
@@ -99,13 +98,6 @@
                   sequence="18"
                   groups="caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"/>
 
-        <menuitem id="menu_caryvil_compras_reabastecimiento"
-                  name="Planificador de Reabastecimiento"
-                  parent="menu_caryvil_compras"
-                  action="stock.action_orderpoint_replenish"
-                  sequence="15"
-                  groups="caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"/>
-
         <!-- Submenús de Configuración Farmacológica -->
         <menuitem id="menu_caryvil_config_farmacologia"
                   name="Catálogo Farmacológico"
@@ -150,6 +142,12 @@
         </record>
 
         <record id="contacts.menu_contacts" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+
+        <!-- ISSUE-66: se restringe a group_no_one (solo modo desarrollador) en vez -->
+        <!-- de borrar el registro, para no dejar huérfanos sus submenús hijos.     -->
+        <record id="menu_caryvil_configuracion" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
         </record>
     </data>
