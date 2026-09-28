@@ -112,42 +112,49 @@ if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
         # Este bloque SQL garantiza que admin y odoobot tengan group_caryvil_manager
         # para que el menú raíz 'Farmacia Caryvil' siempre sea visible.
         # -----------------------------------------------------------------------
-        echo "=== [Caryvil ERP] Verificando asignación de grupo 'group_caryvil_manager' al usuario admin... ==="
+        echo "=== [Caryvil ERP] Verificando asignación de grupos de Farmacia Caryvil al usuario admin... ==="
         PGPASSWORD="${PASSWORD}" psql -h "${HOST}" -p "${DB_PORT}" -U "${USER}" -d "${DB_NAME}" -q -c "
-            -- Obtener el ID del grupo group_caryvil_manager por su xml_id externo
             DO \$\$
             DECLARE
-                v_group_id    INTEGER;
                 v_admin_id    INTEGER;
             BEGIN
-                -- Buscar el grupo por su referencia xml_id
-                SELECT rg.id INTO v_group_id
-                FROM res_groups rg
-                JOIN ir_model_data imd ON imd.res_id = rg.id
-                    AND imd.model = 'res.groups'
-                    AND imd.module = 'caryvil_erp'
-                    AND imd.name = 'group_caryvil_manager';
-
                 -- Obtener el id del usuario admin (login='admin')
                 SELECT id INTO v_admin_id
                 FROM res_users
                 WHERE login = 'admin'
                 LIMIT 1;
 
-                IF v_group_id IS NOT NULL AND v_admin_id IS NOT NULL THEN
-                    -- Insertar la relación en la tabla puente res_groups_users_rel si no existe
+                IF v_admin_id IS NOT NULL THEN
+                    -- Insertar la relación en la tabla puente res_groups_users_rel para todos los grupos de caryvil_erp
                     INSERT INTO res_groups_users_rel (gid, uid)
-                    VALUES (v_group_id, v_admin_id)
+                    SELECT rg.id, v_admin_id
+                    FROM res_groups rg
+                    JOIN ir_model_data imd ON imd.res_id = rg.id
+                        AND imd.model = 'res.groups'
+                        AND imd.module = 'caryvil_erp'
                     ON CONFLICT DO NOTHING;
 
-                    RAISE NOTICE 'Grupo caryvil_manager asignado al usuario admin (uid=%)', v_admin_id;
+                    RAISE NOTICE 'Grupos de Caryvil ERP asignados al usuario admin (uid=%)', v_admin_id;
                 ELSE
-                    RAISE WARNING 'No se pudo asignar grupo: group_id=%, admin_id=%', v_group_id, v_admin_id;
+                    RAISE WARNING 'No se pudo encontrar el usuario admin (login=admin)';
                 END IF;
             END;
             \$\$;
         " 2>/dev/null || true
-        echo "=== [Caryvil ERP] Verificación de grupo completada. ==="
+
+        python3 -c "
+import odoo
+from odoo import api
+odoo.tools.config.parse_config(['-c', '/etc/odoo/odoo.conf', '-d', '${DB_NAME}'])
+with odoo.registry('${DB_NAME}').cursor() as cr:
+    env = api.Environment(cr, odoo.SUPERUSER_ID, {})
+    admin = env['res.users'].search([('login', '=', 'admin')])
+    grp = env.ref('caryvil_erp.group_caryvil_manager', raise_if_not_found=False)
+    if admin and grp:
+        admin.write({'groups_id': [(4, grp.id)]})
+        cr.commit()
+" 2>/dev/null || true
+        echo "=== [Caryvil ERP] Verificación de grupos completada. ==="
     fi
 fi
 
