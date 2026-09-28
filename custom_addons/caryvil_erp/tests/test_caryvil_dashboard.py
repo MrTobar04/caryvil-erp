@@ -134,7 +134,8 @@ class TestCaryvilDashboardSales(TransactionCase):
         quant.action_apply_inventory()
 
     def _create_orderpoint(self, product, min_qty=20.0, max_qty=50.0):
-        """Crea una regla de reabastecimiento para el producto."""
+        """Crea una regla de reabastecimiento para el producto limpiando previas."""
+        self.env["stock.warehouse.orderpoint"].search([("product_id", "=", product.id)]).unlink()
         return self.env["stock.warehouse.orderpoint"].create(
             {
                 "product_id": product.id,

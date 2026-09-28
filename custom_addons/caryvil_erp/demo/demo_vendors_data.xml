@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
+        <!-- ================================================================ -->
+        <!-- EMPRESAS PROVEEDORAS / LABORATORIOS (is_company = True)         -->
+        <!-- ================================================================ -->
+
         <!-- Proveedor / Laboratorio 1: Vijosa -->
         <record id="vendor_vijosa" model="res.partner">
             <field name="name">Laboratorios Vijosa S.A. de C.V.</field>
             <field name="is_company">True</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="vendor_type">laboratorio</field>
+            <field name="nrc">123456-7</field>
+            <field name="nit">0614-121290-101-1</field>
             <field name="supplier_rank">1</field>
             <field name="phone">2250-1000</field>
             <field name="email">ventas@vijosa.com</field>
@@ -17,6 +25,10 @@
         <record id="vendor_lopez" model="res.partner">
             <field name="name">Laboratorios López S.A. de C.V.</field>
             <field name="is_company">True</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="vendor_type">laboratorio</field>
+            <field name="nrc">234567-8</field>
+            <field name="nit">0614-150585-102-2</field>
             <field name="supplier_rank">1</field>
             <field name="phone">2298-2000</field>
             <field name="email">pedidos@laboratorioslopez.com</field>
@@ -29,6 +41,10 @@
         <record id="vendor_santa_lucia" model="res.partner">
             <field name="name">Droguería Santa Lucía</field>
             <field name="is_company">True</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="vendor_type">drogueria</field>
+            <field name="nrc">345678-9</field>
+            <field name="nit">0614-201095-103-3</field>
             <field name="supplier_rank">1</field>
             <field name="phone">2239-3000</field>
             <field name="email">contacto@santalucia.com.sv</field>
@@ -41,12 +57,112 @@
         <record id="vendor_americana" model="res.partner">
             <field name="name">Droguería Americana</field>
             <field name="is_company">True</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="vendor_type">distribuidora</field>
+            <field name="nrc">456789-0</field>
+            <field name="nit">0614-010100-104-4</field>
             <field name="supplier_rank">1</field>
             <field name="phone">2211-4000</field>
             <field name="email">despacho@drogueriaamericana.com</field>
             <field name="street">Colonia Flor Blanca, San Salvador</field>
             <field name="city">San Salvador</field>
             <field name="country_id" ref="base.sv"/>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- AGENTES / VENDEDORES DE PROVEEDORES (is_company = False)         -->
+        <!-- ================================================================ -->
+
+        <!-- Vendedores de Laboratorios Vijosa -->
+        <record id="vendor_rep_vijosa_1" model="res.partner">
+            <field name="name">Carlos Eduardo Rivas</field>
+            <field name="parent_id" ref="caryvil_erp.vendor_vijosa"/>
+            <field name="type">contact</field>
+            <field name="is_company">False</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="supplier_rank">1</field>
+            <field name="phone">7852-1122</field>
+            <field name="email">carlos.rivas@vijosa.com</field>
+        </record>
+
+        <record id="vendor_rep_vijosa_2" model="res.partner">
+            <field name="name">Mariana Isabel Torres</field>
+            <field name="parent_id" ref="caryvil_erp.vendor_vijosa"/>
+            <field name="type">contact</field>
+            <field name="is_company">False</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="supplier_rank">1</field>
+            <field name="phone">7963-3344</field>
+            <field name="email">mariana.torres@vijosa.com</field>
+        </record>
+
+        <!-- Vendedores de Laboratorios López -->
+        <record id="vendor_rep_lopez_1" model="res.partner">
+            <field name="name">Roberto Antonio Meléndez</field>
+            <field name="parent_id" ref="caryvil_erp.vendor_lopez"/>
+            <field name="type">contact</field>
+            <field name="is_company">False</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="supplier_rank">1</field>
+            <field name="phone">7145-5566</field>
+            <field name="email">roberto.melendez@laboratorioslopez.com</field>
+        </record>
+
+        <record id="vendor_rep_lopez_2" model="res.partner">
+            <field name="name">Sofía Beatriz Castillo</field>
+            <field name="parent_id" ref="caryvil_erp.vendor_lopez"/>
+            <field name="type">contact</field>
+            <field name="is_company">False</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="supplier_rank">1</field>
+            <field name="phone">7256-7788</field>
+            <field name="email">sofia.castillo@laboratorioslopez.com</field>
+        </record>
+
+        <!-- Vendedores de Droguería Santa Lucía -->
+        <record id="vendor_rep_santa_lucia_1" model="res.partner">
+            <field name="name">Fernando José Aguilar</field>
+            <field name="parent_id" ref="caryvil_erp.vendor_santa_lucia"/>
+            <field name="type">contact</field>
+            <field name="is_company">False</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="supplier_rank">1</field>
+            <field name="phone">7367-8899</field>
+            <field name="email">fernando.aguilar@santalucia.com.sv</field>
+        </record>
+
+        <record id="vendor_rep_santa_lucia_2" model="res.partner">
+            <field name="name">Ana Patricia Morales</field>
+            <field name="parent_id" ref="caryvil_erp.vendor_santa_lucia"/>
+            <field name="type">contact</field>
+            <field name="is_company">False</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="supplier_rank">1</field>
+            <field name="phone">7478-9900</field>
+            <field name="email">ana.morales@santalucia.com.sv</field>
+        </record>
+
+        <!-- Vendedores de Droguería Americana -->
+        <record id="vendor_rep_americana_1" model="res.partner">
+            <field name="name">Mauricio Alejandro Henríquez</field>
+            <field name="parent_id" ref="caryvil_erp.vendor_americana"/>
+            <field name="type">contact</field>
+            <field name="is_company">False</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="supplier_rank">1</field>
+            <field name="phone">7589-0011</field>
+            <field name="email">mauricio.henriquez@drogueriaamericana.com</field>
+        </record>
+
+        <record id="vendor_rep_americana_2" model="res.partner">
+            <field name="name">Gabriela María Fuentes</field>
+            <field name="parent_id" ref="caryvil_erp.vendor_americana"/>
+            <field name="type">contact</field>
+            <field name="is_company">False</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="supplier_rank">1</field>
+            <field name="phone">7690-1122</field>
+            <field name="email">gabriela.fuentes@drogueriaamericana.com</field>
         </record>
     </data>
 </odoo>
