@@ -20,8 +20,11 @@
                     <attribute name="string">Código de Lote</attribute>
                 </field>
                 <field name="lot_name" position="after">
+                    <field name="tracking" column_invisible="True"/>
                     <field name="expiration_date" string="Fecha de Vencimiento"
-                           column_invisible="parent.has_tracking == 'none'"/>
+                           widget="date"
+                           column_invisible="tracking in ('none', False)"
+                           readonly="tracking in ('none', False)"/>
                 </field>
                 <field name="quantity" position="attributes">
                     <attribute name="string">Stock Ingresado</attribute>
