@@ -26,18 +26,25 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
-                <!-- SPEC-ISSUE-67: Se restablece el botón nativo "Crear Factura" de Odoo      -->
-                <!-- para permitir el flujo estándar de Factura de Proveedor. Además, se       -->
-                <!-- mantiene el botón "Generar Factura Final" para órdenes saldadas vía abonos.-->
+                <!-- Ocultar botones de facturación ("Create Bill"), stat button de facturas y columna Billed -->
+                <xpath expr="(//button[@name='action_create_invoice'])[1]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="(//button[@name='action_create_invoice'])[2]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_view_invoice']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree//field[@name='qty_invoiced']" position="attributes">
+                    <attribute name="column_invisible">1</attribute>
+                </xpath>
+
                 <button name="action_create_invoice" position="after">
                     <button name="action_generar_factura_final_caryvil" type="object"
                             string="Generar Factura Final" class="oe_highlight"
                             invisible="state not in ('purchase', 'done') or abono_status_label != 'pagado' or payment_status_label == 'pagado'"/>
                 </button>
-
-                <xpath expr="//button[@name='action_view_invoice']//field[@name='invoice_count']" position="attributes">
-                    <attribute name="string">Facturas</attribute>
-                </xpath>
 
                 <div name="button_box" position="inside">
                     <button type="object" name="action_view_caryvil_payments"
