@@ -84,9 +84,9 @@ def test_toolbar_button_selectors_present():
         ".o_back_button": "Botón de navegación de retorno (Regresar / Back to...)",
         ".o_form_button_cancel": "Botón de cancelación / descarte",
         ".o_form_status_indicator": "Indicador de estado del formulario post-guardado",
-        "button[data-hotkey=\"s\"]": "Atajo hotkey para Guardar",
-        "button[data-hotkey=\"c\"]": "Atajo hotkey para Nuevo",
-        "button[data-hotkey=\"j\"]": "Atajo hotkey para Cancelar",
+        'button[data-hotkey="s"]': "Atajo hotkey para Guardar",
+        'button[data-hotkey="c"]': "Atajo hotkey para Nuevo",
+        'button[data-hotkey="j"]': "Atajo hotkey para Cancelar",
     }
 
     missing = [f"  '{sel}' ({desc})" for sel, desc in required_selectors.items() if sel not in content]

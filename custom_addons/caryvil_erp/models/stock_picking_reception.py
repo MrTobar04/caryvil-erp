@@ -28,9 +28,7 @@ class StockMoveLineReception(models.Model):
                 and not move_line.expiration_date
             ):
                 from_date = move_line.picking_id.scheduled_date or fields.Datetime.today()
-                move_line.expiration_date = from_date + datetime.timedelta(
-                    days=move_line.product_id.expiration_time
-                )
+                move_line.expiration_date = from_date + datetime.timedelta(days=move_line.product_id.expiration_time)
             else:
                 move_line.expiration_date = move_line.expiration_date or False
 
