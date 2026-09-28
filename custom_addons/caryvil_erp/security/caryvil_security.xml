@@ -23,7 +23,7 @@
         <record id="group_caryvil_inventory_purchases" model="res.groups">
             <field name="name">Encargado de Compras e Inventario</field>
             <field name="category_id" ref="module_category_caryvil_erp"/>
-            <field name="implied_ids" eval="[(4, ref('group_caryvil_cashier')), (4, ref('stock.group_stock_user')), (4, ref('purchase.group_purchase_user'))]"/>
+            <field name="implied_ids" eval="[(4, ref('group_caryvil_cashier')), (4, ref('stock.group_stock_user')), (4, ref('purchase.group_purchase_user')), (4, ref('account.group_account_invoice'))]"/>
             <field name="comment">Acceso a catálogo de fármacos, lotes/vencimiento, compras y recepciones.</field>
         </record>
 
