@@ -211,10 +211,10 @@ def button_validate(self):
 ---
 
 ## 11. Definition of Done (DoD)
-* [ ] Especificación técnica `spec-issue-67-vencimiento-recepciones-facturacion-compra.md` revisada y aprobada.
-* [ ] Rama `fix/issue-67-vencimiento-recepciones-facturacion-compra` creada a partir de `dev`.
-* [ ] Campo `expiration_date` visible con datepicker en operaciones detalladas para productos con lote.
-* [ ] Sincronización automática de `expiration_date` hacia `stock.lot` probada.
-* [ ] Botón nativo "Crear Factura" y stat button de facturas restablecidos y funcionales en `purchase.order`.
-* [ ] Pruebas unitarias ejecutadas con 0 fallos y 0 errores.
-* [ ] Estilo de código conforme a PEP8/Flake8.
+* [x] Especificación técnica `spec-issue-67-vencimiento-recepciones-facturacion-compra.md` revisada y aprobada.
+* [x] Rama `fix/issue-67-vencimiento-recepciones-facturacion-compra` creada a partir de `dev`.
+* [x] Campo `expiration_date` visible con datepicker en operaciones detalladas para productos con lote.
+* [x] Sincronización automática de `expiration_date` hacia `stock.lot` probada.
+* [x] Botón nativo "Crear Factura" y stat button de facturas restablecidos y funcionales en `purchase.order`.
+* [x] Pruebas unitarias ejecutadas con 0 fallos y 0 errores.
+* [x] Estilo de código conforme a PEP8/Flake8.
