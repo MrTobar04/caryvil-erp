@@ -14,18 +14,36 @@
         <record id="view_stock_move_line_operation_tree_caryvil" model="ir.ui.view">
             <field name="name">stock.move.line.operations.tree.caryvil</field>
             <field name="model">stock.move.line</field>
-            <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
+            <field name="inherit_id" ref="product_expiry.view_stock_move_line_operation_tree_expiry"/>
             <field name="arch" type="xml">
                 <field name="lot_name" position="attributes">
                     <attribute name="string">Código de Lote</attribute>
                 </field>
-                <field name="lot_name" position="after">
-                    <field name="tracking" column_invisible="True"/>
-                    <field name="expiration_date" string="Fecha de Vencimiento"
-                           widget="date"
-                           column_invisible="tracking in ('none', False)"
-                           readonly="tracking in ('none', False)"/>
+                <xpath expr="//field[@name='expiration_date']" position="attributes">
+                    <attribute name="string">Fecha de Vencimiento</attribute>
+                    <attribute name="widget">date</attribute>
+                    <attribute name="column_invisible">parent.has_tracking == 'none' or parent.picking_code != 'incoming'</attribute>
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <field name="quantity" position="attributes">
+                    <attribute name="string">Stock Ingresado</attribute>
                 </field>
+            </field>
+        </record>
+
+        <record id="view_stock_move_line_detailed_operation_tree_caryvil" model="ir.ui.view">
+            <field name="name">stock.move.line.detailed.operations.tree.caryvil</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="product_expiry.view_stock_move_line_detailed_operation_tree_expiry"/>
+            <field name="arch" type="xml">
+                <field name="lot_name" position="attributes">
+                    <attribute name="string">Código de Lote</attribute>
+                </field>
+                <xpath expr="//field[@name='expiration_date']" position="attributes">
+                    <attribute name="string">Fecha de Vencimiento</attribute>
+                    <attribute name="widget">date</attribute>
+                    <attribute name="readonly">0</attribute>
+                </xpath>
                 <field name="quantity" position="attributes">
                     <attribute name="string">Stock Ingresado</attribute>
                 </field>
