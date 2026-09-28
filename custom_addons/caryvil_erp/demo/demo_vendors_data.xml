@@ -5,6 +5,10 @@
         <record id="vendor_vijosa" model="res.partner">
             <field name="name">Laboratorios Vijosa S.A. de C.V.</field>
             <field name="is_company">True</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="vendor_type">laboratorio</field>
+            <field name="nrc">10001-1</field>
+            <field name="nit">0614-010180-101-1</field>
             <field name="supplier_rank">1</field>
             <field name="phone">2250-1000</field>
             <field name="email">ventas@vijosa.com</field>
@@ -17,6 +21,10 @@
         <record id="vendor_lopez" model="res.partner">
             <field name="name">Laboratorios López S.A. de C.V.</field>
             <field name="is_company">True</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="vendor_type">laboratorio</field>
+            <field name="nrc">10002-2</field>
+            <field name="nit">0614-020285-102-2</field>
             <field name="supplier_rank">1</field>
             <field name="phone">2298-2000</field>
             <field name="email">pedidos@laboratorioslopez.com</field>
@@ -29,6 +37,10 @@
         <record id="vendor_santa_lucia" model="res.partner">
             <field name="name">Droguería Santa Lucía</field>
             <field name="is_company">True</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="vendor_type">drogueria</field>
+            <field name="nrc">10003-3</field>
+            <field name="nit">0614-030390-103-3</field>
             <field name="supplier_rank">1</field>
             <field name="phone">2239-3000</field>
             <field name="email">contacto@santalucia.com.sv</field>
@@ -41,6 +53,10 @@
         <record id="vendor_americana" model="res.partner">
             <field name="name">Droguería Americana</field>
             <field name="is_company">True</field>
+            <field name="is_pharmacy_vendor">True</field>
+            <field name="vendor_type">drogueria</field>
+            <field name="nrc">10004-4</field>
+            <field name="nit">0614-040495-104-4</field>
             <field name="supplier_rank">1</field>
             <field name="phone">2211-4000</field>
             <field name="email">despacho@drogueriaamericana.com</field>

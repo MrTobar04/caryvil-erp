@@ -145,6 +145,7 @@ if [[ "$*" != *"-i"* && "$*" != *"--init"* ]]; then
         python3 -c "
 import odoo
 from odoo import api
+from odoo.tools import convert_file
 odoo.tools.config.parse_config(['-c', '/etc/odoo/odoo.conf', '-d', '${DB_NAME}'])
 with odoo.registry('${DB_NAME}').cursor() as cr:
     env = api.Environment(cr, odoo.SUPERUSER_ID, {})
@@ -152,9 +153,27 @@ with odoo.registry('${DB_NAME}').cursor() as cr:
     grp = env.ref('caryvil_erp.group_caryvil_manager', raise_if_not_found=False)
     if admin and grp:
         admin.write({'groups_id': [(4, grp.id)]})
-        cr.commit()
+
+    # Cargar datos semilla operativos (medicamentos, proveedores, clientes, stock) si no existen
+    if not env.ref('caryvil_erp.med_amoxicilina_500', raise_if_not_found=False):
+        for f in ['demo/demo_vendors_data.xml', 'demo/demo_customers_data.xml', 'demo/demo_medicines_data.xml', 'demo/demo_inventory_stock_data.xml']:
+            try:
+                convert_file(env, 'caryvil_erp', f, {}, mode='init', noupdate=True, kind='data')
+            except Exception as e:
+                print(f'Error loading {f}:', e)
+
+    # Desactivar productos por defecto de Odoo (muebles, sillas, etc.) para dejar solo farmacia
+    demo_med_tmpl_ids = env['ir.model.data'].search([
+        ('module', '=', 'caryvil_erp'),
+        ('model', 'in', ['product.product', 'product.template'])
+    ]).mapped('res_id')
+    for p in env['product.product'].search([('active', '=', True)]):
+        if p.id not in demo_med_tmpl_ids and p.product_tmpl_id.id not in demo_med_tmpl_ids and 'Med Test' not in p.name:
+            p.product_tmpl_id.write({'active': False, 'purchase_ok': False, 'sale_ok': False})
+
+    cr.commit()
 " 2>/dev/null || true
-        echo "=== [Caryvil ERP] Verificación de grupos completada. ==="
+        echo "=== [Caryvil ERP] Verificación de grupos y datos semilla completada. ==="
     fi
 fi
 
