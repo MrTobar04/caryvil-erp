@@ -25,6 +25,7 @@
         "purchase",
         "purchase_stock",
         "sale_management",
+        "sale_stock",
         "account",
         "uom",
         "spreadsheet_dashboard",
@@ -51,6 +52,12 @@
         "data/stock_lot_cron.xml",
         "data/invoice_sequence_data.xml",
         "data/sale_counter_data.xml",
+        "demo/demo_vendors_data.xml",
+        "demo/demo_customers_data.xml",
+        "demo/demo_medicines_data.xml",
+        "demo/demo_inventory_stock_data.xml",
+        "demo/demo_reordering_rules_data.xml",
+        "demo/demo_transactions_data.xml",
         "views/caryvil_medicine_views.xml",
         "views/caryvil_dashboard_views.xml",
         "views/caryvil_menus.xml",
@@ -82,6 +89,7 @@
         "demo/demo_customers_data.xml",
         "demo/demo_medicines_data.xml",
         "demo/demo_inventory_stock_data.xml",
+        "demo/demo_reordering_rules_data.xml",
     ],
     "assets": {
         "web.assets_backend": [

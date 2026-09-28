@@ -63,7 +63,7 @@ class TestStockPickingReception(TransactionCase):
         with self.assertRaises(ValidationError):
             picking.button_validate()
 
-    # Escenario 1 (SPEC-8.2.1): recepción exitosa con lote y fecha de vencimiento válida.
+    # Escenario 1 (SPEC-8.2.1 / SPEC-ISSUE-67): recepción exitosa con lote y fecha de vencimiento válida.
     def test_recepcion_exitosa_con_lote_y_vencimiento(self):
         orden = self._crear_orden_confirmada()
         picking = orden.picking_ids[0]
@@ -71,11 +71,16 @@ class TestStockPickingReception(TransactionCase):
             {
                 "quantity": 15,
                 "lot_name": "LOT-IBU-2027-01",
-                "expiration_date": "2027-08-31",
+                "expiration_date": "2027-08-31 00:00:00",
             }
         )
         picking.button_validate()
         self.assertEqual(picking.state, "done")
+        lot = picking.move_line_ids.lot_id
+        self.assertTrue(lot)
+        self.assertEqual(lot.name, "LOT-IBU-2027-01")
+        self.assertTrue(lot.expiration_date)
+        self.assertIn("2027-08-31", str(lot.expiration_date))
 
     # Bloquea si hay lote pero no fecha de vencimiento.
     def test_bloqueo_recepcion_sin_fecha_vencimiento(self):
@@ -98,7 +103,7 @@ class TestStockPickingReception(TransactionCase):
             {
                 "quantity": 15,
                 "lot_name": "LOT-VIEJO",
-                "expiration_date": "2000-01-01",
+                "expiration_date": "2000-01-01 00:00:00",
             }
         )
         with self.assertRaises(ValidationError):
@@ -112,7 +117,7 @@ class TestStockPickingReception(TransactionCase):
             {
                 "quantity": 15,
                 "lot_name": "LOT-IBU-2027-01",
-                "expiration_date": "2027-08-31",
+                "expiration_date": "2027-08-31 00:00:00",
             }
         )
         picking.button_validate()
@@ -127,7 +132,7 @@ class TestStockPickingReception(TransactionCase):
             {
                 "quantity": 20,
                 "lot_name": "LOT-PARCIAL",
-                "expiration_date": "2027-08-31",
+                "expiration_date": "2027-08-31 00:00:00",
             }
         )
         picking.with_context(skip_backorder=True, picking_ids_not_to_backorder=picking.ids).button_validate()
@@ -135,3 +140,22 @@ class TestStockPickingReception(TransactionCase):
         self.assertTrue(picking.has_discrepancy)
         self.assertEqual(orden.state, "purchase")
         self.assertEqual(orden.order_line[0].qty_received, 20)
+
+    # SPEC-ISSUE-67: valida que la fecha de caducidad digitada se sincronice y calcule alert_date.
+    def test_recepcion_sincroniza_expiration_date_en_stock_lot(self):
+        orden = self._crear_orden_confirmada(qty=10)
+        picking = orden.picking_ids[0]
+        picking.move_line_ids.write(
+            {
+                "quantity": 10,
+                "lot_name": "LOT-SYNC-2028-05",
+                "expiration_date": "2028-05-20 00:00:00",
+            }
+        )
+        picking.button_validate()
+        self.assertEqual(picking.state, "done")
+        lot = picking.move_line_ids.lot_id
+        self.assertTrue(lot)
+        self.assertIn("2028-05-20", str(lot.expiration_date))
+        self.assertTrue(lot.alert_date)
+        self.assertTrue(lot.removal_date)

@@ -2,9 +2,12 @@
 
 Sistema integral de gestión de recursos empresariales (ERP) especializado para **Farmacia Caryvil**, desarrollado sobre **Odoo 17.0 Community Edition**, **Python 3.10+** y **PostgreSQL 16**.
 
+> [!NOTE]
+> **Entorno de Despliegue en la Nube (Render):** [https://caryvil-erp-dev.onrender.com](https://caryvil-erp-dev.onrender.com)
+
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 El repositorio sigue una arquitectura modular y desacoplada bajo metodología **Spec-Driven Development (SDD)**, centralizando la infraestructura dentro del directorio `infra/`:
 
@@ -13,7 +16,7 @@ caryvil-erp/
 ├── .github/                      # Automatización CI/CD
 │   └── workflows/
 │       └── ci-cd.yml             # Pipeline de Linting, Testing, Build Docker y Deploy
-├── custom_addons/                # 📦 Aplicación y Módulos Farmacéuticos
+├── custom_addons/                # Aplicación y Módulos Farmacéuticos
 │   └── caryvil_erp/              # Módulo central de extensión de negocio
 │       ├── controllers/          # Endpoints HTTP y rutas web
 │       ├── data/                 # Datos maestros, categorías fiscales e inicializaciones
@@ -27,10 +30,10 @@ caryvil-erp/
 │       ├── wizards/              # Asistentes interactivos de recepción y conteo
 │       ├── __init__.py           # Enrutamiento de paquetes Python
 │       └── __manifest__.py       # Manifiesto y dependencias del addon
-├── docs/                         # 📚 Documentación Técnica y de Gestión
+├── docs/                         # Documentación Técnica y de Gestión
 │   ├── adr/                      # Architecture Decision Records (ADRs)
 │   └── gestion/                  # Planificación y alcance (EDT/WBS)
-├── infra/                        # 🛠️ Infraestructura Desacoplada
+├── infra/                        # Infraestructura Desacoplada
 │   ├── compose/                  # Orquestación de contenedores multi-servicio
 │   │   ├── docker-compose.yml
 │   │   └── docker-compose.override.yml.example
@@ -45,7 +48,7 @@ caryvil-erp/
 │       ├── outputs.tf
 │       ├── versions.tf
 │       └── terraform.tfvars.example
-├── specs/                        # 📋 Ecosistema SDD (40 especificaciones detalladas)
+├── specs/                        # Ecosistema SDD (40 especificaciones detalladas)
 │   └── spec-plan.md              # Plan maestro de especificaciones
 ├── .dockerignore                 # Exclusiones de contexto Docker
 ├── .gitignore                    # Exclusiones de control de versiones Git
@@ -55,7 +58,7 @@ caryvil-erp/
 
 ---
 
-## 🚀 Inicio Rápido en Entorno Local
+## Inicio Rápido en Entorno Local
 
 ### Prerrequisitos
 - [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/) v2.0+
@@ -63,7 +66,7 @@ caryvil-erp/
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/MelissaFloresA/Odoo_ERP_Farmacia.git caryvil-erp
+git clone https://github.com/MrTobar04/caryvil-erp.git
 cd caryvil-erp
 ```
 
@@ -73,8 +76,8 @@ docker compose -f infra/compose/docker-compose.yml up -d --build
 ```
 
 ### 3. Acceder al sistema
-Una vez que los contenedores estén en estado `healthy`:
-- **Interfaz Web de Odoo:** [http://localhost:8069](http://localhost:8069)
+- **Entorno de Despliegue en la Nube (Render):** [https://caryvil-erp-dev.onrender.com](https://caryvil-erp-dev.onrender.com)
+- **Interfaz Web Local de Odoo:** [http://localhost:8069](http://localhost:8069)
 - **Base de Datos por defecto:** `caryvil_dev`
 - **Usuario administrador:** `admin`
 
@@ -85,7 +88,7 @@ docker compose -f infra/compose/docker-compose.yml logs -f web
 
 ---
 
-## 🧪 Pruebas Automatizadas y Calidad de Código
+## Pruebas Automatizadas y Calidad de Código
 
 ### Ejecución de Linter (Flake8):
 ```bash
@@ -99,7 +102,7 @@ docker compose -f infra/compose/docker-compose.yml exec web odoo --test-enable -
 
 ---
 
-## 📄 Metodología y Documentación
+## Metodología y Documentación
 - **Especificaciones Funcionales:** Consulta [specs/spec-plan.md](specs/spec-plan.md) para el catálogo de requerimientos.
 - **Decisiones de Arquitectura:** Consulta [docs/adr/README.md](docs/adr/README.md) para los registros ADR inmutables.
 - **Licencia:** LGPL-3.0.

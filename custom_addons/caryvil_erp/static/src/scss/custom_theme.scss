@@ -112,17 +112,17 @@ body,
     border-bottom: none !important;
     height: var(--caryvil-topbar-height);
     min-height: var(--caryvil-topbar-height);
-    color: var(--caryvil-text-light) !important;
+    color: #FFFFFF !important;
 
     // Marca Institucional
     .o_menu_brand {
-        color: var(--caryvil-text-light) !important;
+        color: #FFFFFF !important;
         font-family: var(--caryvil-font-family) !important;
         font-weight: 700 !important;
         font-size: 1.15rem !important;
         letter-spacing: 0.5px;
         text-transform: uppercase;
-        padding: 0 1rem;
+        padding: 0 1rem !important;
 
         &:hover {
             color: var(--caryvil-sidebar-active) !important;
@@ -132,7 +132,7 @@ body,
     // Botón de aplicaciones / menú hamburguesa
     .o_navbar_apps_menu button,
     .o_navbar_apps_menu .dropdown-toggle {
-        color: var(--caryvil-text-light) !important;
+        color: #FFFFFF !important;
         background-color: transparent !important;
         border: none !important;
 
@@ -143,9 +143,8 @@ body,
     }
 
     // Secciones de Menú Superior (Medicamentos e Inventario, Compras, etc.)
-    // Elimina el fondo morado (#714B67) heredado de Odoo Community
     .o_menu_sections {
-        background-color: var(--caryvil-sidebar-bg) !important;
+        background-color: transparent !important;
         border: none !important;
 
         button,
@@ -157,7 +156,7 @@ body,
             font-family: var(--caryvil-font-family) !important;
             font-weight: 500 !important;
             font-size: 0.9375rem !important;
-            padding: 0.6rem 1rem !important;
+            padding: 0.4rem 0.75rem !important;
             border: none !important;
             border-radius: 4px !important;
             box-shadow: none !important;
@@ -167,7 +166,7 @@ body,
             &:focus,
             &[aria-expanded="true"] {
                 background-color: var(--caryvil-sidebar-hover) !important;
-                color: var(--caryvil-text-light) !important;
+                color: #FFFFFF !important;
             }
 
             &.active,
@@ -207,14 +206,14 @@ body,
     }
 
     .o_nav_entry {
-        color: var(--caryvil-sidebar-text) !important;
+        color: #FFFFFF !important;
         font-weight: 500;
-        border-radius: 6px;
+        border-radius: 4px;
 
         &:hover,
         &:focus {
             background-color: var(--caryvil-sidebar-hover) !important;
-            color: var(--caryvil-text-light) !important;
+            color: #FFFFFF !important;
         }
 
         &.active,
@@ -224,16 +223,17 @@ body,
         }
     }
 
-    .o_notification_icon,
-    .o_mail_messaging_menu_icon {
-        color: var(--caryvil-text-light) !important;
-    }
-
-    .o_user_menu {
-        color: var(--caryvil-text-light) !important;
-
-        .o_user_menu_button {
-            color: var(--caryvil-text-light) !important;
+    .o_menu_systray {
+        .o_nav_entry,
+        .o_user_menu,
+        .o_user_menu_button,
+        .o_notification_icon,
+        .o_mail_messaging_menu_icon,
+        i,
+        span,
+        a,
+        button {
+            color: #FFFFFF !important;
         }
     }
 }
@@ -337,10 +337,34 @@ body,
 .o_control_panel,
 .o_control_panel_top,
 .o_control_panel_bottom {
-    background-color: var(--caryvil-topbar-bg) !important;
-    color: var(--caryvil-topbar-text) !important;
+    background-color: #FFFFFF !important;
+    color: #1F2937 !important;
     min-height: var(--caryvil-topbar-height);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-bottom: 1px solid #E5E7EB !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+
+    // Entradas de texto de búsqueda dentro del Control Panel (sin afectar títulos de migas de pan)
+    .o_searchview input,
+    .o_cp_search_input input,
+    .o_control_panel_main input.o_searchview_input {
+        color: #111827 !important;
+        background-color: #FFFFFF !important;
+        border: 1px solid #D1D5DB !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+        padding: 5px 12px !important;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+
+        &::placeholder {
+            color: #9CA3AF !important;
+        }
+
+        &:focus {
+            border-color: var(--caryvil-primary-green) !important;
+            box-shadow: 0 0 0 3px rgba(30, 122, 58, 0.15) !important;
+            outline: none !important;
+        }
+    }
 
     // Breadcrumbs, títulos de sección y migas de pan
     .o_control_panel_breadcrumbs,
@@ -350,25 +374,111 @@ body,
     .o_breadcrumb_title,
     .o_page_title,
     .o_last_breadcrumb_item {
-        color: #FFFFFF !important;
-        font-weight: 600 !important;
+        color: #111827 !important;
+        font-weight: 700 !important;
         font-size: 1.05rem !important;
 
         span,
-        a,
-        a:hover,
         .text-truncate {
-            color: #FFFFFF !important;
+            color: #111827 !important;
             text-decoration: none !important;
         }
 
+        // Enlaces de migas de pan estándar (diseño limpio sin cuadro pesado)
+        .breadcrumb-item a,
+        .o_breadcrumb a {
+            color: #4B5563 !important;
+            font-weight: 500 !important;
+            background-color: transparent !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 2px 6px !important;
+            text-decoration: none !important;
+            transition: all 0.15s ease-in-out !important;
+
+            i,
+            .oi,
+            .fa {
+                color: #4B5563 !important;
+            }
+
+            &:hover {
+                color: #111827 !important;
+                background-color: #F3F4F6 !important;
+                text-decoration: none !important;
+
+                i,
+                .oi,
+                .fa {
+                    color: #111827 !important;
+                }
+            }
+        }
+
+        // Botones explícitos de navegación de retorno ("Regresar", "Back to...")
+        button.o_back_button,
+        a.o_back_button,
+        .o_back_button {
+            color: #374151 !important;
+            font-weight: 600 !important;
+            background-color: #F3F4F6 !important;
+            border: 1px solid #D1D5DB !important;
+            border-radius: 6px !important;
+            padding: 5px 12px !important;
+            text-decoration: none !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            transition: all 0.15s ease-in-out !important;
+
+            i,
+            .oi,
+            .fa {
+                color: #374151 !important;
+            }
+
+            &:hover:not(:disabled) {
+                color: #111827 !important;
+                background-color: #E5E7EB !important;
+                border-color: #9CA3AF !important;
+                text-decoration: none !important;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+
+                i,
+                .oi,
+                .fa {
+                    color: #111827 !important;
+                }
+            }
+
+            &:focus,
+            &:focus-visible {
+                color: #111827 !important;
+                background-color: #E5E7EB !important;
+                border-color: var(--caryvil-accent-blue) !important;
+                outline: 2px solid var(--caryvil-accent-blue) !important;
+                outline-offset: 2px !important;
+                box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.3) !important;
+            }
+
+            &:disabled,
+            &.disabled {
+                background-color: #F3F4F6 !important;
+                border-color: #E5E7EB !important;
+                color: #9CA3AF !important;
+                opacity: 0.65 !important;
+                cursor: not-allowed !important;
+                pointer-events: none !important;
+            }
+        }
+
         &.active {
-            color: #FFFFFF !important;
+            color: #111827 !important;
         }
     }
 
     .breadcrumb-item + .breadcrumb-item::before {
-        color: rgba(255, 255, 255, 0.6) !important;
+        color: #9CA3AF !important;
     }
 
     // Botón de engranaje (configuración / acciones)
@@ -376,27 +486,27 @@ body,
     .o_control_panel_breadcrumbs_actions button,
     .oi-cog,
     .fa-cog {
-        color: rgba(255, 255, 255, 0.85) !important;
+        color: #4B5563 !important;
         border: none !important;
         background: transparent !important;
 
         &:hover,
         &:focus {
-            color: #FFFFFF !important;
-            background-color: rgba(255, 255, 255, 0.15) !important;
+            color: #111827 !important;
+            background-color: #F3F4F6 !important;
         }
     }
 
     // Paginador de vistas ("1-55 / 55") con alto contraste
     .o_pager,
     .o_cp_pager {
-        color: #FFFFFF !important;
+        color: #374151 !important;
 
         .o_pager_counter,
         .o_pager_value,
         .o_pager_limit,
         span {
-            color: #FFFFFF !important;
+            color: #374151 !important;
             font-weight: 500 !important;
             font-size: 0.9rem !important;
         }
@@ -404,17 +514,18 @@ body,
         .o_pager_previous,
         .o_pager_next,
         button {
-            color: #FFFFFF !important;
-            background-color: rgba(255, 255, 255, 0.15) !important;
-            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            color: #374151 !important;
+            background-color: #FFFFFF !important;
+            border: 1px solid #D1D5DB !important;
             border-radius: 4px !important;
             padding: 3px 8px !important;
             margin: 0 2px !important;
             transition: all 0.15s ease-in-out;
 
             &:hover:not(:disabled) {
-                background-color: rgba(255, 255, 255, 0.3) !important;
-                color: #FFFFFF !important;
+                background-color: #F3F4F6 !important;
+                color: #111827 !important;
+                border-color: #9CA3AF !important;
             }
 
             &:disabled {
@@ -428,8 +539,8 @@ body,
     .o_cp_switch_buttons {
         button.o_switch_view,
         .btn {
-            background-color: rgba(255, 255, 255, 0.9) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            background-color: #FFFFFF !important;
+            border: 1px solid #D1D5DB !important;
             color: #495057 !important;
             border-radius: 6px !important;
             padding: 5px 9px !important;
@@ -437,7 +548,7 @@ body,
             transition: all 0.15s ease;
 
             &:hover {
-                background-color: #FFFFFF !important;
+                background-color: #F3F4F6 !important;
                 color: var(--caryvil-sidebar-bg) !important;
             }
 
@@ -450,86 +561,263 @@ body,
         }
     }
 
-    // Botones de acción principales del Control Panel (Crear / New, Guardar, Descartar)
+    // Botones de acción principales del Control Panel (Guardar, Nuevo / Crear, Descartar, Regresar)
     .o_control_panel_main_buttons,
     .o_cp_buttons,
+    .o_form_buttons,
     .o_control_panel_collapsed_create {
+        // Botones de acción principal (Guardar / Save, Nuevo / Create, Add)
         .btn-primary,
+        .o_form_button_save,
         .o_form_button_create,
         .o_list_button_add,
+        button[data-hotkey="s"],
         button[data-hotkey="c"] {
             background-color: var(--caryvil-primary-green) !important;
             border: 1px solid var(--caryvil-primary-green) !important;
             color: #FFFFFF !important;
             font-weight: 600 !important;
             border-radius: 6px !important;
+            padding: 7px 18px !important;
             --bs-btn-color: #FFFFFF !important;
             --bs-btn-border-color: var(--caryvil-primary-green) !important;
+            transition: all 0.15s ease-in-out !important;
+            box-shadow: 0 1px 3px rgba(30, 122, 58, 0.2) !important;
+
+            span,
+            i,
+            .fa,
+            .oi {
+                color: #FFFFFF !important;
+                visibility: visible !important;
+            }
 
             &:hover:not(:disabled) {
                 background-color: var(--caryvil-primary-green-hover) !important;
                 border-color: var(--caryvil-primary-green-active) !important;
                 color: #FFFFFF !important;
+                box-shadow: 0 4px 10px rgba(30, 122, 58, 0.3) !important;
+
+                span,
+                i,
+                .fa,
+                .oi {
+                    color: #FFFFFF !important;
+                }
+            }
+
+            &:focus,
+            &:focus-visible {
+                background-color: var(--caryvil-primary-green-hover) !important;
+                border-color: var(--caryvil-primary-green-active) !important;
+                color: #FFFFFF !important;
+                outline: 2px solid var(--caryvil-accent-cyan) !important;
+                outline-offset: 2px !important;
+                box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.4) !important;
             }
 
             &:disabled,
             &.disabled {
-                background-color: rgba(255, 255, 255, 0.18) !important;
-                border: 1px solid rgba(255, 255, 255, 0.45) !important;
-                color: #FFFFFF !important;
-                --bs-btn-color: #FFFFFF !important;
-                --bs-btn-disabled-color: #FFFFFF !important;
-                --bs-btn-disabled-border-color: rgba(255, 255, 255, 0.45) !important;
-                opacity: 0.85 !important;
+                background-color: #E5E7EB !important;
+                border: 1px solid #D1D5DB !important;
+                color: #9CA3AF !important;
+                --bs-btn-color: #9CA3AF !important;
+                --bs-btn-disabled-color: #9CA3AF !important;
+                --bs-btn-disabled-border-color: #D1D5DB !important;
+                opacity: 0.75 !important;
                 cursor: not-allowed !important;
+                pointer-events: none !important;
+            }
+        }
+
+        // Botones de acción secundaria y cancelación (Descartar, Regresar, Volver)
+        .btn-secondary,
+        .o_form_button_cancel,
+        button[data-hotkey="j"] {
+            background-color: #FFFFFF !important;
+            border: 1px solid #D1D5DB !important;
+            color: #1F2937 !important;
+            font-weight: 600 !important;
+            border-radius: 6px !important;
+            padding: 7px 16px !important;
+            --bs-btn-color: #1F2937 !important;
+            --bs-btn-border-color: #D1D5DB !important;
+            transition: all 0.15s ease-in-out !important;
+
+            span,
+            i,
+            .fa,
+            .oi {
+                color: #1F2937 !important;
+            }
+
+            &:hover:not(:disabled) {
+                background-color: #F9FAFB !important;
+                border-color: #9CA3AF !important;
+                color: #111827 !important;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+
+                span,
+                i,
+                .fa,
+                .oi {
+                    color: #111827 !important;
+                }
+            }
+
+            &:focus,
+            &:focus-visible {
+                background-color: #FFFFFF !important;
+                border-color: var(--caryvil-accent-blue) !important;
+                color: #111827 !important;
+                outline: 2px solid var(--caryvil-accent-blue) !important;
+                outline-offset: 2px !important;
+                box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.3) !important;
+            }
+
+            &:disabled,
+            &.disabled {
+                background-color: #F3F4F6 !important;
+                border: 1px solid #E5E7EB !important;
+                color: #9CA3AF !important;
+                opacity: 0.7 !important;
+                cursor: not-allowed !important;
+                pointer-events: none !important;
             }
         }
 
         .btn-outline-primary {
-            background-color: rgba(255, 255, 255, 0.15) !important;
-            border: 1px solid rgba(255, 255, 255, 0.5) !important;
-            color: #FFFFFF !important;
+            background-color: #FFFFFF !important;
+            border: 1px solid var(--caryvil-primary-green) !important;
+            color: var(--caryvil-primary-green) !important;
             font-weight: 600 !important;
             border-radius: 6px !important;
-            --bs-btn-color: #FFFFFF !important;
-            --bs-btn-border-color: rgba(255, 255, 255, 0.5) !important;
+            padding: 7px 16px !important;
 
             &:hover:not(:disabled) {
-                background-color: rgba(255, 255, 255, 0.28) !important;
-                border-color: #FFFFFF !important;
+                background-color: var(--caryvil-primary-green) !important;
+                border-color: var(--caryvil-primary-green) !important;
                 color: #FFFFFF !important;
+            }
+
+            &:focus,
+            &:focus-visible {
+                outline: 2px solid var(--caryvil-accent-cyan) !important;
+                outline-offset: 2px !important;
+                box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.4) !important;
             }
 
             &:disabled,
             &.disabled {
-                background-color: rgba(255, 255, 255, 0.18) !important;
-                border: 1px solid rgba(255, 255, 255, 0.45) !important;
-                color: #FFFFFF !important;
-                --bs-btn-color: #FFFFFF !important;
-                --bs-btn-disabled-color: #FFFFFF !important;
-                --bs-btn-disabled-border-color: rgba(255, 255, 255, 0.45) !important;
+                background-color: #F3F4F6 !important;
+                border: 1px solid #E5E7EB !important;
+                color: #9CA3AF !important;
                 opacity: 0.85 !important;
                 cursor: not-allowed !important;
             }
         }
     }
 
-    // Indicador de estado de formulario (Guardado automático, Deshacer)
+    // Indicador de estado de formulario (Guardado automático, Deshacer, visibilidad post-guardado)
     .o_form_status_indicator {
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        border-radius: 6px !important;
-        padding: 2px 8px !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 4px !important;
+        gap: 6px !important;
         margin-left: 6px !important;
 
-        .o_form_status_indicator_buttons .btn {
-            color: #495057 !important;
-            padding: 2px 6px !important;
+        .o_form_status_indicator_text,
+        .o_form_status_indicator_text span,
+        span {
+            color: #374151 !important;
+            font-weight: 600 !important;
+            font-size: 0.875rem !important;
+        }
 
-            &:hover {
-                color: var(--caryvil-primary-green) !important;
+        // Botones dentro del status indicator (Guardar, Descartar / Deshacer)
+        .o_form_status_indicator_buttons {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+
+            // Botón Guardar en el status indicator
+            .o_form_button_save,
+            button.o_form_button_save,
+            .btn-primary {
+                background-color: var(--caryvil-primary-green) !important;
+                border: 1px solid var(--caryvil-primary-green) !important;
+                color: #FFFFFF !important;
+                font-weight: 600 !important;
+                padding: 5px 14px !important;
+                border-radius: 6px !important;
+                font-size: 0.875rem !important;
+                line-height: 1.4 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 4px !important;
+
+                span,
+                i,
+                .fa,
+                .oi {
+                    color: #FFFFFF !important;
+                    visibility: visible !important;
+                }
+
+                &:hover:not(:disabled) {
+                    background-color: var(--caryvil-primary-green-hover) !important;
+                    border-color: var(--caryvil-primary-green-active) !important;
+                    color: #FFFFFF !important;
+
+                    span,
+                    i,
+                    .fa,
+                    .oi {
+                        color: #FFFFFF !important;
+                    }
+                }
+            }
+
+            // Botón Descartar / Deshacer en el status indicator
+            .o_form_button_cancel,
+            button.o_form_button_cancel,
+            .btn-secondary {
+                background-color: #FFFFFF !important;
+                border: 1px solid #D1D5DB !important;
+                color: #374151 !important;
+                font-weight: 600 !important;
+                padding: 5px 10px !important;
+                border-radius: 6px !important;
+                font-size: 0.875rem !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+
+                span,
+                i,
+                .fa,
+                .oi,
+                .fa-undo,
+                .oi-undo {
+                    color: #374151 !important;
+                    visibility: visible !important;
+                }
+
+                &:hover:not(:disabled) {
+                    background-color: #E5E7EB !important;
+                    color: #111827 !important;
+                    border-color: #9CA3AF !important;
+
+                    span,
+                    i,
+                    .fa,
+                    .oi {
+                        color: #111827 !important;
+                    }
+                }
             }
         }
     }

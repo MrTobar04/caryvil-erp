@@ -23,31 +23,30 @@
                   name="Ventas y Caja"
                   parent="menu_caryvil_root"
                   sequence="20"
-                  groups="caryvil_erp.group_caryvil_cashier"/>
+                  groups="caryvil_erp.group_caryvil_cashier,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_inventario"
                   name="Medicamentos e Inventario"
                   parent="menu_caryvil_root"
                   sequence="30"
-                  groups="caryvil_erp.group_caryvil_cashier"/>
+                  groups="caryvil_erp.group_caryvil_cashier,caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_compras"
                   name="Compras y Proveedores"
                   parent="menu_caryvil_root"
                   sequence="40"
-                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
+                  groups="caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_clientes"
                   name="Clientes"
                   parent="menu_caryvil_root"
                   sequence="50"
-                  groups="caryvil_erp.group_caryvil_cashier"/>
+                  groups="caryvil_erp.group_caryvil_cashier,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_configuracion"
                   name="Configuración"
                   parent="menu_caryvil_root"
-                  sequence="100"
-                  groups="caryvil_erp.group_caryvil_manager"/>
+                  sequence="100"/>
 
         <!-- ================================================================ -->
         <!-- Acciones de Ventana y Submenús de Medicamentos e Inventario      -->
@@ -56,6 +55,7 @@
             <field name="name">Medicamentos</field>
             <field name="res_model">product.template</field>
             <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">['|', ('therapeutic_category_id', '!=', False), ('active_ingredient_id', '!=', False)]</field>
             <field name="context">{'default_detailed_type': 'product'}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
@@ -75,35 +75,28 @@
                   parent="menu_caryvil_inventario"
                   action="stock.action_production_lot_form"
                   sequence="15"
-                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
+                  groups="caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_principios_activos"
                   name="Principios Activos"
                   parent="menu_caryvil_inventario"
                   action="action_caryvil_active_ingredient"
                   sequence="20"
-                  groups="caryvil_erp.group_caryvil_cashier"/>
+                  groups="caryvil_erp.group_caryvil_cashier,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_categorias_terapeuticas"
                   name="Categorías Terapéuticas"
                   parent="menu_caryvil_inventario"
                   action="action_caryvil_therapeutic_category"
                   sequence="30"
-                  groups="caryvil_erp.group_caryvil_cashier"/>
+                  groups="caryvil_erp.group_caryvil_cashier,caryvil_erp.group_caryvil_manager"/>
 
         <menuitem id="menu_caryvil_reordering_rules"
                   name="Reglas de Reabastecimiento"
                   parent="menu_caryvil_inventario"
                   action="stock.action_orderpoint"
                   sequence="18"
-                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
-
-        <menuitem id="menu_caryvil_compras_reabastecimiento"
-                  name="Planificador de Reabastecimiento"
-                  parent="menu_caryvil_compras"
-                  action="stock.action_orderpoint_replenish"
-                  sequence="15"
-                  groups="caryvil_erp.group_caryvil_inventory_purchases"/>
+                  groups="caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"/>
 
         <!-- Submenús de Configuración Farmacológica -->
         <menuitem id="menu_caryvil_config_farmacologia"
@@ -149,6 +142,12 @@
         </record>
 
         <record id="contacts.menu_contacts" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+        </record>
+
+        <!-- ISSUE-66: se restringe a group_no_one (solo modo desarrollador) en vez -->
+        <!-- de borrar el registro, para no dejar huérfanos sus submenús hijos.     -->
+        <record id="menu_caryvil_configuracion" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
         </record>
     </data>

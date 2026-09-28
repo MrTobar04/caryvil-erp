@@ -83,6 +83,8 @@
             <field name="barcode">7410001000050</field>
             <field name="standard_price">3.80</field>
             <field name="list_price">6.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 6. Metformina 850mg -->
@@ -98,6 +100,8 @@
             <field name="barcode">7410001000067</field>
             <field name="standard_price">4.00</field>
             <field name="list_price">6.25</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 7. Omeprazol 20mg -->
@@ -113,6 +117,8 @@
             <field name="barcode">7410001000074</field>
             <field name="standard_price">3.50</field>
             <field name="list_price">5.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 8. Salbutamol Inhalador 100mcg -->
@@ -128,6 +134,8 @@
             <field name="barcode">7410001000081</field>
             <field name="standard_price">6.00</field>
             <field name="list_price">9.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_bottle_120ml"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_12_bottles"/>
         </record>
 
         <!-- 9. Complejo B Inyectable -->
@@ -160,6 +168,8 @@
             <field name="barcode">7410001000104</field>
             <field name="standard_price">2.20</field>
             <field name="list_price">3.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 11. Azitromicina 500mg -->
@@ -175,6 +185,8 @@
             <field name="barcode">7410001000111</field>
             <field name="standard_price">4.80</field>
             <field name="list_price">7.20</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 12. Cetirizina 10mg -->
@@ -190,6 +202,8 @@
             <field name="barcode">7410001000128</field>
             <field name="standard_price">2.00</field>
             <field name="list_price">3.25</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 13. Losartán 50mg -->
@@ -205,6 +219,8 @@
             <field name="barcode">7410001000135</field>
             <field name="standard_price">4.20</field>
             <field name="list_price">6.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 14. Ranitidina 150mg -->
@@ -220,6 +236,8 @@
             <field name="barcode">7410001000142</field>
             <field name="standard_price">2.80</field>
             <field name="list_price">4.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 15. Vitamina C 500mg -->
@@ -286,6 +304,8 @@
             <field name="barcode">7410001000180</field>
             <field name="standard_price">4.00</field>
             <field name="list_price">6.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_bottle_120ml"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_12_bottles"/>
         </record>
 
         <!-- 19. Ambroxol Jarabe 15mg/5ml -->
@@ -335,6 +355,8 @@
             <field name="barcode">7410001000210</field>
             <field name="standard_price">3.80</field>
             <field name="list_price">6.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 22. Glibenclamida 5mg -->
@@ -350,6 +372,8 @@
             <field name="barcode">7410001000227</field>
             <field name="standard_price">3.50</field>
             <field name="list_price">5.80</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_100"/>
         </record>
 
         <!-- 23. Electrolitos Orales Suero -->
@@ -365,6 +389,8 @@
             <field name="barcode">7410001000234</field>
             <field name="standard_price">1.50</field>
             <field name="list_price">2.50</field>
+            <field name="uom_id" ref="caryvil_erp.uom_bottle_120ml"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_12_bottles"/>
         </record>
 
         <!-- 24. Multivitamínico con Minerales -->
@@ -379,6 +405,8 @@
             <field name="barcode">7410001000241</field>
             <field name="standard_price">6.50</field>
             <field name="list_price">10.00</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
         <!-- 25. Naproxeno 550mg -->
@@ -394,6 +422,8 @@
             <field name="barcode">7410001000258</field>
             <field name="standard_price">3.00</field>
             <field name="list_price">4.80</field>
+            <field name="uom_id" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="uom_po_id" ref="caryvil_erp.uom_box_20"/>
         </record>
 
     </data>

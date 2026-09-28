@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ================================================================ -->
+        <!-- ÓRDENES DE COMPRA (ODC) DE DEMO - FARMACIA CARYVIL              -->
+        <!-- ================================================================ -->
+
+        <!-- ODC 1: Orden de Compra Confirmada a Laboratorios Vijosa -->
+        <record id="po_demo_vijosa_1" model="purchase.order">
+            <field name="partner_id" ref="caryvil_erp.vendor_vijosa"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-20 09:00:00</field>
+            <field name="state">purchase</field>
+        </record>
+
+        <record id="pol_demo_vijosa_1_line_1" model="purchase.order.line">
+            <field name="order_id" ref="caryvil_erp.po_demo_vijosa_1"/>
+            <field name="product_id" ref="caryvil_erp.med_amoxicilina_500"/>
+            <field name="name">Amoxicilina Vijosa 500mg (Caja x 50 Cápsulas)</field>
+            <field name="product_qty">20.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_box_50"/>
+            <field name="price_unit">4.50</field>
+            <field name="date_planned">2026-09-21 10:00:00</field>
+        </record>
+
+        <record id="pol_demo_vijosa_1_line_2" model="purchase.order.line">
+            <field name="order_id" ref="caryvil_erp.po_demo_vijosa_1"/>
+            <field name="product_id" ref="caryvil_erp.med_paracetamol_500"/>
+            <field name="name">Paracetamol Vijosa 500mg (Caja x 100 Tabletas)</field>
+            <field name="product_qty">15.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_box_100"/>
+            <field name="price_unit">3.20</field>
+            <field name="date_planned">2026-09-21 10:00:00</field>
+        </record>
+
+        <!-- ODC 2: Orden de Compra Borrador a Laboratorios López -->
+        <record id="po_demo_lopez_2" model="purchase.order">
+            <field name="partner_id" ref="caryvil_erp.vendor_lopez"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-25 14:00:00</field>
+            <field name="state">draft</field>
+        </record>
+
+        <record id="pol_demo_lopez_2_line_1" model="purchase.order.line">
+            <field name="order_id" ref="caryvil_erp.po_demo_lopez_2"/>
+            <field name="product_id" ref="caryvil_erp.med_ibuprofeno_400"/>
+            <field name="name">Ibuprofeno López 400mg (Caja x 100 Tabletas)</field>
+            <field name="product_qty">30.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_box_100"/>
+            <field name="price_unit">5.00</field>
+            <field name="date_planned">2026-09-28 10:00:00</field>
+        </record>
+
+        <!-- ODC 3: Orden de Compra Confirmada a Droguería Santa Lucía -->
+        <record id="po_demo_santa_lucia_3" model="purchase.order">
+            <field name="partner_id" ref="caryvil_erp.vendor_santa_lucia"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-22 11:30:00</field>
+            <field name="state">purchase</field>
+        </record>
+
+        <record id="pol_demo_santa_lucia_3_line_1" model="purchase.order.line">
+            <field name="order_id" ref="caryvil_erp.po_demo_santa_lucia_3"/>
+            <field name="product_id" ref="caryvil_erp.med_loratadina_10"/>
+            <field name="name">Loratadina Santa Lucía 10mg (Caja x 20 Tabletas)</field>
+            <field name="product_qty">10.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_box_20"/>
+            <field name="price_unit">2.50</field>
+            <field name="date_planned">2026-09-23 15:00:00</field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- HISTORIAL DE VENTAS (HISTORIAL DE MOSTRADOR) - FARMACIA CARYVIL  -->
+        <!-- ================================================================ -->
+
+        <!-- Venta 1: María Elena López Rivas -->
+        <record id="so_demo_cliente_1" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_maria_lopez"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-25 09:15:00</field>
+            <field name="payment_method">efectivo</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_1_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_1"/>
+            <field name="product_id" ref="caryvil_erp.med_amoxicilina_500"/>
+            <field name="name">Amoxicilina Vijosa 500mg</field>
+            <field name="product_uom_qty">2.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">6.50</field>
+        </record>
+
+        <record id="sol_demo_cliente_1_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_1"/>
+            <field name="product_id" ref="caryvil_erp.med_paracetamol_500"/>
+            <field name="name">Paracetamol Vijosa 500mg</field>
+            <field name="product_uom_qty">10.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.10</field>
+        </record>
+
+        <!-- Venta 2: Carlos Alberto Pérez -->
+        <record id="so_demo_cliente_2" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_carlos_perez"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-25 11:30:00</field>
+            <field name="payment_method">tarjeta_debito_credito</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_2_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_2"/>
+            <field name="product_id" ref="caryvil_erp.med_ibuprofeno_400"/>
+            <field name="name">Ibuprofeno López 400mg</field>
+            <field name="product_uom_qty">12.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.15</field>
+        </record>
+
+        <record id="sol_demo_cliente_2_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_2"/>
+            <field name="product_id" ref="caryvil_erp.med_ambroxol_jarabe"/>
+            <field name="name">Ambroxol Jarabe 120ml</field>
+            <field name="product_uom_qty">1.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_bottle_120ml"/>
+            <field name="price_unit">4.50</field>
+        </record>
+
+        <!-- Venta 3: Ana Sofía Ramírez -->
+        <record id="so_demo_cliente_3" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_ana_ramirez"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-26 08:45:00</field>
+            <field name="payment_method">efectivo</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_3_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_3"/>
+            <field name="product_id" ref="caryvil_erp.med_loratadina_10"/>
+            <field name="name">Loratadina Santa Lucía 10mg</field>
+            <field name="product_uom_qty">10.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.20</field>
+        </record>
+
+        <record id="sol_demo_cliente_3_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_3"/>
+            <field name="product_id" ref="caryvil_erp.med_suero_oral"/>
+            <field name="name">Suero Oral Electrolítico 500ml</field>
+            <field name="product_uom_qty">2.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_bottle_120ml"/>
+            <field name="price_unit">1.50</field>
+        </record>
+
+        <!-- Venta 4: José Roberto Gómez -->
+        <record id="so_demo_cliente_4" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_roberto_gomez"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-26 14:20:00</field>
+            <field name="payment_method">transferencia_qr</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_4_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_4"/>
+            <field name="product_id" ref="caryvil_erp.med_losartan_50"/>
+            <field name="name">Losartán Potásico 50mg</field>
+            <field name="product_uom_qty">30.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.30</field>
+        </record>
+
+        <record id="sol_demo_cliente_4_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_4"/>
+            <field name="product_id" ref="caryvil_erp.med_aspirina_100"/>
+            <field name="name">Aspirina Cardio 100mg</field>
+            <field name="product_uom_qty">30.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.10</field>
+        </record>
+
+        <!-- Venta 5: Claudia Patricia Alvarado -->
+        <record id="so_demo_cliente_5" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_claudia_alvarado"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-26 16:50:00</field>
+            <field name="payment_method">efectivo</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_5_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_5"/>
+            <field name="product_id" ref="caryvil_erp.med_omeprazol_20"/>
+            <field name="name">Omeprazol 20mg</field>
+            <field name="product_uom_qty">14.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.35</field>
+        </record>
+
+        <record id="sol_demo_cliente_5_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_5"/>
+            <field name="product_id" ref="caryvil_erp.med_metformina_850"/>
+            <field name="name">Metformina 850mg</field>
+            <field name="product_uom_qty">30.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.40</field>
+        </record>
+
+        <!-- Venta 6: Luis Antonio Rivas -->
+        <record id="so_demo_cliente_6" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_luis_rivas"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-27 09:10:00</field>
+            <field name="payment_method">tarjeta_debito_credito</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_6_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_6"/>
+            <field name="product_id" ref="caryvil_erp.med_salbutamol_inhalador"/>
+            <field name="name">Salbutamol Inhalador 100mcg</field>
+            <field name="product_uom_qty">1.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_bottle_120ml"/>
+            <field name="price_unit">6.50</field>
+        </record>
+
+        <record id="sol_demo_cliente_6_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_6"/>
+            <field name="product_id" ref="caryvil_erp.med_complejo_b_inj"/>
+            <field name="name">Complejo B Inyectable 10ml</field>
+            <field name="product_uom_qty">2.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_ampoule_vial"/>
+            <field name="price_unit">3.50</field>
+        </record>
+
+        <!-- Venta 7: Rosa Beatriz Martínez -->
+        <record id="so_demo_cliente_7" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_rosa_martinez"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-27 10:40:00</field>
+            <field name="payment_method">efectivo</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_7_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_7"/>
+            <field name="product_id" ref="caryvil_erp.med_clotrimazol_crema"/>
+            <field name="name">Clotrimazol Crema 1% 20g</field>
+            <field name="product_uom_qty">1.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_tube_ointment"/>
+            <field name="price_unit">3.25</field>
+        </record>
+
+        <record id="sol_demo_cliente_7_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_7"/>
+            <field name="product_id" ref="caryvil_erp.med_hidrocortisona_crema"/>
+            <field name="name">Hidrocortisona Crema 1% 15g</field>
+            <field name="product_uom_qty">1.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_tube_ointment"/>
+            <field name="price_unit">3.50</field>
+        </record>
+
+        <!-- Venta 8: Jorge Eduardo Hernández -->
+        <record id="so_demo_cliente_8" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_jorge_hernandez"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-27 12:15:00</field>
+            <field name="payment_method">efectivo</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_8_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_8"/>
+            <field name="product_id" ref="caryvil_erp.med_diclofenac_50"/>
+            <field name="name">Diclofenac Sódico 50mg</field>
+            <field name="product_uom_qty">20.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.20</field>
+        </record>
+
+        <record id="sol_demo_cliente_8_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_8"/>
+            <field name="product_id" ref="caryvil_erp.med_naproxeno_550"/>
+            <field name="name">Naproxeno 550mg</field>
+            <field name="product_uom_qty">10.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.45</field>
+        </record>
+
+        <!-- Venta 9: Silvia Cristina Mendoza -->
+        <record id="so_demo_cliente_9" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_silvia_mendoza"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-27 14:30:00</field>
+            <field name="payment_method">tarjeta_debito_credito</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_9_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_9"/>
+            <field name="product_id" ref="caryvil_erp.med_azitromicina_500"/>
+            <field name="name">Azitromicina 500mg</field>
+            <field name="product_uom_qty">3.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">2.50</field>
+        </record>
+
+        <record id="sol_demo_cliente_9_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_9"/>
+            <field name="product_id" ref="caryvil_erp.med_multivitaminico"/>
+            <field name="name">Multivitamínico + Minerales (Frasco x 60)</field>
+            <field name="product_uom_qty">1.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">8.50</field>
+        </record>
+
+        <!-- Venta 10: Manuel Fernando Castillo -->
+        <record id="so_demo_cliente_10" model="sale.order">
+            <field name="partner_id" ref="caryvil_erp.customer_manuel_castillo"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="date_order">2026-09-27 15:45:00</field>
+            <field name="payment_method">efectivo</field>
+            <field name="state">sale</field>
+        </record>
+
+        <record id="sol_demo_cliente_10_line_1" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_10"/>
+            <field name="product_id" ref="caryvil_erp.med_glibenclamida_5"/>
+            <field name="name">Glibenclamida 5mg</field>
+            <field name="product_uom_qty">30.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.15</field>
+        </record>
+
+        <record id="sol_demo_cliente_10_line_2" model="sale.order.line">
+            <field name="order_id" ref="caryvil_erp.so_demo_cliente_10"/>
+            <field name="product_id" ref="caryvil_erp.med_vitamina_c_500"/>
+            <field name="name">Vitamina C Masticable 500mg</field>
+            <field name="product_uom_qty">20.0</field>
+            <field name="product_uom" ref="caryvil_erp.uom_unit_pill"/>
+            <field name="price_unit">0.25</field>
+        </record>
+
+    </data>
+</odoo>
