@@ -63,7 +63,7 @@ caryvil-erp/
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/MelissaFloresA/Odoo_ERP_Farmacia.git caryvil-erp
+git clone https://github.com/MrTobar04/caryvil-erp.git
 cd caryvil-erp
 ```
 
