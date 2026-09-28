@@ -15,6 +15,17 @@
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
+                <!-- Ocultar botones de envío por correo ("Send by email") -->
+                <xpath expr="(//button[@name='action_rfq_send'])[1]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="(//button[@name='action_rfq_send'])[2]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="(//button[@name='action_rfq_send'])[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
                 <!-- SPEC-ISSUE-67: Se restablece el botón nativo "Crear Factura" de Odoo      -->
                 <!-- para permitir el flujo estándar de Factura de Proveedor. Además, se       -->
                 <!-- mantiene el botón "Generar Factura Final" para órdenes saldadas vía abonos.-->
