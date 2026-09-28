@@ -5,8 +5,15 @@ import { CharField, charField } from "@web/views/fields/char/char_field";
 import { useEffect } from "@odoo/owl";
 
 //  Formatea el TELÉFONO como 0000-0000 (4 dígitos, guion, 4 dígitos).
+//  Solo agrega el guion automáticamente; nunca antepone el código de país (+503).
+//  Si el valor pegado/autocompletado ya trae el "503" delante, se descarta para
+//  que no desplace los dígitos reales del número local.
 function formatTelefono(rawValue) {
-    const digits = (rawValue || "").replace(/\D/g, "").slice(0, 8);
+    let digits = (rawValue || "").replace(/\D/g, "");
+    if (digits.startsWith("503") && digits.length > 8) {
+        digits = digits.slice(3);
+    }
+    digits = digits.slice(0, 8);
     const parte1 = digits.slice(0, 4);
     const parte2 = digits.slice(4, 8);
     return parte2 ? `${parte1}-${parte2}` : parte1;

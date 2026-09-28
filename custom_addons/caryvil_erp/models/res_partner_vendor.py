@@ -72,3 +72,13 @@ class ResPartnerVendor(models.Model):
         for partner in self:
             if partner.is_pharmacy_vendor and partner.phone and not PHONE_RE.match(partner.phone):
                 raise ValidationError(_('El teléfono de "%s" debe tener el formato 0000-0000.') % partner.name)
+
+    # El onchange nativo de Odoo (módulo phone_validation) reformatea el teléfono a
+    # formato internacional (+503 0000 0000) al salir del campo. Para proveedores
+    # farmacéuticos el teléfono debe quedar en formato local 0000-0000, así que se
+    # omite ese reformateo automático.
+    @api.onchange("phone", "country_id", "company_id")
+    def _onchange_phone_validation(self):
+        if self.is_pharmacy_vendor:
+            return
+        return super()._onchange_phone_validation()
