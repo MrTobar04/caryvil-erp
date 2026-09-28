@@ -11,4 +11,11 @@
         <field name="binding_type">report</field>
         <field name="paperformat_id" ref="caryvil_erp.paperformat_ticket_80mm"/>
     </record>
+
+    <!-- Sobrescribir el reporte de factura estándar de Odoo para aplicar por defecto el diseño Ticket de Venta Caryvil (80mm) -->
+    <record id="account.account_invoices" model="ir.actions.report">
+        <field name="report_name">caryvil_erp.report_invoice_ticket_template</field>
+        <field name="report_file">caryvil_erp.report_invoice_ticket_template</field>
+        <field name="paperformat_id" ref="caryvil_erp.paperformat_ticket_80mm"/>
+    </record>
 </odoo>

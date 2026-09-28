@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
+        <!-- ================================================================ -->
+        <!-- REGISTRO DE LOTES DE DEMO (stock.lot)                           -->
+        <!-- ================================================================ -->
+
         <!-- Lotes para Amoxicilina 500mg -->
         <record id="lot_amoxicilina_largo" model="stock.lot">
             <field name="name">LOT-AMX-202801</field>
@@ -31,7 +35,7 @@
             <field name="expiration_date">2026-11-10 23:59:59</field>
         </record>
 
-        <!-- Lotes para Paracetamol 500mg -->
+        <!-- Lote para Paracetamol 500mg -->
         <record id="lot_paracetamol_largo" model="stock.lot">
             <field name="name">LOT-PAR-202805</field>
             <field name="product_id" ref="caryvil_erp.med_paracetamol_500"/>
@@ -39,12 +43,375 @@
             <field name="expiration_date">2028-05-31 23:59:59</field>
         </record>
 
-        <!-- Lotes para Omeprazol 20mg -->
+        <!-- Lote para Loratadina 10mg -->
+        <record id="lot_loratadina_largo" model="stock.lot">
+            <field name="name">LOT-LOR-202708</field>
+            <field name="product_id" ref="caryvil_erp.med_loratadina_10"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-08-15 23:59:59</field>
+        </record>
+
+        <!-- Lote para Enalapril 20mg -->
+        <record id="lot_enalapril_largo" model="stock.lot">
+            <field name="name">LOT-ENA-202802</field>
+            <field name="product_id" ref="caryvil_erp.med_enalapril_20"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-02-28 23:59:59</field>
+        </record>
+
+        <!-- Lote para Metformina 850mg -->
+        <record id="lot_metformina_largo" model="stock.lot">
+            <field name="name">LOT-MET-202711</field>
+            <field name="product_id" ref="caryvil_erp.med_metformina_850"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-11-30 23:59:59</field>
+        </record>
+
+        <!-- Lote para Omeprazol 20mg -->
         <record id="lot_omeprazol_critico" model="stock.lot">
             <field name="name">LOT-OME-CRITICO</field>
             <field name="product_id" ref="caryvil_erp.med_omeprazol_20"/>
             <field name="company_id" ref="base.main_company"/>
             <field name="expiration_date">2026-09-30 23:59:59</field>
         </record>
+
+        <!-- Lote para Salbutamol Inhalador -->
+        <record id="lot_salbutamol_largo" model="stock.lot">
+            <field name="name">LOT-SAL-202804</field>
+            <field name="product_id" ref="caryvil_erp.med_salbutamol_inhalador"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-04-30 23:59:59</field>
+        </record>
+
+        <!-- Lote para Complejo B Inyectable -->
+        <record id="lot_complejo_b_largo" model="stock.lot">
+            <field name="name">LOT-CPX-202709</field>
+            <field name="product_id" ref="caryvil_erp.med_complejo_b_inj"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-09-30 23:59:59</field>
+        </record>
+
+        <!-- Lote para Aspirina 100mg -->
+        <record id="lot_aspirina_largo" model="stock.lot">
+            <field name="name">LOT-ASP-202803</field>
+            <field name="product_id" ref="caryvil_erp.med_aspirina_100"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-03-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Azitromicina 500mg -->
+        <record id="lot_azitromicina_largo" model="stock.lot">
+            <field name="name">LOT-AZI-202710</field>
+            <field name="product_id" ref="caryvil_erp.med_azitromicina_500"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-10-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Cetirizina 10mg -->
+        <record id="lot_cetirizina_largo" model="stock.lot">
+            <field name="name">LOT-CET-202801</field>
+            <field name="product_id" ref="caryvil_erp.med_cetirizina_10"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-01-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Losartán 50mg -->
+        <record id="lot_losartan_largo" model="stock.lot">
+            <field name="name">LOT-LOS-202712</field>
+            <field name="product_id" ref="caryvil_erp.med_losartan_50"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-12-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Ranitidina 150mg -->
+        <record id="lot_ranitidina_largo" model="stock.lot">
+            <field name="name">LOT-RAN-202707</field>
+            <field name="product_id" ref="caryvil_erp.med_ranitidina_150"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-07-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Vitamina C 500mg -->
+        <record id="lot_vitamina_c_largo" model="stock.lot">
+            <field name="name">LOT-VTC-202806</field>
+            <field name="product_id" ref="caryvil_erp.med_vitamina_c_500"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-06-30 23:59:59</field>
+        </record>
+
+        <!-- Lote para Hidrocortisona Crema -->
+        <record id="lot_hidrocortisona_largo" model="stock.lot">
+            <field name="name">LOT-HDR-202705</field>
+            <field name="product_id" ref="caryvil_erp.med_hidrocortisona_crema"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-05-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Clotrimazol Crema -->
+        <record id="lot_clotrimazol_largo" model="stock.lot">
+            <field name="name">LOT-CLT-202709</field>
+            <field name="product_id" ref="caryvil_erp.med_clotrimazol_crema"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-09-30 23:59:59</field>
+        </record>
+
+        <!-- Lote para Tobramicina Gotas -->
+        <record id="lot_tobramicina_largo" model="stock.lot">
+            <field name="name">LOT-TOB-202708</field>
+            <field name="product_id" ref="caryvil_erp.med_tobramicina_gotas"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-08-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Ambroxol Jarabe -->
+        <record id="lot_ambroxol_largo" model="stock.lot">
+            <field name="name">LOT-AMB-202711</field>
+            <field name="product_id" ref="caryvil_erp.med_ambroxol_jarabe"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-11-30 23:59:59</field>
+        </record>
+
+        <!-- Lote para Diclofenac 50mg -->
+        <record id="lot_diclofenac_largo" model="stock.lot">
+            <field name="name">LOT-DIC-202802</field>
+            <field name="product_id" ref="caryvil_erp.med_diclofenac_50"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-02-28 23:59:59</field>
+        </record>
+
+        <!-- Lote para Ciprofloxacino 500mg -->
+        <record id="lot_ciprofloxacino_largo" model="stock.lot">
+            <field name="name">LOT-CIP-202710</field>
+            <field name="product_id" ref="caryvil_erp.med_ciprofloxacino_500"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-10-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Glibenclamida 5mg -->
+        <record id="lot_glibenclamida_largo" model="stock.lot">
+            <field name="name">LOT-GLI-202801</field>
+            <field name="product_id" ref="caryvil_erp.med_glibenclamida_5"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-01-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Suero Oral -->
+        <record id="lot_suero_oral_largo" model="stock.lot">
+            <field name="name">LOT-SUE-202806</field>
+            <field name="product_id" ref="caryvil_erp.med_suero_oral"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-06-30 23:59:59</field>
+        </record>
+
+        <!-- Lote para Multivitamínico -->
+        <record id="lot_multivitaminico_largo" model="stock.lot">
+            <field name="name">LOT-MLT-202803</field>
+            <field name="product_id" ref="caryvil_erp.med_multivitaminico"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2028-03-31 23:59:59</field>
+        </record>
+
+        <!-- Lote para Naproxeno 550mg -->
+        <record id="lot_naproxeno_largo" model="stock.lot">
+            <field name="name">LOT-NAP-202712</field>
+            <field name="product_id" ref="caryvil_erp.med_naproxeno_550"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="expiration_date">2027-12-31 23:59:59</field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- SALDOS INICIALES DE EXISTENCIAS EN ALMACÉN (stock.quant)          -->
+        <!-- ================================================================ -->
+
+        <record id="quant_amoxicilina_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_amoxicilina_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_amoxicilina_largo"/>
+            <field name="quantity">100.0</field>
+        </record>
+
+        <record id="quant_amoxicilina_critico" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_amoxicilina_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_amoxicilina_critico"/>
+            <field name="quantity">15.0</field>
+        </record>
+
+        <record id="quant_ibuprofeno_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_ibuprofeno_400"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_ibuprofeno_largo"/>
+            <field name="quantity">150.0</field>
+        </record>
+
+        <record id="quant_ibuprofeno_medio" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_ibuprofeno_400"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_ibuprofeno_medio"/>
+            <field name="quantity">30.0</field>
+        </record>
+
+        <record id="quant_paracetamol_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_paracetamol_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_paracetamol_largo"/>
+            <field name="quantity">200.0</field>
+        </record>
+
+        <record id="quant_loratadina_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_loratadina_10"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_loratadina_largo"/>
+            <field name="quantity">80.0</field>
+        </record>
+
+        <record id="quant_enalapril_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_enalapril_20"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_enalapril_largo"/>
+            <field name="quantity">60.0</field>
+        </record>
+
+        <record id="quant_metformina_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_metformina_850"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_metformina_largo"/>
+            <field name="quantity">120.0</field>
+        </record>
+
+        <record id="quant_omeprazol_critico" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_omeprazol_20"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_omeprazol_critico"/>
+            <field name="quantity">12.0</field>
+        </record>
+
+        <record id="quant_salbutamol_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_salbutamol_inhalador"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_salbutamol_largo"/>
+            <field name="quantity">25.0</field>
+        </record>
+
+        <record id="quant_complejo_b_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_complejo_b_inj"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_complejo_b_largo"/>
+            <field name="quantity">40.0</field>
+        </record>
+
+        <record id="quant_aspirina_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_aspirina_100"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_aspirina_largo"/>
+            <field name="quantity">180.0</field>
+        </record>
+
+        <record id="quant_azitromicina_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_azitromicina_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_azitromicina_largo"/>
+            <field name="quantity">45.0</field>
+        </record>
+
+        <record id="quant_cetirizina_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_cetirizina_10"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_cetirizina_largo"/>
+            <field name="quantity">90.0</field>
+        </record>
+
+        <record id="quant_losartan_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_losartan_50"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_losartan_largo"/>
+            <field name="quantity">110.0</field>
+        </record>
+
+        <record id="quant_ranitidina_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_ranitidina_150"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_ranitidina_largo"/>
+            <field name="quantity">70.0</field>
+        </record>
+
+        <record id="quant_vitamina_c_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_vitamina_c_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_vitamina_c_largo"/>
+            <field name="quantity">300.0</field>
+        </record>
+
+        <record id="quant_hidrocortisona_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_hidrocortisona_crema"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_hidrocortisona_largo"/>
+            <field name="quantity">35.0</field>
+        </record>
+
+        <record id="quant_clotrimazol_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_clotrimazol_crema"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_clotrimazol_largo"/>
+            <field name="quantity">50.0</field>
+        </record>
+
+        <record id="quant_tobramicina_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_tobramicina_gotas"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_tobramicina_largo"/>
+            <field name="quantity">20.0</field>
+        </record>
+
+        <record id="quant_ambroxol_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_ambroxol_jarabe"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_ambroxol_largo"/>
+            <field name="quantity">40.0</field>
+        </record>
+
+        <record id="quant_diclofenac_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_diclofenac_50"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_diclofenac_largo"/>
+            <field name="quantity">130.0</field>
+        </record>
+
+        <record id="quant_ciprofloxacino_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_ciprofloxacino_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_ciprofloxacino_largo"/>
+            <field name="quantity">65.0</field>
+        </record>
+
+        <record id="quant_glibenclamida_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_glibenclamida_5"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_glibenclamida_largo"/>
+            <field name="quantity">85.0</field>
+        </record>
+
+        <record id="quant_suero_oral_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_suero_oral"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_suero_oral_largo"/>
+            <field name="quantity">200.0</field>
+        </record>
+
+        <record id="quant_multivitaminico_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_multivitaminico"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_multivitaminico_largo"/>
+            <field name="quantity">100.0</field>
+        </record>
+
+        <record id="quant_naproxeno_largo" model="stock.quant">
+            <field name="product_id" ref="caryvil_erp.med_naproxeno_550"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="lot_id" ref="caryvil_erp.lot_naproxeno_largo"/>
+            <field name="quantity">75.0</field>
+        </record>
+
     </data>
 </odoo>
+

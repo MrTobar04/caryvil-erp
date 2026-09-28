@@ -20,9 +20,6 @@ class StockPickingReception(models.Model):
     discrepancy_notes = fields.Text(string="Detalle de Discrepancia / Daños")
 
     # SPEC-8.2.1: exige lote y fecha de vencimiento antes de validar una recepción de medicamentos.
-    # NOTA: solo aplica a productos con tracking='lot'. El catálogo de medicamentos de Caryvil
-    # aún no tiene ese seguimiento activado (pendiente en SPEC-7.1.1/7.1.2), así que hasta que se
-    # active, esta validación no bloqueará ninguna recepción.
     def _check_expired_lots_on_outgoing(self, picking):
         if picking.picking_type_code != "outgoing":
             return
@@ -36,32 +33,73 @@ class StockPickingReception(models.Model):
                         _("No es posible dispensar el lote %s porque se encuentra vencido.") % lot.name
                     )
 
+    def _find_expiration_date_from_siblings_or_db(self, line):
+        """Busca fecha de vencimiento en líneas hermanas, backorders o lotes existentes."""
+        siblings = (line.move_id.move_line_ids | line.picking_id.move_line_ids).filtered(lambda ml: ml.expiration_date)
+        if siblings:
+            return siblings[0].expiration_date
+
+        if line.picking_id.backorder_id:
+            backorder_lines = line.picking_id.backorder_id.move_line_ids
+            bo_siblings = backorder_lines.filtered(
+                lambda ml: (ml.lot_name == line.lot_name or (ml.lot_id and ml.lot_id.name == line.lot_name))
+                and ml.expiration_date
+            )
+            if bo_siblings:
+                return bo_siblings[0].expiration_date
+
+        existing_lot = self.env["stock.lot"].search(
+            [
+                ("name", "=", line.lot_name),
+                ("product_id", "=", line.product_id.id),
+                ("expiration_date", "!=", False),
+            ],
+            limit=1,
+        )
+        return existing_lot.expiration_date if existing_lot else False
+
+    def _process_incoming_line_lot_expiration(self, line, today):
+        """Procesa la asignación y validación de fecha de vencimiento para una línea de recepción."""
+        product = line.product_id
+        if product.tracking != "lot" or line.quantity <= 0:
+            return
+
+        if not line.lot_id and not line.lot_name:
+            raise ValidationError(
+                _("Debe asignar el Número de Lote ") + _("para el medicamento %s en la recepción.") % product.name
+            )
+
+        exp_date = line.expiration_date or (line.lot_id.expiration_date if line.lot_id else False)
+        if not exp_date and line.lot_name:
+            exp_date = self._find_expiration_date_from_siblings_or_db(line)
+            if exp_date:
+                line.expiration_date = exp_date
+
+        ctx = self.env.context
+        if line.lot_name and not exp_date:
+            if ctx.get("skip_backorder") or ctx.get("picking_ids_not_to_backorder"):
+                return
+            raise ValidationError(
+                _("Debe especificar la Fecha de Vencimiento ")
+                + _("para el lote %s del producto %s.") % (line.lot_name, product.name)
+            )
+
+        if exp_date and exp_date < today:
+            raise ValidationError(
+                _(
+                    "La fecha de vencimiento (%s) del lote %s "
+                    "ya está caducada. No se puede recibir "
+                    "mercadería vencida."
+                )
+                % (line.expiration_date, line.lot_name)
+            )
+
     def button_validate(self):
         today = fields.Datetime.now()
         for picking in self:
             if picking.picking_type_code == "incoming":
                 for line in picking.move_line_ids:
-                    product = line.product_id
-                    if product.tracking == "lot" and line.quantity > 0:
-                        if not line.lot_id and not line.lot_name:
-                            raise ValidationError(
-                                _("Debe asignar el Número de Lote " "para el medicamento %s en la recepción.")
-                                % product.name
-                            )
-                        if line.lot_name and not line.expiration_date:
-                            raise ValidationError(
-                                _("Debe especificar la Fecha de Vencimiento " "para el lote %s del producto %s.")
-                                % (line.lot_name, product.name)
-                            )
-                        if line.expiration_date and line.expiration_date < today:
-                            raise ValidationError(
-                                _(
-                                    "La fecha de vencimiento (%s) del lote %s "
-                                    "ya está caducada. No se puede recibir "
-                                    "mercadería vencida."
-                                )
-                                % (line.expiration_date, line.lot_name)
-                            )
+                    self._process_incoming_line_lot_expiration(line, today)
 
             self._check_expired_lots_on_outgoing(picking)
 
@@ -94,8 +132,6 @@ class StockPickingReception(models.Model):
                 )
 
     # SPEC-8.2.2: bloquea (Lock) automáticamente la Orden de Compra cuando ya se recibió todo lo pedido.
-    # El resto de la actualización de stock (stock.quant, balance del lote, qty_received) ya es
-    # comportamiento nativo de Odoo (módulo purchase_stock) y no requiere código adicional.
     def _caryvil_lock_fully_received_purchase_orders(self):
         orders = self.mapped("move_ids.purchase_line_id.order_id")
         for order in orders:

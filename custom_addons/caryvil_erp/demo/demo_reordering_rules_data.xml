@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Limpieza preventiva de reglas de reabastecimiento genéricas de Odoo demo (Office Lamp FURN_8888, etc.) -->
+        <delete model="stock.warehouse.orderpoint" search="[('product_id.active_ingredient_id', '=', False)]"/>
+
+        <!-- ================================================================ -->
+        <!-- REGLAS DE REABASTECIMIENTO Y STOCK MÍNIMO (SPEC-7.2.2)           -->
+        <!-- ================================================================ -->
+
+        <!-- 1. Amoxicilina 500mg -->
+        <record id="op_amoxicilina_500" model="stock.warehouse.orderpoint">
+            <field name="name">OP/AMX-500</field>
+            <field name="product_id" ref="caryvil_erp.med_amoxicilina_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">20.0</field>
+            <field name="product_max_qty">50.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 2. Ibuprofeno 400mg -->
+        <record id="op_ibuprofeno_400" model="stock.warehouse.orderpoint">
+            <field name="name">OP/IBU-400</field>
+            <field name="product_id" ref="caryvil_erp.med_ibuprofeno_400"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">30.0</field>
+            <field name="product_max_qty">100.0</field>
+            <field name="qty_multiple">10.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 3. Paracetamol 500mg -->
+        <record id="op_paracetamol_500" model="stock.warehouse.orderpoint">
+            <field name="name">OP/PAR-500</field>
+            <field name="product_id" ref="caryvil_erp.med_paracetamol_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">50.0</field>
+            <field name="product_max_qty">200.0</field>
+            <field name="qty_multiple">10.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 4. Loratadina 10mg -->
+        <record id="op_loratadina_10" model="stock.warehouse.orderpoint">
+            <field name="name">OP/LOR-10</field>
+            <field name="product_id" ref="caryvil_erp.med_loratadina_10"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">15.0</field>
+            <field name="product_max_qty">50.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 5. Enalapril 20mg -->
+        <record id="op_enalapril_20" model="stock.warehouse.orderpoint">
+            <field name="name">OP/ENA-20</field>
+            <field name="product_id" ref="caryvil_erp.med_enalapril_20"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">20.0</field>
+            <field name="product_max_qty">60.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 6. Metformina 850mg -->
+        <record id="op_metformina_850" model="stock.warehouse.orderpoint">
+            <field name="name">OP/MET-850</field>
+            <field name="product_id" ref="caryvil_erp.med_metformina_850"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">25.0</field>
+            <field name="product_max_qty">80.0</field>
+            <field name="qty_multiple">10.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 7. Omeprazol 20mg -->
+        <record id="op_omeprazol_20" model="stock.warehouse.orderpoint">
+            <field name="name">OP/OME-20</field>
+            <field name="product_id" ref="caryvil_erp.med_omeprazol_20"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">30.0</field>
+            <field name="product_max_qty">90.0</field>
+            <field name="qty_multiple">10.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 8. Salbutamol Inhalador -->
+        <record id="op_salbutamol_inhalador" model="stock.warehouse.orderpoint">
+            <field name="name">OP/SAL-INH</field>
+            <field name="product_id" ref="caryvil_erp.med_salbutamol_inhalador"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">10.0</field>
+            <field name="product_max_qty">30.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 9. Complejo B Inyectable -->
+        <record id="op_complejo_b_inj" model="stock.warehouse.orderpoint">
+            <field name="name">OP/CPX-INJ</field>
+            <field name="product_id" ref="caryvil_erp.med_complejo_b_inj"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">15.0</field>
+            <field name="product_max_qty">45.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 10. Aspirina 100mg -->
+        <record id="op_aspirina_100" model="stock.warehouse.orderpoint">
+            <field name="name">OP/ASP-100</field>
+            <field name="product_id" ref="caryvil_erp.med_aspirina_100"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">40.0</field>
+            <field name="product_max_qty">150.0</field>
+            <field name="qty_multiple">10.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 11. Azitromicina 500mg -->
+        <record id="op_azitromicina_500" model="stock.warehouse.orderpoint">
+            <field name="name">OP/AZI-500</field>
+            <field name="product_id" ref="caryvil_erp.med_azitromicina_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">15.0</field>
+            <field name="product_max_qty">50.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 12. Cetirizina 10mg -->
+        <record id="op_cetirizina_10" model="stock.warehouse.orderpoint">
+            <field name="name">OP/CET-10</field>
+            <field name="product_id" ref="caryvil_erp.med_cetirizina_10"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">20.0</field>
+            <field name="product_max_qty">70.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 13. Losartán 50mg -->
+        <record id="op_losartan_50" model="stock.warehouse.orderpoint">
+            <field name="name">OP/LOS-50</field>
+            <field name="product_id" ref="caryvil_erp.med_losartan_50"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">25.0</field>
+            <field name="product_max_qty">80.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 14. Ranitidina 150mg -->
+        <record id="op_ranitidina_150" model="stock.warehouse.orderpoint">
+            <field name="name">OP/RAN-150</field>
+            <field name="product_id" ref="caryvil_erp.med_ranitidina_150"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">15.0</field>
+            <field name="product_max_qty">50.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 15. Vitamina C 500mg -->
+        <record id="op_vitamina_c_500" model="stock.warehouse.orderpoint">
+            <field name="name">OP/VTC-500</field>
+            <field name="product_id" ref="caryvil_erp.med_vitamina_c_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">50.0</field>
+            <field name="product_max_qty">200.0</field>
+            <field name="qty_multiple">10.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 16. Hidrocortisona Crema -->
+        <record id="op_hidrocortisona_crema" model="stock.warehouse.orderpoint">
+            <field name="name">OP/HDR-CRM</field>
+            <field name="product_id" ref="caryvil_erp.med_hidrocortisona_crema"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">10.0</field>
+            <field name="product_max_qty">30.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 17. Clotrimazol Crema -->
+        <record id="op_clotrimazol_crema" model="stock.warehouse.orderpoint">
+            <field name="name">OP/CLT-CRM</field>
+            <field name="product_id" ref="caryvil_erp.med_clotrimazol_crema"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">15.0</field>
+            <field name="product_max_qty">40.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 18. Tobramicina Gotas -->
+        <record id="op_tobramicina_gotas" model="stock.warehouse.orderpoint">
+            <field name="name">OP/TOB-GTS</field>
+            <field name="product_id" ref="caryvil_erp.med_tobramicina_gotas"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">8.0</field>
+            <field name="product_max_qty">25.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 19. Ambroxol Jarabe -->
+        <record id="op_ambroxol_jarabe" model="stock.warehouse.orderpoint">
+            <field name="name">OP/AMB-JRB</field>
+            <field name="product_id" ref="caryvil_erp.med_ambroxol_jarabe"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">10.0</field>
+            <field name="product_max_qty">35.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 20. Diclofenac 50mg -->
+        <record id="op_diclofenac_50" model="stock.warehouse.orderpoint">
+            <field name="name">OP/DIC-50</field>
+            <field name="product_id" ref="caryvil_erp.med_diclofenac_50"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">30.0</field>
+            <field name="product_max_qty">100.0</field>
+            <field name="qty_multiple">10.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 21. Ciprofloxacino 500mg -->
+        <record id="op_ciprofloxacino_500" model="stock.warehouse.orderpoint">
+            <field name="name">OP/CIP-500</field>
+            <field name="product_id" ref="caryvil_erp.med_ciprofloxacino_500"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">15.0</field>
+            <field name="product_max_qty">50.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 22. Glibenclamida 5mg -->
+        <record id="op_glibenclamida_5" model="stock.warehouse.orderpoint">
+            <field name="name">OP/GLI-5</field>
+            <field name="product_id" ref="caryvil_erp.med_glibenclamida_5"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">20.0</field>
+            <field name="product_max_qty">60.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 23. Suero Oral -->
+        <record id="op_suero_oral" model="stock.warehouse.orderpoint">
+            <field name="name">OP/SUE-ORAL</field>
+            <field name="product_id" ref="caryvil_erp.med_suero_oral"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">50.0</field>
+            <field name="product_max_qty">150.0</field>
+            <field name="qty_multiple">10.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 24. Multivitamínico -->
+        <record id="op_multivitaminico" model="stock.warehouse.orderpoint">
+            <field name="name">OP/MLT-VIT</field>
+            <field name="product_id" ref="caryvil_erp.med_multivitaminico"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">25.0</field>
+            <field name="product_max_qty">80.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <!-- 25. Naproxeno 550mg -->
+        <record id="op_naproxeno_550" model="stock.warehouse.orderpoint">
+            <field name="name">OP/NAP-550</field>
+            <field name="product_id" ref="caryvil_erp.med_naproxeno_550"/>
+            <field name="location_id" ref="stock.stock_location_stock"/>
+            <field name="product_min_qty">20.0</field>
+            <field name="product_max_qty">70.0</field>
+            <field name="qty_multiple">5.0</field>
+            <field name="trigger">auto</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>
