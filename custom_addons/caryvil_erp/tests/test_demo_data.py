@@ -27,3 +27,23 @@ class TestDemoData(TransactionCase):
         lot_critico = self.env.ref("caryvil_erp.lot_amoxicilina_critico", raise_if_not_found=False)
         self.assertIsNotNone(lot_critico)
         self.assertEqual(lot_critico.name, "LOT-AMX-CRITICO")
+
+    def test_05_verify_demo_reordering_rules(self):
+        """SPEC-7.2.2: Verificar existencia de reglas de reabastecimiento de demostración"""
+        op = self.env.ref("caryvil_erp.demo_orderpoint_amoxicilina_500", raise_if_not_found=False)
+        self.assertIsNotNone(op)
+        self.assertEqual(op.name, "OP/AMX500")
+
+    def test_06_verify_quant_update_on_module_upgrade(self):
+        """Verificar actualización sin errores de stock.quant en recarga de datos demo"""
+        quant = self.env.ref("caryvil_erp.quant_amoxicilina_largo", raise_if_not_found=False)
+        if quant:
+            # Simular actualización de registro XML mediante _load_records_write
+            vals = {
+                "product_id": quant.product_id.id,
+                "location_id": quant.location_id.id,
+                "lot_id": quant.lot_id.id if quant.lot_id else False,
+                "quantity": 100.0,
+            }
+            quant._load_records_write(vals)
+            self.assertEqual(quant.quantity, 100.0)

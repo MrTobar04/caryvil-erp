@@ -68,6 +68,15 @@
                     </div>
                 </xpath>
 
+                <!-- ISSUE-66: Se ocultan las pestañas nativas "Inventario" y "Contabilidad", -->
+                <!-- no aplican al flujo simplificado de mostrador de la farmacia.             -->
+                <xpath expr="//page[@name='inventory']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='invoicing']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
                 <!-- Pestaña técnica Información Farmacéutica -->
                 <xpath expr="//page[@name='general_information']" position="after">
                     <page string="Información Farmacéutica" name="pharma_information">

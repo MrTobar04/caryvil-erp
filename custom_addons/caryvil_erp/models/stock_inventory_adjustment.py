@@ -57,6 +57,16 @@ class StockQuantAdjustment(models.Model):
                     vals["user_id"] = self.env.user.id
         return super().create(vals_list)
 
+    def _load_records_write(self, values):
+        # En Odoo 17, stock.quant prohíbe actualizar campos relacionales clave
+        # ('product_id', 'location_id', 'lot_id', 'package_id', 'owner_id')
+        # en registros existentes a través de write(). Al actualizar un módulo con datos demo (mode=='update'),
+        # Odoo intenta reescribir esos campos provocando UserError("Quant's editing is restricted").
+        # Filtramos los campos restringidos para permitir la actualización fluida del módulo y sus datos.
+        restricted_fields = {"product_id", "location_id", "lot_id", "package_id", "owner_id"}
+        clean_values = {k: v for k, v in values.items() if k not in restricted_fields}
+        return super(StockQuantAdjustment, self.with_context(inventory_mode=True))._load_records_write(clean_values)
+
     def write(self, vals):
         if "inventory_quantity" in vals and "counted_by_user_id" not in vals:
             vals["counted_by_user_id"] = self.env.user.id

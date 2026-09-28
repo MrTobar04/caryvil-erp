@@ -15,18 +15,29 @@
             <field name="model">purchase.order</field>
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
-                <!-- Se oculta el botón nativo "Crear Factura". Los abonos del día a día se   -->
-                <!-- anotan en la pestaña "Abonos" (sin pasar por Contabilidad). Este botón    -->
-                <!-- solo se habilita cuando ya se abonó el 100%, para generar de un clic la   -->
-                <!-- Factura de Proveedor formal y su pago, ya reconciliado.                   -->
-                <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                <!-- Ocultar botones de envío por correo ("Send by email") -->
+                <xpath expr="(//button[@name='action_rfq_send'])[1]" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="(//button[@name='action_rfq_send'])[2]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="(//button[@name='action_rfq_send'])[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <!-- SPEC-ISSUE-67: Se restablece el botón nativo "Crear Factura" de Odoo      -->
+                <!-- para permitir el flujo estándar de Factura de Proveedor. Además, se       -->
+                <!-- mantiene el botón "Generar Factura Final" para órdenes saldadas vía abonos.-->
                 <button name="action_create_invoice" position="after">
                     <button name="action_generar_factura_final_caryvil" type="object"
                             string="Generar Factura Final" class="oe_highlight"
                             invisible="state not in ('purchase', 'done') or abono_status_label != 'pagado' or payment_status_label == 'pagado'"/>
                 </button>
+
+                <xpath expr="//button[@name='action_view_invoice']//field[@name='invoice_count']" position="attributes">
+                    <attribute name="string">Facturas</attribute>
+                </xpath>
 
                 <div name="button_box" position="inside">
                     <button type="object" name="action_view_caryvil_payments"
@@ -48,6 +59,10 @@
                 <div name="date_planned_div" position="after">
                     <field name="commercial_terms_id"/>
                 </div>
+                <!-- ISSUE-66: Se oculta la pestaña nativa "Otra información", no se usa en el flujo de Caryvil. -->
+                <page name="purchase_delivery_invoice" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </page>
                 <page name="purchase_delivery_invoice" position="after">
                     <page string="Recepción" name="caryvil_reception">
                         <group>
@@ -194,7 +209,7 @@
                   name="Órdenes de Compra"
                   parent="menu_caryvil_compras"
                   action="action_purchase_order_caryvil"
-                  groups="caryvil_erp.group_caryvil_inventory_purchases"
+                  groups="caryvil_erp.group_caryvil_inventory_purchases,caryvil_erp.group_caryvil_manager"
                   sequence="5"/>
 
     </data>

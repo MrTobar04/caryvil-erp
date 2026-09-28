@@ -237,3 +237,61 @@ class TestPurchaseOrderMedicine(TransactionCase):
                     "partner_id": proveedor_generico.id,
                 }
             )
+
+    # SPEC-ISSUE-67: Restablecer flujo nativo de action_create_invoice desde purchase.order.
+    def test_crear_factura_desde_orden_compra_flujo_estandar(self):
+        orden = self.env["purchase.order"].create(
+            {
+                "partner_id": self.vendedor.id,
+                "order_line": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.producto.id,
+                            "name": self.producto.name,
+                            "product_qty": 5,
+                            "price_unit": 10.0,
+                        },
+                    )
+                ],
+            }
+        )
+        orden.button_confirm()
+        self.assertEqual(orden.state, "purchase")
+        self.assertEqual(orden.invoice_count, 0)
+
+        action = orden.action_create_invoice()
+        self.assertTrue(action)
+        self.assertEqual(orden.invoice_count, 1)
+        self.assertEqual(len(orden.invoice_ids), 1)
+
+        factura = orden.invoice_ids[0]
+        self.assertEqual(factura.move_type, "in_invoice")
+        self.assertEqual(factura.state, "draft")
+        self.assertEqual(factura.partner_id, self.vendedor)
+        self.assertAlmostEqual(factura.amount_total, orden.amount_total, places=2)
+
+    # SPEC-ISSUE-67: Verifica la sincronización del contador en el stat button de facturas.
+    def test_stat_button_facturas_conteo(self):
+        orden = self.env["purchase.order"].create(
+            {
+                "partner_id": self.vendedor.id,
+                "order_line": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.producto.id,
+                            "name": self.producto.name,
+                            "product_qty": 2,
+                            "price_unit": 20.0,
+                        },
+                    )
+                ],
+            }
+        )
+        orden.button_confirm()
+        self.assertEqual(orden.invoice_count, 0)
+        orden.action_create_invoice()
+        self.assertEqual(orden.invoice_count, 1)
