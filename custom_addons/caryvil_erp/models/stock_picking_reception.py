@@ -48,12 +48,44 @@ class StockPickingReception(models.Model):
                                 _("Debe asignar el Número de Lote " "para el medicamento %s en la recepción.")
                                 % product.name
                             )
-                        if line.lot_name and not line.expiration_date:
+                        exp_date = line.expiration_date or (line.lot_id.expiration_date if line.lot_id else False)
+                        if not exp_date and line.lot_name:
+                            sibling = (line.move_id.move_line_ids | line.picking_id.move_line_ids).filtered(
+                                lambda l: l.expiration_date
+                            )
+                            if sibling:
+                                exp_date = sibling[0].expiration_date
+                                line.expiration_date = exp_date
+
+                            if not exp_date and line.picking_id.backorder_id:
+                                backorder_sibling = line.picking_id.backorder_id.move_line_ids.filtered(
+                                    lambda l: (l.lot_name == line.lot_name or (l.lot_id and l.lot_id.name == line.lot_name)) and l.expiration_date
+                                )
+                                if backorder_sibling:
+                                    exp_date = backorder_sibling[0].expiration_date
+                                    line.expiration_date = exp_date
+
+                            if not exp_date:
+                                existing_lot = self.env["stock.lot"].search(
+                                    [
+                                        ("name", "=", line.lot_name),
+                                        ("product_id", "=", product.id),
+                                        ("expiration_date", "!=", False),
+                                    ],
+                                    limit=1,
+                                )
+                                if existing_lot:
+                                    exp_date = existing_lot.expiration_date
+                                    line.expiration_date = exp_date
+
+                        if line.lot_name and not exp_date:
+                            if self.env.context.get("skip_backorder") or self.env.context.get("picking_ids_not_to_backorder"):
+                                continue
                             raise ValidationError(
                                 _("Debe especificar la Fecha de Vencimiento " "para el lote %s del producto %s.")
                                 % (line.lot_name, product.name)
                             )
-                        if line.expiration_date and line.expiration_date < today:
+                        if exp_date and exp_date < today:
                             raise ValidationError(
                                 _(
                                     "La fecha de vencimiento (%s) del lote %s "

@@ -71,3 +71,61 @@ def post_init_hook(env):
                     "company_id": company.id,
                 }
             )
+
+    # -----------------------------------------------------------------------
+    # PURGA DE REGISTROS DEMO GENÉRICOS DE ODOO (MUEBLES, ESCRITORIOS, ETC.)
+    # -----------------------------------------------------------------------
+    try:
+        # 0. Eliminar reglas de reabastecimiento (orderpoints) genéricas de Odoo demo (ej. Office Lamp FURN_8888, Desk Pad, etc.)
+        env["stock.warehouse.orderpoint"].sudo().search(
+            [
+                ("product_id.active_ingredient_id", "=", False),
+            ]
+        ).unlink()
+
+        # 1. Eliminar órdenes de venta y compra genéricas nativas de Odoo demo
+        env["sale.order"].sudo().search([("partner_id.is_pharmacy_customer", "=", False)]).unlink()
+        env["purchase.order"].sudo().search(
+            [
+                ("partner_id.is_pharmacy_vendor", "=", False),
+                ("laboratory_id.is_pharmacy_vendor", "=", False),
+            ]
+        ).unlink()
+
+        # 2. Eliminar plantillas de producto genéricas de Odoo que no son medicamentos de Caryvil
+        generic_tmpls = env["product.template"].sudo().search(
+            [
+                ("active_ingredient_id", "=", False),
+                ("therapeutic_category_id", "=", False),
+            ]
+        )
+        if generic_tmpls:
+            generic_prods = generic_tmpls.product_variant_ids
+            env["stock.quant"].sudo().search([("product_id", "in", generic_prods.ids)]).unlink()
+            env["stock.move.line"].sudo().search([("product_id", "in", generic_prods.ids)]).unlink()
+            env["stock.move"].sudo().search([("product_id", "in", generic_prods.ids)]).unlink()
+            env["stock.valuation.layer"].sudo().search([("product_id", "in", generic_prods.ids)]).unlink()
+            generic_tmpls.unlink()
+
+        # 3. Eliminar partners demo genéricos nativos de Odoo (ej. Azure Interior, Deco Addict, etc.)
+        protected_partner_ids = [company.id]
+        admin_user = env.ref("base.user_admin", raise_if_not_found=False)
+        root_partner = env.ref("base.partner_root", raise_if_not_found=False)
+        if admin_user and admin_user.partner_id:
+            protected_partner_ids.append(admin_user.partner_id.id)
+        if root_partner:
+            protected_partner_ids.append(root_partner.id)
+
+        generic_partners = env["res.partner"].sudo().search(
+            [
+                ("is_pharmacy_customer", "=", False),
+                ("is_pharmacy_vendor", "=", False),
+                ("id", "not in", protected_partner_ids),
+                ("is_company", "=", True),
+            ]
+        )
+        if generic_partners:
+            generic_partners.unlink()
+    except Exception:
+        pass
+

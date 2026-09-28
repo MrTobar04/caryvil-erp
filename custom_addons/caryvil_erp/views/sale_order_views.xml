@@ -114,6 +114,14 @@
         </record>
 
 
+        <!-- Acción para Historial de Ventas -->
+        <record id="action_caryvil_sales_history" model="ir.actions.act_window">
+            <field name="name">Historial de Ventas</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('partner_id.is_pharmacy_customer', '=', True)]</field>
+        </record>
+
         <!-- Menú para cajeros -->
         <menuitem
             id="menu_caryvil_sales_counter"
@@ -121,6 +129,15 @@
             parent="caryvil_erp.menu_caryvil_ventas"
             action="action_caryvil_sales_counter"
             sequence="10"
+            groups="caryvil_erp.group_caryvil_cashier"
+        />
+
+        <menuitem
+            id="menu_caryvil_sales_history"
+            name="Historial de Ventas"
+            parent="caryvil_erp.menu_caryvil_ventas"
+            action="action_caryvil_sales_history"
+            sequence="20"
             groups="caryvil_erp.group_caryvil_cashier"
         />
 

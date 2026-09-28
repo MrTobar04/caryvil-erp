@@ -96,7 +96,7 @@
             <field name="name">Proveedores</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[('is_pharmacy_vendor', '=', True), ('is_company', '=', False)]</field>
+            <field name="domain">[('is_pharmacy_vendor', '=', True)]</field>
             <field name="context">{'default_is_pharmacy_vendor': True, 'default_type': 'contact', 'default_supplier_rank': 1}</field>
             <field name="search_view_id" ref="view_res_partner_vendor_search"/>
             <field name="help" type="html">
