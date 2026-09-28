@@ -99,11 +99,16 @@ class StockLotMedicine(models.Model):
     def write(self, vals):
         if "expiration_date" in vals:
             is_admin = (
-                self.env.user.has_group("caryvil_erp.group_caryvil_manager")
+                self.env.is_superuser
+                or self.env.user.has_group("caryvil_erp.group_caryvil_manager")
                 or self.env.user.has_group("stock.group_stock_manager")
                 or self.env.user.has_group("base.group_system")
             )
-            if not is_admin and not self.env.context.get("install_mode"):
+            if (
+                not is_admin
+                and not self.env.context.get("install_mode")
+                and not self.env.context.get("bypass_expiration_check")
+            ):
                 raise ValidationError(
                     _(
                         "Solo un Administrador de Farmacia Caryvil puede modificar "

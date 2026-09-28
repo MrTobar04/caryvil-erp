@@ -3,10 +3,36 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
+import datetime
+
+
 class StockMoveLineReception(models.Model):
     _inherit = "stock.move.line"
 
-    expiration_date = fields.Datetime(string="Fecha de Vencimiento")
+    expiration_date = fields.Datetime(
+        string="Fecha de Vencimiento",
+        compute="_compute_expiration_date",
+        store=True,
+        readonly=False,
+    )
+    tracking = fields.Selection(related="product_id.tracking", readonly=True)
+
+    @api.depends("product_id", "lot_id.expiration_date", "picking_id.scheduled_date")
+    def _compute_expiration_date(self):
+        for move_line in self:
+            if move_line.lot_id and move_line.lot_id.expiration_date:
+                move_line.expiration_date = move_line.lot_id.expiration_date
+            elif (
+                move_line.picking_type_use_create_lots
+                and move_line.product_id.use_expiration_date
+                and not move_line.expiration_date
+            ):
+                from_date = move_line.picking_id.scheduled_date or fields.Datetime.today()
+                move_line.expiration_date = from_date + datetime.timedelta(
+                    days=move_line.product_id.expiration_time
+                )
+            else:
+                move_line.expiration_date = move_line.expiration_date or False
 
 
 class StockPickingReception(models.Model):
@@ -104,6 +130,14 @@ class StockPickingReception(models.Model):
             self._check_expired_lots_on_outgoing(picking)
 
         result = super().button_validate()
+        for picking in self:
+            if picking.picking_type_code == "incoming":
+                for line in picking.move_line_ids:
+                    if line.lot_id and line.expiration_date:
+                        if not line.lot_id.expiration_date or line.lot_id.expiration_date != line.expiration_date:
+                            line.lot_id.with_context(bypass_expiration_check=True).sudo().write(
+                                {"expiration_date": line.expiration_date}
+                            )
         self._caryvil_notify_discrepancy()
         self._caryvil_lock_fully_received_purchase_orders()
         return result
