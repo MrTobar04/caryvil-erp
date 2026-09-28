@@ -25,6 +25,7 @@
         "purchase",
         "purchase_stock",
         "sale_management",
+        "sale_stock",
         "account",
         "uom",
         "spreadsheet_dashboard",
