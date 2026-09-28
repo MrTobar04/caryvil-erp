@@ -47,4 +47,3 @@ class TestDemoData(TransactionCase):
             }
             quant._load_records_write(vals)
             self.assertEqual(quant.quantity, 100.0)
-
