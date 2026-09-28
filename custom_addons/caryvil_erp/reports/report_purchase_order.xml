@@ -5,108 +5,198 @@
             <t t-foreach="docs" t-as="o">
                 <t t-call="web.external_layout">
                     <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)"/>
-                    <div class="page">
+                    <div class="page caryvil-po-container">
                         <style>
+                            .caryvil-po-container {
+                                font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                                color: #212529;
+                                font-size: 12px;
+                            }
+                            .caryvil-po-title {
+                                font-size: 26px;
+                                font-weight: 400;
+                                color: #212529;
+                                margin-top: 15px;
+                                margin-bottom: 6px;
+                                line-height: 1.2;
+                            }
+                            .caryvil-po-date {
+                                font-size: 13px;
+                                margin-bottom: 24px;
+                                color: #212529;
+                            }
+                            .caryvil-po-col-left {
+                                width: 48%;
+                                float: left;
+                                font-size: 12px;
+                                line-height: 1.45;
+                            }
+                            .caryvil-po-col-right {
+                                width: 48%;
+                                float: right;
+                                font-size: 12px;
+                                line-height: 1.45;
+                            }
+                            .caryvil-po-section-title {
+                                font-weight: 700;
+                                font-size: 13px;
+                                color: #212529;
+                                margin-bottom: 4px;
+                            }
+                            .caryvil-po-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-top: 20px;
+                                margin-bottom: 20px;
+                                font-size: 11px;
+                            }
                             .caryvil-po-table thead th {
                                 background-color: #004085;
                                 color: #ffffff;
-                                font-size: 11px;
+                                font-size: 10px;
+                                font-weight: 700;
                                 text-transform: uppercase;
+                                padding: 7px 8px;
+                                border: 1px solid #dee2e6;
+                                letter-spacing: 0.3px;
                             }
-                            .caryvil-po-table tbody tr:nth-child(even) {
-                                background-color: #f2f5f9;
+                            .caryvil-po-table tbody td {
+                                padding: 7px 8px;
+                                border: 1px solid #dee2e6;
+                                background-color: #ffffff;
+                                color: #212529;
+                                vertical-align: middle;
                             }
-                            .caryvil-po-table td, .caryvil-po-table th {
-                                padding: 6px 8px;
-                                word-break: break-word;
+                            .caryvil-po-totals-box {
+                                width: 45%;
+                                float: right;
+                                margin-top: 5px;
+                                margin-bottom: 25px;
+                            }
+                            .caryvil-po-totals-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                font-size: 12px;
+                            }
+                            .caryvil-po-totals-table td {
+                                padding: 3px 0;
+                                border: none;
+                                color: #212529;
+                            }
+                            .caryvil-po-totals-table td.text-end {
+                                text-align: right;
+                            }
+                            .caryvil-po-totals-total {
+                                font-weight: 700;
+                                font-size: 13px;
+                            }
+                            .caryvil-instructions-box {
+                                margin-top: 15px;
+                                margin-bottom: 30px;
+                                font-size: 12px;
+                                color: #212529;
+                            }
+                            .caryvil-signatures-wrapper {
+                                margin-top: 60px;
+                                width: 100%;
                             }
                             .caryvil-signature-box {
-                                border-top: 1px solid #333;
-                                margin-top: 40px;
-                                padding-top: 4px;
+                                width: 44%;
                                 text-align: center;
+                            }
+                            .caryvil-signature-line {
+                                border-top: 1px solid #212529;
+                                padding-top: 6px;
+                                font-size: 12px;
+                                color: #212529;
+                            }
+                            .clearfix {
+                                clear: both;
                             }
                         </style>
 
-                        <div class="mt-2 mb-4">
-                            <h2>
-                                <span t-if="o.state in ('draft', 'sent')">Solicitud de Presupuesto</span>
-                                <span t-elif="o.state == 'cancel'">Orden de Compra Cancelada</span>
-                                <span t-else="">Orden de Compra</span>
-                                #<span t-field="o.name"/>
-                            </h2>
-                            <p>
-                                <strong>Fecha de Emisión:</strong>
-                                <span t-field="o.date_order" t-options='{"widget": "date"}'/>
-                            </p>
+                        <!-- Título y Fecha de Emisión -->
+                        <div class="caryvil-po-title">
+                            <span t-if="o.state in ('draft', 'sent')">Solicitud de Presupuesto</span>
+                            <span t-elif="o.state == 'cancel'">Orden de Compra Cancelada</span>
+                            <span t-else="">Orden de Compra</span>
+                            #<span t-field="o.name"/>
+                        </div>
+                        <div class="caryvil-po-date">
+                            <strong>Fecha de Emisión:</strong>
+                            <span t-field="o.date_order" t-options='{"widget": "date", "format": "MM/dd/yyyy"}'/>
                         </div>
 
-                        <div class="row mb-4">
-                            <div class="col-6">
-                                <strong>Proveedor</strong>
-                                <p class="m-0" t-field="o.laboratory_id.name"/>
-                                <p class="m-0" t-if="o.laboratory_id.nit">
-                                    NIT: <span t-field="o.laboratory_id.nit"/>
-                                </p>
-                                <p class="m-0" t-if="o.laboratory_id.nrc">
-                                    NRC: <span t-field="o.laboratory_id.nrc"/>
-                                </p>
-                                <p class="m-0" t-if="o.laboratory_id.street">
-                                    <span t-field="o.laboratory_id.street"/>
-                                </p>
-                                <p class="m-0">
-                                    <strong>Vendedor:</strong> <span t-field="o.partner_id.name"/>
-                                </p>
-                                <p class="m-0" t-if="o.partner_id.phone">
-                                    Tel: <span t-field="o.partner_id.phone"/>
-                                </p>
-                                <p class="m-0" t-if="o.partner_id.email">
-                                    Correo: <span t-field="o.partner_id.email"/>
-                                </p>
+                        <!-- Proveedor y Condiciones -->
+                        <div class="caryvil-po-col-left">
+                            <div class="caryvil-po-section-title">Proveedor</div>
+                            <div t-if="o.laboratory_id" t-field="o.laboratory_id.name"/>
+                            <div t-else="" t-field="o.partner_id.commercial_partner_id.name"/>
+                            <div t-if="o.laboratory_id.nit">
+                                NIT: <span t-field="o.laboratory_id.nit"/>
                             </div>
-                            <div class="col-6">
-                                <strong>Condiciones</strong>
-                                <p class="m-0">
-                                    <strong>Condiciones de Pago:</strong>
-                                    <span t-field="o.commercial_terms_id"/>
-                                </p>
+                            <div t-elif="o.partner_id.commercial_partner_id.vat">
+                                NIT: <span t-field="o.partner_id.commercial_partner_id.vat"/>
+                            </div>
+                            <div t-if="o.laboratory_id.nrc">
+                                NRC: <span t-field="o.laboratory_id.nrc"/>
+                            </div>
+                            <div>
+                                <strong>Vendedor:</strong> <span t-field="o.partner_id.name"/>
+                            </div>
+                            <div t-if="o.partner_id.phone">
+                                Tel: <span t-field="o.partner_id.phone"/>
+                            </div>
+                            <div t-if="o.partner_id.email">
+                                Correo: <span t-field="o.partner_id.email"/>
                             </div>
                         </div>
 
-                        <table class="table table-sm caryvil-po-table">
+                        <div class="caryvil-po-col-right">
+                            <div class="caryvil-po-section-title">Condiciones</div>
+                            <div>
+                                <strong>Condiciones de Pago:</strong>
+                                <span t-field="o.commercial_terms_id"/>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"/>
+
+                        <!-- Tabla de Medicamentos -->
+                        <table class="caryvil-po-table">
                             <thead>
                                 <tr>
-                                    <th>Código</th>
-                                    <th>Producto / Descripción</th>
-                                    <th>Presentación</th>
-                                    <th class="text-end">Cantidad</th>
-                                    <th class="text-end">Precio Unitario</th>
-                                    <th class="text-end">Descuento</th>
-                                    <th class="text-end">Subtotal</th>
+                                    <th style="width: 11%; text-align: left;">CÓDIGO</th>
+                                    <th style="width: 25%; text-align: left;">PRODUCTO / DESCRIPCIÓN</th>
+                                    <th style="width: 14%; text-align: left;">PRESENTACIÓN</th>
+                                    <th style="width: 11%; text-align: right;">CANTIDAD</th>
+                                    <th style="width: 15%; text-align: right;">PRECIO UNITARIO</th>
+                                    <th style="width: 12%; text-align: right;">DESCUENTO</th>
+                                    <th style="width: 12%; text-align: right;">SUBTOTAL</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr t-foreach="o.order_line" t-as="line" t-if="not line.display_type">
-                                    <td>
+                                    <td style="text-align: left;">
                                         <span t-field="line.product_id.default_code"/>
                                     </td>
-                                    <td>
+                                    <td style="text-align: left;">
                                         <span t-field="line.product_id.name"/>
                                     </td>
-                                    <td>
+                                    <td style="text-align: left;">
                                         <span t-field="line.product_uom.name"/>
                                     </td>
-                                    <td class="text-end">
-                                        <span t-field="line.product_qty"/>
+                                    <td style="text-align: right;">
+                                        <span t-field="line.product_qty" t-options='{"widget": "float", "precision": 2}'/>
                                     </td>
-                                    <td class="text-end">
+                                    <td style="text-align: right;">
                                         <span t-field="line.price_unit"
                                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                     </td>
-                                    <td class="text-end">
-                                        <span t-field="line.discount"/>%
+                                    <td style="text-align: right;">
+                                        <span t-esc="'%.2f' % line.discount"/>%
                                     </td>
-                                    <td class="text-end">
+                                    <td style="text-align: right;">
                                         <span t-field="line.price_subtotal"
                                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                     </td>
@@ -114,62 +204,64 @@
                             </tbody>
                         </table>
 
-                        <div class="row justify-content-end">
-                            <div class="col-5">
-                                <table class="table table-sm table-borderless">
-                                    <tr>
-                                        <td><strong>Subtotal</strong></td>
-                                        <td class="text-end">
-                                            <span t-field="o.amount_untaxed"
-                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Descuento</strong></td>
-                                        <td class="text-end">
-                                            <span t-field="o.amount_discount_total"
-                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>IVA (13%)</strong></td>
-                                        <td class="text-end">
-                                            <span t-field="o.amount_tax"
-                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                        </td>
-                                    </tr>
-                                    <tr t-if="o.iva_percibido_check">
-                                        <td><strong>IVA Percibido (1%)</strong></td>
-                                        <td class="text-end">
-                                            <span t-field="o.amount_iva_percibido"
-                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                        </td>
-                                    </tr>
-                                    <tr style="border-top: 2px solid #004085;">
-                                        <td><strong>Total</strong></td>
-                                        <td class="text-end">
-                                            <strong>
-                                                <span t-field="o.amount_total_final"
-                                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                            </strong>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+                        <!-- Totales de la Orden -->
+                        <div class="caryvil-po-totals-box">
+                            <table class="caryvil-po-totals-table">
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td class="text-end">
+                                        <span t-field="o.amount_untaxed"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Descuento</td>
+                                    <td class="text-end">
+                                        <span t-field="o.amount_discount_total"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>IVA (13%)</td>
+                                    <td class="text-end">
+                                        <span t-field="o.amount_tax"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr t-if="o.iva_percibido_check">
+                                    <td>IVA Percibido (1%)</td>
+                                    <td class="text-end">
+                                        <span t-field="o.amount_iva_percibido"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                                <tr class="caryvil-po-totals-total">
+                                    <td>Total</td>
+                                    <td class="text-end">
+                                        <span t-field="o.amount_total_final"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
 
-                        <div class="mt-4" t-if="o.notes_reception">
-                            <strong>Instrucciones de Recepción</strong>
-                            <p t-field="o.notes_reception"/>
+                        <div class="clearfix"/>
+
+                        <!-- Instrucciones de Recepción -->
+                        <div class="caryvil-instructions-box" t-if="o.notes_reception">
+                            <div class="caryvil-po-section-title">Instrucciones de Recepción</div>
+                            <div t-field="o.notes_reception"/>
                         </div>
 
-                        <div class="row mt-5">
-                            <div class="col-6">
-                                <div class="caryvil-signature-box">Elaborado por</div>
+                        <!-- Firmas -->
+                        <div class="caryvil-signatures-wrapper">
+                            <div class="caryvil-signature-box" style="float: left;">
+                                <div class="caryvil-signature-line">Elaborado por</div>
                             </div>
-                            <div class="col-6">
-                                <div class="caryvil-signature-box">Autorizado por</div>
+                            <div class="caryvil-signature-box" style="float: right;">
+                                <div class="caryvil-signature-line">Autorizado por</div>
                             </div>
+                            <div class="clearfix"/>
                         </div>
                     </div>
                 </t>
